@@ -67,8 +67,8 @@ public enum PDVDO {
             case .usb20: return String(localized: "USB 2.0 (480 Mbps)", bundle: _coreLocalizedBundle)
             case .usb32Gen1: return String(localized: "USB 3.2 Gen 1 (5 Gbps)", bundle: _coreLocalizedBundle)
             case .usb32Gen2: return String(localized: "USB 3.2 Gen 2 (10 Gbps)", bundle: _coreLocalizedBundle)
-            case .usb4Gen3: return String(localized: "USB4 Gen 3 (20 / 40 Gbps)", bundle: _coreLocalizedBundle)
-            case .usb4Gen4: return String(localized: "USB4 Gen 4 (80 Gbps)", bundle: _coreLocalizedBundle)
+            case .usb4Gen3: return String(localized: "USB4 Gen 3 (40 Gbps, Thunderbolt 4 class)", bundle: _coreLocalizedBundle)
+            case .usb4Gen4: return String(localized: "USB4 Gen 4 (80 Gbps, Thunderbolt 5 class)", bundle: _coreLocalizedBundle)
             }
         }
 

@@ -656,4 +656,51 @@ final class PortSummaryTests: XCTestCase {
             "Transport for wrong port should be ignored, got: \(summary.bullets)"
         )
     }
+
+    // MARK: - Real cable reproductions (from issue reports)
+
+    /// Issue #131: Apple Thunderbolt 5 data cable (A3189) on M4 MBA.
+    /// Reporter expected "Thunderbolt 5" label but saw "Thunderbolt / USB4".
+    /// Pins the exact output so we can verify any future labelling changes.
+    func testIssue131AppleTB5CableOnCIOPort() {
+        let vdos: [UInt32] = [0x1C60_05AC, 0x0000_0000, 0x720A_0100, 0x110A_2644]
+        let cable = PDIdentity(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x05AC, productID: 0x720A, bcdDevice: 0x0100,
+            vdos: vdos, specRevision: 0
+        )
+
+        // Verify the cable VDO decodes to Gen 4 / 80 Gbps / 250W passive.
+        let cv = cable.cableVDO!
+        XCTAssertEqual(cv.speed, .usb4Gen4)
+        XCTAssertEqual(cv.current, .fiveAmp)
+        XCTAssertEqual(cv.maxVolts, 50)
+        XCTAssertEqual(cv.maxWatts, 250)
+        XCTAssertEqual(cv.cableType, .passive)
+        XCTAssertTrue(cv.decodeWarnings.isEmpty)
+
+        // CIO active (Thunderbolt link up on the port).
+        let port = makePort(
+            connected: true,
+            active: ["CIO", "USB3"],
+            supported: ["CC", "USB2", "USB3", "CIO"]
+        )
+        let summary = PortSummary(port: port, identities: [cable])
+
+        XCTAssertEqual(summary.status, .thunderboltCable)
+        XCTAssertEqual(summary.headline, "Thunderbolt / USB4")
+        XCTAssertTrue(
+            summary.bullets.contains(where: { $0.contains("USB4 Gen 4 (80 Gbps, Thunderbolt 5 class)") }),
+            "Cable speed bullet should show Gen 4, got: \(summary.bullets)"
+        )
+        XCTAssertTrue(
+            summary.bullets.contains(where: { $0.contains("Apple") }),
+            "Cable maker bullet should show Apple, got: \(summary.bullets)"
+        )
+        XCTAssertTrue(
+            summary.bullets.contains(where: { $0.contains("250W") }),
+            "Cable power bullet should show 250W, got: \(summary.bullets)"
+        )
+    }
 }
