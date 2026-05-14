@@ -45,7 +45,7 @@ Right-click the menu bar icon for **Refresh**, a **Keep window open** toggle (ha
 
 ## WhatCable Pro
 
-WhatCable is free and open source. For users who want to go deeper, [WhatCable Pro](https://whatcable.uk/pro) adds live power metering, PD contract inspection, port health counters, pin diagrams, cable resistance estimation, liquid detection status, and a dedicated power monitor window. One-time purchase, works on up to 2 Macs.
+WhatCable is free and open source. If you find it useful, you can support the project by picking up [WhatCable Pro](https://whatcable.uk/pro), which unlocks a ton of extra features: live power metering, PD contract inspection, port health counters, pin diagrams, cable resistance estimation, liquid detection status, and a dedicated power monitor window. One-time purchase, works on up to 2 Macs.
 
 ## Install
 
