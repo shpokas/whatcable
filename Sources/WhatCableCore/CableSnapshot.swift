@@ -38,6 +38,10 @@ public struct CableSnapshot: Equatable {
     /// device is connected; the IOKit services appear and disappear
     /// dynamically with plug/unplug events.
     public let usb3Transports: [USB3Transport]
+    /// Per-transport TRM (Trust and Restrict Management) state. Present
+    /// only while an accessory is connected; the IOKit transport services
+    /// appear and disappear dynamically with plug/unplug events.
+    public let trmTransports: [TRMTransport]
 
     public init(
         ports: [USBCPort],
@@ -48,7 +52,8 @@ public struct CableSnapshot: Equatable {
         thunderboltSwitches: [ThunderboltSwitch] = [],
         isDesktopMac: Bool = false,
         federatedIdentities: [FederatedIdentity] = [],
-        usb3Transports: [USB3Transport] = []
+        usb3Transports: [USB3Transport] = [],
+        trmTransports: [TRMTransport] = []
     ) {
         self.ports = ports
         self.powerSources = powerSources
@@ -59,6 +64,7 @@ public struct CableSnapshot: Equatable {
         self.isDesktopMac = isDesktopMac
         self.federatedIdentities = federatedIdentities
         self.usb3Transports = usb3Transports
+        self.trmTransports = trmTransports
     }
 }
 

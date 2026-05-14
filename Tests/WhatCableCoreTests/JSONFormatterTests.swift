@@ -516,6 +516,127 @@ final class JSONFormatterTests: XCTestCase {
         XCTAssertEqual(port["rawSpeedCode"] as? Int, 0x2)
     }
 
+    // MARK: - TRM transport state
+
+    func testTRMAppearsOnPortWithRestrictedTransport() throws {
+        let port = makePort()
+        let trm = TRMTransport(
+            id: 300,
+            portKey: "2/1",
+            transportType: "USB2",
+            state: 2,
+            stateDescription: "Limited",
+            transportRestricted: true,
+            transportSupervised: true,
+            identificationRestricted: false,
+            deviceLocked: false,
+            relaxedPeriod: true,
+            gracePeriodReason: 4,
+            gracePeriodReasonDescription: "Device Unlocked",
+            profile: 2,
+            profileDescription: "Ask for New Accessories",
+            cacheMiss: false
+        )
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [], showRaw: false,
+            trmTransports: [trm]
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        let trmArr = try XCTUnwrap(portObj["trm"] as? [[String: Any]])
+        XCTAssertEqual(trmArr.count, 1)
+
+        let entry = trmArr[0]
+        XCTAssertEqual(entry["transportType"] as? String, "USB2")
+        XCTAssertEqual(entry["state"] as? Int, 2)
+        XCTAssertEqual(entry["stateDescription"] as? String, "Limited")
+        XCTAssertEqual(entry["transportRestricted"] as? Bool, true)
+        XCTAssertEqual(entry["transportSupervised"] as? Bool, true)
+        XCTAssertEqual(entry["identificationRestricted"] as? Bool, false)
+        XCTAssertEqual(entry["deviceLocked"] as? Bool, false)
+        XCTAssertEqual(entry["relaxedPeriod"] as? Bool, true)
+        XCTAssertEqual(entry["gracePeriodReason"] as? Int, 4)
+        XCTAssertEqual(entry["gracePeriodReasonDescription"] as? String, "Device Unlocked")
+        XCTAssertEqual(entry["profile"] as? Int, 2)
+        XCTAssertEqual(entry["profileDescription"] as? String, "Ask for New Accessories")
+        XCTAssertEqual(entry["cacheMiss"] as? Bool, false)
+    }
+
+    func testTRMNilWhenNoTransportData() throws {
+        let json = try JSONFormatter.render(
+            ports: [makePort()], sources: [], identities: [], showRaw: false
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        XCTAssertNil(portObj["trm"] as? [[String: Any]])
+    }
+
+    func testTRMMultipleTransportsOnSamePort() throws {
+        let port = makePort()
+        let usb2 = TRMTransport(
+            id: 300, portKey: "2/1", transportType: "USB2",
+            state: 2, stateDescription: "Limited",
+            transportRestricted: true, transportSupervised: true,
+            identificationRestricted: nil, deviceLocked: nil,
+            relaxedPeriod: nil, gracePeriodReason: nil,
+            gracePeriodReasonDescription: nil, profile: nil,
+            profileDescription: nil, cacheMiss: nil
+        )
+        let dp = TRMTransport(
+            id: 301, portKey: "2/1", transportType: "DisplayPort",
+            state: nil, stateDescription: nil,
+            transportRestricted: nil, transportSupervised: false,
+            identificationRestricted: nil, deviceLocked: nil,
+            relaxedPeriod: nil, gracePeriodReason: nil,
+            gracePeriodReasonDescription: nil, profile: nil,
+            profileDescription: nil, cacheMiss: nil
+        )
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [], showRaw: false,
+            trmTransports: [usb2, dp]
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        let trmArr = try XCTUnwrap(portObj["trm"] as? [[String: Any]])
+        XCTAssertEqual(trmArr.count, 2)
+
+        let types = trmArr.compactMap { $0["transportType"] as? String }
+        XCTAssertTrue(types.contains("USB2"))
+        XCTAssertTrue(types.contains("DisplayPort"))
+    }
+
+    func testTRMFilteredByPortKey() throws {
+        let port = makePort()  // portKey = "2/1"
+        let matchingTRM = TRMTransport(
+            id: 300, portKey: "2/1", transportType: "USB2",
+            state: 2, stateDescription: "Limited",
+            transportRestricted: true, transportSupervised: true,
+            identificationRestricted: nil, deviceLocked: nil,
+            relaxedPeriod: nil, gracePeriodReason: nil,
+            gracePeriodReasonDescription: nil, profile: nil,
+            profileDescription: nil, cacheMiss: nil
+        )
+        let otherPortTRM = TRMTransport(
+            id: 301, portKey: "2/4", transportType: "USB2",
+            state: 0, stateDescription: "Full",
+            transportRestricted: false, transportSupervised: true,
+            identificationRestricted: nil, deviceLocked: nil,
+            relaxedPeriod: nil, gracePeriodReason: nil,
+            gracePeriodReasonDescription: nil, profile: nil,
+            profileDescription: nil, cacheMiss: nil
+        )
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [], showRaw: false,
+            trmTransports: [matchingTRM, otherPortTRM]
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        let trmArr = try XCTUnwrap(portObj["trm"] as? [[String: Any]])
+        // Only the matching portKey should be included
+        XCTAssertEqual(trmArr.count, 1)
+        XCTAssertEqual(trmArr[0]["state"] as? Int, 2)
+    }
+
     func testPortDtoCarriesThunderboltSwitchUidReference() throws {
         let host = ThunderboltSwitch(
             id: 12345,

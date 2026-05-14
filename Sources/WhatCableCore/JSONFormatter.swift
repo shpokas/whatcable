@@ -10,7 +10,8 @@ public enum JSONFormatter {
         thunderboltSwitches: [ThunderboltSwitch] = [],
         isDesktopMac: Bool = false,
         federatedIdentities: [FederatedIdentity] = [],
-        usb3Transports: [USB3Transport] = []
+        usb3Transports: [USB3Transport] = [],
+        trmTransports: [TRMTransport] = []
     ) throws -> String {
         let output = Output(
             version: AppInfo.version,
@@ -24,7 +25,8 @@ public enum JSONFormatter {
                     showRaw: showRaw,
                     adapter: adapter,
                     federatedIdentities: federatedIdentities,
-                    usb3Transports: usb3Transports.filter { $0.portKey == port.portKey }
+                    usb3Transports: usb3Transports.filter { $0.portKey == port.portKey },
+                    trmTransports: trmTransports.filter { $0.portKey == port.portKey }
                 )
             },
             thunderboltSwitches: thunderboltSwitches.map { ThunderboltSwitchDTO(sw: $0) }
@@ -68,6 +70,9 @@ private struct PortDTO: Codable {
     /// sign bit). nil for ports that aren't TB-protocol or for which the
     /// watcher hasn't found a match.
     let thunderboltSwitchUID: Int64?
+    /// Per-transport TRM state for this port. Nil when no TRM data is
+    /// available (nothing connected, or TRM not active on this port).
+    let trm: [TRMTransportDTO]?
     let rawProperties: [String: String]?
 
     init(
@@ -78,7 +83,8 @@ private struct PortDTO: Codable {
         showRaw: Bool,
         adapter: AdapterInfo?,
         federatedIdentities: [FederatedIdentity] = [],
-        usb3Transports: [USB3Transport] = []
+        usb3Transports: [USB3Transport] = [],
+        trmTransports: [TRMTransport] = []
     ) {
         self.name = port.portDescription ?? port.serviceName
         self.type = port.portTypeDescription
@@ -127,6 +133,8 @@ private struct PortDTO: Codable {
 
         self.charging = ChargingDiagnostic(port: port, sources: sources, identities: identities, adapter: adapter)
             .map { ChargingDTO(diagnostic: $0) }
+
+        self.trm = trmTransports.isEmpty ? nil : trmTransports.map { TRMTransportDTO(transport: $0) }
 
         self.rawProperties = showRaw ? port.rawProperties : nil
     }
@@ -372,6 +380,38 @@ private struct ThunderboltPortDTO: Codable {
         case .tb5: return 0x2
         case .unknown(let raw): return Int(raw)
         }
+    }
+}
+
+private struct TRMTransportDTO: Codable {
+    let transportType: String
+    let state: Int?
+    let stateDescription: String?
+    let transportRestricted: Bool?
+    let transportSupervised: Bool?
+    let identificationRestricted: Bool?
+    let deviceLocked: Bool?
+    let relaxedPeriod: Bool?
+    let gracePeriodReason: Int?
+    let gracePeriodReasonDescription: String?
+    let profile: Int?
+    let profileDescription: String?
+    let cacheMiss: Bool?
+
+    init(transport: TRMTransport) {
+        self.transportType = transport.transportType
+        self.state = transport.state
+        self.stateDescription = transport.stateDescription
+        self.transportRestricted = transport.transportRestricted
+        self.transportSupervised = transport.transportSupervised
+        self.identificationRestricted = transport.identificationRestricted
+        self.deviceLocked = transport.deviceLocked
+        self.relaxedPeriod = transport.relaxedPeriod
+        self.gracePeriodReason = transport.gracePeriodReason
+        self.gracePeriodReasonDescription = transport.gracePeriodReasonDescription
+        self.profile = transport.profile
+        self.profileDescription = transport.profileDescription
+        self.cacheMiss = transport.cacheMiss
     }
 }
 
