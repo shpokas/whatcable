@@ -17,7 +17,7 @@ public struct WidgetSnapshot: Codable, Equatable {
     /// One port's display-ready state. Every field is pre-computed by the
     /// main app so the widget just decodes and renders.
     public struct PortEntry: Codable, Equatable, Identifiable {
-        /// Stable numeric ID from the underlying USBCPort. Using the
+        /// Stable numeric ID from the underlying AppleHPMInterface. Using the
         /// display name would break SwiftUI if two ports share the same
         /// description string.
         public let id: UInt64

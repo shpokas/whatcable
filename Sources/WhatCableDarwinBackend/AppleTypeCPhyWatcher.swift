@@ -13,7 +13,7 @@ import WhatCableCore
 /// Updates instantly on mode change (notification-driven).
 @MainActor
 public final class AppleTypeCPhyWatcher: ObservableObject {
-    @Published public private(set) var phys: [TypeCPhy] = []
+    @Published public private(set) var phys: [AppleTypeCPhy] = []
 
     nonisolated static let candidateClasses = [
         "AppleT8132TypeCPhy",
@@ -75,7 +75,7 @@ public final class AppleTypeCPhyWatcher: ObservableObject {
     }
 
     public func refresh() {
-        var rebuilt: [TypeCPhy] = []
+        var rebuilt: [AppleTypeCPhy] = []
         for cls in Self.candidateClasses {
             var iter: io_iterator_t = 0
             guard IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching(cls), &iter) == KERN_SUCCESS else {
@@ -99,7 +99,7 @@ public final class AppleTypeCPhyWatcher: ObservableObject {
         if rebuilt != phys { phys = rebuilt }
     }
 
-    private func makePhy(from service: io_service_t) -> TypeCPhy? {
+    private func makePhy(from service: io_service_t) -> AppleTypeCPhy? {
         var props: Unmanaged<CFMutableDictionary>?
         guard IORegistryEntryCreateCFProperties(service, &props, kCFAllocatorDefault, 0) == KERN_SUCCESS,
               let dict = props?.takeRetainedValue() as? [String: Any] else {
@@ -145,7 +145,7 @@ public final class AppleTypeCPhyWatcher: ObservableObject {
 
         let dpTunnel = dict["AppleTypeCPhyDisplayPortTunnel"] as? String
 
-        return TypeCPhy(
+        return AppleTypeCPhy(
             id: phyID,
             lanes: lanes,
             usb2: usb2,

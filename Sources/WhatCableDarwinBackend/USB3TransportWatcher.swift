@@ -121,7 +121,7 @@ public final class USB3TransportWatcher: ObservableObject {
 
 extension USB3TransportWatcher {
     /// USB3 transports attached to a given port.
-    public func transports(for port: USBCPort) -> [USB3Transport] {
+    public func transports(for port: AppleHPMInterface) -> [USB3Transport] {
         guard let key = port.portKey else { return [] }
         return transports.filter { $0.portKey == key }
     }

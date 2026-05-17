@@ -2,7 +2,7 @@ import Foundation
 
 public enum TextFormatter {
     public static func render(
-        ports: [USBCPort],
+        ports: [AppleHPMInterface],
         sources: [PowerSource],
         identities: [USBPDSOP],
         showRaw: Bool,
@@ -49,7 +49,7 @@ public enum TextFormatter {
     }
 
     private static func renderPort(
-        _ port: USBCPort,
+        _ port: AppleHPMInterface,
         sources: [PowerSource],
         identities: [USBPDSOP],
         showRaw: Bool,
@@ -163,12 +163,12 @@ public enum TextFormatter {
         }
     }
 
-    private static func filterSources(_ port: USBCPort, all: [PowerSource]) -> [PowerSource] {
+    private static func filterSources(_ port: AppleHPMInterface, all: [PowerSource]) -> [PowerSource] {
         guard let key = port.portKey else { return [] }
         return all.filter { $0.portKey == key }
     }
 
-    private static func filterIdentities(_ port: USBCPort, all: [USBPDSOP]) -> [USBPDSOP] {
+    private static func filterIdentities(_ port: AppleHPMInterface, all: [USBPDSOP]) -> [USBPDSOP] {
         guard let key = port.portKey else { return [] }
         return all.filter { $0.portKey == key }
     }

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct USBCPort: Identifiable, Hashable {
+public struct AppleHPMInterface: Identifiable, Hashable {
     public let id: UInt64
     public let serviceName: String          // e.g. "Port-USB-C@1"
     public let className: String            // e.g. "AppleHPMInterfaceType10"
@@ -41,7 +41,7 @@ public struct USBCPort: Identifiable, Hashable {
     public let busIndex: Int?
     public let rawProperties: [String: String]
 
-    /// Build a `USBCPort` from a parsed IOKit property dictionary. Returns nil
+    /// Build from a parsed IOKit property dictionary. Returns nil
     /// if the entry isn't a real physical Type-C / MagSafe port. Lives in
     /// `WhatCableCore` rather than the watcher so it can be exercised against
     /// fixture data without IOKit. The watcher feeds in real CFProperties;
@@ -52,7 +52,7 @@ public struct USBCPort: Identifiable, Hashable {
         className: String,
         properties: [String: Any],
         busIndex: Int? = nil
-    ) -> USBCPort? {
+    ) -> AppleHPMInterface? {
         // Only return things that actually look like a physical Type-C or
         // MagSafe port. Real ports have a `PortTypeDescription` and a name
         // like `Port-USB-C@N` / `Port-MagSafe 3@N`.
@@ -64,7 +64,7 @@ public struct USBCPort: Identifiable, Hashable {
         var raw: [String: String] = [:]
         for (k, v) in properties { raw[k] = stringifyProperty(v) }
 
-        return USBCPort(
+        return AppleHPMInterface(
             id: entryID,
             serviceName: serviceName,
             className: className,
@@ -253,7 +253,7 @@ public struct USBCPort: Identifiable, Hashable {
 
 // MARK: - Property-dictionary parsing helpers
 //
-// Used by `USBCPort.from(...)` and (transitively) by the watcher. Pulled out
+// Used by `AppleHPMInterface.from(...)` and (transitively) by the watcher. Pulled out
 // to file scope so the pure factory can run without an instance.
 
 func stringArrayProperty(_ value: Any?) -> [String] {
@@ -287,3 +287,6 @@ func stringifyProperty(_ value: Any) -> String {
     default: return String(describing: value)
     }
 }
+
+@available(*, deprecated, renamed: "AppleHPMInterface")
+public typealias USBCPort = AppleHPMInterface

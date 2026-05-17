@@ -331,7 +331,7 @@ struct ContentView: View {
 
     /// Live-signal check delegating to the pure helper in `WhatCableCore`,
     /// so the same rules apply to both the GUI and any test harness.
-    private func isPortLive(_ port: USBCPort) -> Bool {
+    private func isPortLive(_ port: AppleHPMInterface) -> Bool {
         WhatCableCore.isPortLive(
             port: port,
             powerSources: powerWatcher.sources(for: port),
@@ -358,7 +358,7 @@ struct ContentView: View {
     /// device onto the port. Showing all devices on every active USB port
     /// is worse than showing none, and it caused the bug that issue #21
     /// reported.
-    private func matchingDevices(for port: USBCPort) -> [USBDevice] {
+    private func matchingDevices(for port: AppleHPMInterface) -> [USBDevice] {
         port.matchingDevices(from: deviceWatcher.devices)
     }
 }
@@ -429,7 +429,7 @@ struct UpdateBanner: View {
 // MARK: - Port card
 
 struct PortCard: View {
-    let port: USBCPort
+    let port: AppleHPMInterface
     let devices: [USBDevice]
     let powerSources: [PowerSource]
     let identities: [USBPDSOP]
@@ -640,7 +640,7 @@ struct PowerSourceList: View {
 }
 
 struct AdvancedPortDetails: View {
-    let port: USBCPort
+    let port: AppleHPMInterface
     let cableEmarker: USBPDSOP?
     let thunderboltChain: [IOThunderboltSwitch]
 

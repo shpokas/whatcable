@@ -4,7 +4,7 @@ import Foundation
 /// on the machine (4 on M4 Pro). Read from `AppleT8132TypeCPhy` IOKit
 /// services. Provides per-lane transport mode, the only way to determine
 /// whether a port is using CIO (Thunderbolt), DisplayPort alt-mode, or both.
-public struct TypeCPhy: Identifiable, Hashable, Equatable, Sendable {
+public struct AppleTypeCPhy: Identifiable, Hashable, Equatable, Sendable {
     /// AppleTypeCPhyID (port index 0-3).
     public let id: Int
     /// Per-lane state. Typically 2 lanes (Lane 0 and Lane 1).
@@ -97,3 +97,6 @@ public struct PhyDisplayPortPclk: Hashable, Sendable {
         self.linkRate = linkRate
     }
 }
+
+@available(*, deprecated, renamed: "AppleTypeCPhy")
+public typealias TypeCPhy = AppleTypeCPhy

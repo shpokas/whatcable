@@ -89,9 +89,9 @@ public struct AdapterInfo: Hashable, Sendable {
 
 /// One unified view of cable / port / power state at a point in time.
 /// Backends produce these; CLI and GUI consume them.
-// TODO: Sendable — requires USBCPort, PowerSource, USBPDSOP, USBDevice to conform first
+// TODO: Sendable — requires AppleHPMInterface, PowerSource, USBPDSOP, USBDevice to conform first
 public struct CableSnapshot: Equatable {
-    public let ports: [USBCPort]
+    public let ports: [AppleHPMInterface]
     public let powerSources: [PowerSource]
     public let identities: [USBPDSOP]
     public let usbDevices: [USBDevice]
@@ -123,10 +123,10 @@ public struct CableSnapshot: Equatable {
     /// Per-port physical layer state from the TypeC PHY controller. Shows
     /// per-lane transport mode (CIO/DisplayPort/idle), USB2 state, and DP
     /// pixel clock. One entry per physical USB-C port.
-    public let typeCPhys: [TypeCPhy]
+    public let typeCPhys: [AppleTypeCPhy]
 
     public init(
-        ports: [USBCPort],
+        ports: [AppleHPMInterface],
         powerSources: [PowerSource],
         identities: [USBPDSOP],
         usbDevices: [USBDevice],
@@ -137,7 +137,7 @@ public struct CableSnapshot: Equatable {
         usb3Transports: [USB3Transport] = [],
         trmTransports: [TRMTransport] = [],
         cioCapabilities: [CIOCableCapability] = [],
-        typeCPhys: [TypeCPhy] = []
+        typeCPhys: [AppleTypeCPhy] = []
     ) {
         self.ports = ports
         self.powerSources = powerSources

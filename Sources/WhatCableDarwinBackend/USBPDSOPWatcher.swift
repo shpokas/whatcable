@@ -215,7 +215,7 @@ public final class USBPDSOPWatcher: ObservableObject {
         (metadata["bcdDevice"] as? NSNumber)?.intValue ?? 0
     }
 
-    public func identities(for port: USBCPort) -> [USBPDSOP] {
+    public func identities(for port: AppleHPMInterface) -> [USBPDSOP] {
         guard let key = port.portKey else { return [] }
         return identities.filter { $0.portKey == key }
     }

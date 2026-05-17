@@ -41,7 +41,7 @@ public final class DarwinSnapshotProvider: CableSnapshotProvider, @unchecked Sen
         }
 
         func read() -> CableSnapshot {
-            // USBCPort property changes don't fire match notifications,
+            // AppleHPMInterface property changes don't fire match notifications,
             // so refresh on every read. The others are notification-driven
             // but refresh is cheap and keeps reads consistent.
             portWatcher.refresh()

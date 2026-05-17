@@ -6,7 +6,7 @@ import WhatCableCore
 /// relevant class is `AppleHPMInterfaceType10` (USB-C) and `Type11` (MagSafe).
 @MainActor
 public final class AppleHPMInterfaceWatcher: ObservableObject {
-    @Published public private(set) var ports: [USBCPort] = []
+    @Published public private(set) var ports: [AppleHPMInterface] = []
 
     // Match only Type-C / MagSafe physical port controllers. Generic
     // `AppleUSBHostPort` would sweep in internal DRD (dual-role device)
@@ -80,7 +80,7 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
     /// assignment entirely when nothing changed, which keeps the UI calm
     /// when refresh() is called speculatively after every device event.
     public func refresh() {
-        var rebuilt: [USBCPort] = []
+        var rebuilt: [AppleHPMInterface] = []
         for cls in Self.candidateClasses {
             let matching = IOServiceMatching(cls)
             var iter: io_iterator_t = 0
@@ -148,7 +148,7 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
         }
     }
 
-    private func makePort(from service: io_service_t) -> USBCPort? {
+    private func makePort(from service: io_service_t) -> AppleHPMInterface? {
         var entryID: UInt64 = 0
         IORegistryEntryGetRegistryEntryID(service, &entryID)
 
@@ -181,7 +181,7 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
             return nil
         }
 
-        return USBCPort.from(
+        return AppleHPMInterface.from(
             entryID: entryID,
             serviceName: serviceName,
             className: className,

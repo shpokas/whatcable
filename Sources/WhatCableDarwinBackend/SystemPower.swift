@@ -73,7 +73,7 @@ extension ChargingDiagnostic {
     /// a diagnostic. Callers that need a custom adapter (e.g. tests)
     /// can use the core init that takes `adapter:` explicitly.
     public init?(
-        port: USBCPort,
+        port: AppleHPMInterface,
         sources: [PowerSource],
         identities: [USBPDSOP]
     ) {

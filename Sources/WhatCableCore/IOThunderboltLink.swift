@@ -260,7 +260,7 @@ public struct IOThunderboltSwitch: Identifiable, Hashable {
     /// plus a list of already-parsed child ports. Returns `nil` if the
     /// dictionary is missing the minimum identifying fields (UID + Vendor ID).
     /// Lives here in `WhatCableCore` so it can be exercised against fixture
-    /// data without IOKit, mirroring the `USBCPort.from(...)` pattern.
+    /// data without IOKit, mirroring the `AppleHPMInterface.from(...)` pattern.
     public static func from(
         properties: [String: Any],
         className: String,

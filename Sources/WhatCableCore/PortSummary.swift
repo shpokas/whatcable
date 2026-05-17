@@ -3,7 +3,7 @@ import os.log
 
 private let _portSummaryLog = Logger(subsystem: "uk.whatcable.whatcable", category: "port-summary")
 
-/// Plain-English interpretation of a USBCPort's raw IOKit data.
+/// Plain-English interpretation of a AppleHPMInterface's raw IOKit data.
 public struct PortSummary {
     public enum Status {
         case empty
@@ -37,7 +37,7 @@ extension PortSummary {
     ///   to fall back to `port.connectionActive` for callers that don't
     ///   track the live signals (CLI / JSON snapshots).
     public init(
-        port: USBCPort,
+        port: AppleHPMInterface,
         sources: [PowerSource] = [],
         identities: [USBPDSOP] = [],
         devices: [USBDevice] = [],
@@ -378,7 +378,7 @@ extension PortSummary {
 /// watcher hasn't populated yet). Caller falls back to a generic bullet
 /// in that case.
 private func thunderboltBullets(
-    for port: USBCPort,
+    for port: AppleHPMInterface,
     switches: [IOThunderboltSwitch]
 ) -> [String] {
     guard !switches.isEmpty,

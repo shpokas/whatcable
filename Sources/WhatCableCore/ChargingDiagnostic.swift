@@ -25,7 +25,7 @@ public struct ChargingDiagnostic {
 
 extension ChargingDiagnostic {
     public init?(
-        port: USBCPort,
+        port: AppleHPMInterface,
         sources: [PowerSource],
         identities: [USBPDSOP],
         adapter: AdapterInfo? = nil,

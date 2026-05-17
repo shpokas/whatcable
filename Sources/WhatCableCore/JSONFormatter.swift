@@ -2,7 +2,7 @@ import Foundation
 
 public enum JSONFormatter {
     public static func render(
-        ports: [USBCPort],
+        ports: [AppleHPMInterface],
         sources: [PowerSource],
         identities: [USBPDSOP],
         showRaw: Bool,
@@ -95,7 +95,7 @@ private struct PortDTO: Codable {
     let rawProperties: [String: String]?
 
     init(
-        port: USBCPort,
+        port: AppleHPMInterface,
         sources: [PowerSource],
         identities: [USBPDSOP],
         thunderboltSwitches: [IOThunderboltSwitch],
