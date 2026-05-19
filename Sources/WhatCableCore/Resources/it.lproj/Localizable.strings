@@ -112,15 +112,6 @@
 "smart cable" = "Cavo con e-marker";
 "video" = "video";
 
-/* DisplayPort lane labels, connected-device variants, pin-diagram Data label */
-"2 DP lanes + USB3 data" = "2 lane DP + dati USB3";
-"4 DP lanes (no USB3 alongside video)" = "4 lane DP (nessun USB3 insieme al video)";
-"Carrying DisplayPort video (%@)" = "Supporta video DisplayPort (%@)";
-"Connected device: %@" = "Dispositivo connesso: %@";
-"Connected device: %@, %@ (%@)" = "Dispositivo connesso: %1$@, %2$@ (%3$@)";
-"Data" = "Dati";
-"DisplayPort alt mode" = "Modalità alternativa DisplayPort";
-
 /* Cable speed / charger status strings (previously missing keys) */
 "40 Gbps capable" = "Compatibile con 40 Gbps";
 "Charger connected. Battery is full, so the Mac isn't drawing power." = "Caricabatterie collegato. La batteria è carica, quindi il Mac non assorbe alimentazione.";
@@ -132,6 +123,14 @@
 "USB4 Gen 3 (40 Gbps, Thunderbolt 4 class)" = "USB4 Gen 3 (40 Gbps, classe Thunderbolt 4)";
 "USB4 Gen 4 (80 Gbps, Thunderbolt 5 class)" = "USB4 Gen 4 (80 Gbps, classe Thunderbolt 5)";
 
+/* DisplayPort lane labels, connected-device variants, pin-diagram Data label */
+"2 DP lanes + USB3 data" = "2 lane DP + dati USB3";
+"4 DP lanes (no USB3 alongside video)" = "4 lane DP (nessun USB3 insieme al video)";
+"Carrying DisplayPort video (%@)" = "Supporta video DisplayPort (%@)";
+"Connected device: %@" = "Dispositivo connesso: %@";
+"Connected device: %@, %@ (%@)" = "Dispositivo connesso: %1$@, %2$@ (%3$@)";
+"Data" = "Dati";
+"DisplayPort alt mode" = "Modalità alternativa DisplayPort";
 
 /* Pro plugin UI strings */
 "%@ (spec, not measured)" = "%@ (da specifica, non misurato)";
