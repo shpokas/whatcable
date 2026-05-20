@@ -1,9 +1,9 @@
 [
   {
-    "brand" : "Anker braided cable, bundled with 140W adapter",
+    "brand" : "Anker USB-C cable, model not provided (e-marker present, no PD Discover Identity response)",
     "cableVDO" : "",
-    "issueNum" : "#136",
-    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/136",
+    "issueNum" : "#170",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/170",
     "pid" : "0x0000",
     "power" : "(not advertised)",
     "registered" : true,
@@ -50,6 +50,20 @@
     "power" : "5 A \/ 20 V (100 W)",
     "registered" : true,
     "speed" : "USB 3.2 Gen 1 (5 Gbps)",
+    "type" : "passive",
+    "vendor" : "(zeroed)",
+    "vid" : "0x0000",
+    "xid" : "none"
+  },
+  {
+    "brand" : "Anker Zolo 240 W 3 ft (A8060) (VID\/PID zeroed; Cable VDO encodes 250 W EPR)",
+    "cableVDO" : "0x000A2640",
+    "issueNum" : "#166",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/166",
+    "pid" : "0x0000",
+    "power" : "5 A \/ 50 V (250 W)",
+    "registered" : true,
+    "speed" : "USB 2.0 (480 Mbps)",
     "type" : "passive",
     "vendor" : "(zeroed)",
     "vid" : "0x0000",
@@ -140,6 +154,34 @@
     "xid" : "0x939"
   },
   {
+    "brand" : "Apple USB-C to 3.5 mm headphone jack adapter (e-marker on built-in plug)",
+    "cableVDO" : "0x11000000",
+    "issueNum" : "#175",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/175",
+    "pid" : "0x110A",
+    "power" : "USB default at up to 20V (~60W)",
+    "registered" : true,
+    "speed" : "USB 2.0 (480 Mbps)",
+    "type" : "passive",
+    "vendor" : "Apple",
+    "vid" : "0x05AC",
+    "xid" : "none"
+  },
+  {
+    "brand" : "Apple USB-C EarPods (e-marker on built-in plug, audio accessory)",
+    "cableVDO" : "0x11000000",
+    "issueNum" : "#173",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/173",
+    "pid" : "0x110B",
+    "power" : "USB default at up to 20V (~60W)",
+    "registered" : true,
+    "speed" : "USB 2.0 (480 Mbps)",
+    "type" : "passive",
+    "vendor" : "Apple",
+    "vid" : "0x05AC",
+    "xid" : "none"
+  },
+  {
     "brand" : "Apple Thunderbolt 5 cable 1 m (model A3189)",
     "cableVDO" : "0x110A2644",
     "issueNum" : "#131",
@@ -152,6 +194,20 @@
     "vendor" : "Apple",
     "vid" : "0x05AC",
     "xid" : "none"
+  },
+  {
+    "brand" : "LG 27UP85NP-W monitor bundled USB-C cable (unbranded)",
+    "cableVDO" : "0x00084841",
+    "issueNum" : "#165",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/165",
+    "pid" : "0x0CE9",
+    "power" : "5 A \/ 20 V (100 W)",
+    "registered" : true,
+    "speed" : "USB 3.2 Gen 1 (5 Gbps)",
+    "type" : "passive",
+    "vendor" : "Huizhou Bohui Connection Technology Co., Ltd",
+    "vid" : "0x163E",
+    "xid" : "0x99"
   },
   {
     "brand" : "Anker 333 USB-C 3.3 ft nylon",
@@ -224,6 +280,20 @@
     "xid" : "none"
   },
   {
+    "brand" : "Generic USB-C cable used with Dell P2422HE monitor (unbranded)",
+    "cableVDO" : "0x00084041",
+    "issueNum" : "#177",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/177",
+    "pid" : "0x0000",
+    "power" : "5 A \/ 20 V (100 W)",
+    "registered" : true,
+    "speed" : "USB 3.2 Gen 1 (5 Gbps)",
+    "type" : "passive",
+    "vendor" : "Hotron Precision Electronic Ind. Corp.",
+    "vid" : "0x228A",
+    "xid" : "0x294"
+  },
+  {
     "brand" : "OnePlus SuperVOOC 10A cable (Type-C to Type-C)",
     "cableVDO" : "0x60082A40",
     "issueNum" : "#148",
@@ -294,6 +364,34 @@
     "xid" : "none"
   },
   {
+    "brand" : "AGFINEST \/ ULT-unite TB5-class USB4 80 Gbps cable, 3.94 ft (no USB-IF cert)",
+    "cableVDO" : "0x000A4644",
+    "issueNum" : "#151",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/151",
+    "pid" : "0x0000",
+    "power" : "5 A \/ 50 V (250 W)",
+    "registered" : true,
+    "speed" : "USB4 Gen 4 (80 Gbps, Thunderbolt 5 class)",
+    "type" : "passive",
+    "vendor" : "Dongguan ULT-unite Electronic Technology Co., LTD",
+    "vid" : "0x2BD3",
+    "xid" : "none"
+  },
+  {
+    "brand" : "CUKTECH PB200N powerbank built-in cable",
+    "cableVDO" : "0x00082040",
+    "issueNum" : "#168",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/168",
+    "pid" : "0x0000",
+    "power" : "5 A \/ 20 V (100 W)",
+    "registered" : true,
+    "speed" : "USB 2.0 (480 Mbps)",
+    "type" : "passive",
+    "vendor" : "Shenzhen Injoinic Technology Co., Ltd.",
+    "vid" : "0x2E87",
+    "xid" : "none"
+  },
+  {
     "brand" : "Dbilida TB4-branded 240 W cable, Amazon (no USB-IF cert)",
     "cableVDO" : "",
     "issueNum" : "#49",
@@ -306,6 +404,20 @@
     "vendor" : "Hynetek Semiconductor Co., Ltd",
     "vid" : "0x2E99",
     "xid" : "none"
+  },
+  {
+    "brand" : "Anker PowerLine III Flow 100 W 1.8 m, Amazon",
+    "cableVDO" : "0x00084040",
+    "issueNum" : "#152",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/152",
+    "pid" : "0x0000",
+    "power" : "5 A \/ 20 V (100 W)",
+    "registered" : true,
+    "speed" : "USB 2.0 (480 Mbps)",
+    "type" : "passive",
+    "vendor" : "Hynetek Semiconductor Co., Ltd",
+    "vid" : "0x2E99",
+    "xid" : "0x1514"
   },
   {
     "brand" : "Satechi Thunderbolt 5 cable 1 m",
@@ -348,6 +460,34 @@
     "vendor" : "Chengdu Convenientpower Semiconductor Co., LTD",
     "vid" : "0x315C",
     "xid" : "none"
+  },
+  {
+    "brand" : "Generic AliExpress TB4-branded cable (Chengdu Convenientpower silicon, no USB-IF cert)",
+    "cableVDO" : "0x000A4843",
+    "issueNum" : "#169",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/169",
+    "pid" : "0x0000",
+    "power" : "5 A \/ 20 V (100 W)",
+    "registered" : true,
+    "speed" : "USB4 Gen 3 (40 Gbps, Thunderbolt 4 class)",
+    "type" : "passive",
+    "vendor" : "Chengdu Convenientpower Semiconductor Co., LTD",
+    "vid" : "0x315C",
+    "xid" : "none"
+  },
+  {
+    "brand" : "Orico USB4 Gen 3 \/ Thunderbolt 4 class cable, USB-IF certified",
+    "cableVDO" : "0x45082043",
+    "issueNum" : "#162",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/162",
+    "pid" : "0x0000",
+    "power" : "5 A \/ 20 V (100 W)",
+    "registered" : true,
+    "speed" : "USB4 Gen 3 (40 Gbps, clase Thunderbolt 4)",
+    "type" : "passive",
+    "vendor" : "Shenzhen Orico Technologies Co., Ltd",
+    "vid" : "0x34BD",
+    "xid" : "0x10536"
   },
   {
     "brand" : "Silkland USB4 80 Gbps cable 3.3 ft, Amazon",
