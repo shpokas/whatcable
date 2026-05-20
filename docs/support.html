@@ -170,6 +170,40 @@
         margin-top: 4px;
       }
 
+      .proof-toggle {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 18px;
+        padding: 4px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+
+      .proof-btn {
+        flex: 1;
+        padding: 8px 12px;
+        border: none;
+        background: transparent;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--ink-soft);
+        border-radius: 7px;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+      }
+
+      .proof-btn:hover {
+        color: var(--ink);
+      }
+
+      .proof-btn.active {
+        background: var(--panel);
+        color: var(--ink);
+        box-shadow: var(--shadow-sm);
+      }
+
       .button {
         display: inline-flex;
         align-items: center;
@@ -279,13 +313,24 @@
     <main>
       <div class="card">
         <h1>Pro Support</h1>
-        <p class="subtitle">Enter your licence key and we'll get back to you by email.</p>
+        <p class="subtitle">Confirm your purchase and we'll get back to you by email.</p>
 
         <form id="support-form">
-          <div class="field">
+          <div class="proof-toggle" role="group" aria-label="Proof of purchase">
+            <button type="button" class="proof-btn active" data-proof="key">Licence key</button>
+            <button type="button" class="proof-btn" data-proof="tx">Transaction ID</button>
+          </div>
+
+          <div class="field" data-field="key">
             <label for="key">Licence key</label>
-            <input type="text" id="key" name="key" placeholder="XXXX-XXXX-XXXX-XXXX" required autocomplete="off" spellcheck="false">
+            <input type="text" id="key" name="key" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false">
             <div class="field-hint">Right-click WhatCable in the menu bar, then click Licence to find your key.</div>
+          </div>
+
+          <div class="field" data-field="tx" hidden>
+            <label for="tx">Stripe transaction ID or receipt number</label>
+            <input type="text" id="tx" name="tx" placeholder="pi_... or 1234-5678" autocomplete="off" spellcheck="false">
+            <div class="field-hint">From your Stripe receipt email (subject: "Receipt from WhatCable"). Use this if you paid but never received a key.</div>
           </div>
 
           <div class="field">
@@ -307,8 +352,8 @@
         <h2>Common questions</h2>
 
         <details class="faq-item">
-          <summary>I lost my licence key</summary>
-          <div class="answer">Check your email for a message from noreply@whatcable.uk with the subject "Your WhatCable Pro licence key". If you can't find it, use the form above with any details you remember (purchase email, approximate date) and we'll look it up.</div>
+          <summary>I lost my licence key (or never received one)</summary>
+          <div class="answer">Check your email for a message from noreply@whatcable.uk with the subject "Your WhatCable Pro licence key". If you can't find it, switch the form above to "Transaction ID" and paste your Stripe receipt number or payment ID. We'll look up your purchase and send the key over.</div>
         </details>
 
         <details class="faq-item">
@@ -332,23 +377,62 @@
       const form = document.getElementById("support-form");
       const btn = document.getElementById("submit-btn");
       const status = document.getElementById("status");
+      const keyField = document.querySelector('[data-field="key"]');
+      const txField = document.querySelector('[data-field="tx"]');
+      const keyInput = document.getElementById("key");
+      const txInput = document.getElementById("tx");
+      const proofBtns = document.querySelectorAll(".proof-btn");
+      let proofType = "key";
+
+      proofBtns.forEach((b) => {
+        b.addEventListener("click", () => {
+          proofBtns.forEach((x) => x.classList.remove("active"));
+          b.classList.add("active");
+          proofType = b.dataset.proof;
+          if (proofType === "key") {
+            keyField.hidden = false;
+            txField.hidden = true;
+          } else {
+            keyField.hidden = true;
+            txField.hidden = false;
+          }
+          status.className = "status";
+          status.textContent = "";
+        });
+      });
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         status.className = "status";
         status.textContent = "";
+
+        const proofValue = proofType === "key" ? keyInput.value.trim() : txInput.value.trim();
+        if (!proofValue) {
+          status.className = "status error";
+          status.textContent = proofType === "key"
+            ? "Please enter your licence key."
+            : "Please enter your Stripe transaction ID or receipt number.";
+          return;
+        }
+
         btn.disabled = true;
         btn.textContent = "Sending...";
+
+        const payload = {
+          email: document.getElementById("email").value.trim(),
+          message: document.getElementById("message").value.trim(),
+        };
+        if (proofType === "key") {
+          payload.key = proofValue;
+        } else {
+          payload.stripeTxId = proofValue;
+        }
 
         try {
           const res = await fetch("https://whatcable.uk/api/support", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              key: document.getElementById("key").value.trim(),
-              email: document.getElementById("email").value.trim(),
-              message: document.getElementById("message").value.trim(),
-            }),
+            body: JSON.stringify(payload),
           });
 
           const data = await res.json();
@@ -359,7 +443,7 @@
             form.reset();
           } else if (res.status === 403) {
             status.className = "status error";
-            status.textContent = "That licence key wasn't recognised. Please check and try again.";
+            status.textContent = "That licence key wasn't recognised. Please check and try again, or switch to Transaction ID.";
           } else {
             status.className = "status error";
             status.textContent = data.error || "Something went wrong. Please try again.";
