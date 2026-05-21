@@ -354,7 +354,6 @@
 
 
 /* Pro overview screen + footer pill (Pro funnel). Parity placeholders in English; refine in the community translation flow. */
-"About WhatCable Pro" = "About WhatCable Pro";
 "Cable Diagnostics" = "Cable Diagnostics";
 "Deep per-port pin maps, plug orientation, and protocol detail." = "Deep per-port pin maps, plug orientation, and protocol detail.";
 "Licence Key" = "Licence Key";
