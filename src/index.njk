@@ -793,14 +793,14 @@ extraHead: |
   <div class="wrap-wide">
     <span class="section-tag">Reviews</span>
     <div class="quotes-grid">
-      {% for q in press.quotes %}
-        {% if q.attribution == "MakeUseOf" %}
-          <figure class="pull-quote">
-            <blockquote class="quote">{{ q.text }}</blockquote>
-            <figcaption class="attribution">{{ q.attribution }}</figcaption>
-          </figure>
-        {% endif %}
-      {% endfor %}
+      <figure class="pull-quote">
+        <blockquote class="quote">Excellent at spotting bottlenecks.</blockquote>
+        <figcaption class="attribution">MakeUseOf</figcaption>
+      </figure>
+      <figure class="pull-quote">
+        <blockquote class="quote">Finally tells you what your USB-C cables can actually do.</blockquote>
+        <figcaption class="attribution">MakeUseOf</figcaption>
+      </figure>
     </div>
   </div>
 </section>
