@@ -354,7 +354,7 @@
 "The cable's own e-marker reports %@, but the Thunderbolt controller negotiated %@. This is common on active Thunderbolt cables that declare themselves passive. The controller's reading is the one used above." = "線材本身的 e-marker 回報 %@，但 Thunderbolt 控制器協商為 %@。這常見於自稱被動式的主動式 Thunderbolt 線材。上方使用的是控制器讀數。";
 
 
-/* Pro overview screen + footer pill (Pro funnel). Parity placeholders in English; refine in the community translation flow. */
+/* Pro overview screen + footer pill (Pro funnel). */
 "Cable Diagnostics" = "線材診斷";
 "Deep per-port pin maps, plug orientation, and protocol detail." = "深入查看各連接埠的針腳配置、插頭方向與協定詳細資訊。";
 "Licence Key" = "授權金鑰";
