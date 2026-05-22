@@ -139,16 +139,17 @@ extraHead: |
     }
     .home .quotes-strip .quotes-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 20px;
-      max-width: 920px;
+      max-width: 1080px;
       margin: 0 auto;
     }
     .home .quotes-strip .pull-quote {
       padding: 32px 30px;
       border-radius: 14px;
-      background: var(--accent-soft);
-      border: 1px solid rgba(12, 140, 166, 0.22);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -171,9 +172,11 @@ extraHead: |
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
+    @media (max-width: 960px) {
+      .home .quotes-strip .quotes-grid { grid-template-columns: 1fr; max-width: 560px; }
+    }
     @media (max-width: 720px) {
       .home .quotes-strip { padding: 40px 0 32px; }
-      .home .quotes-strip .quotes-grid { grid-template-columns: 1fr; }
       .home .quotes-strip .pull-quote { padding: 26px 24px; }
     }
 
@@ -794,12 +797,16 @@ extraHead: |
     <span class="section-tag">Reviews</span>
     <div class="quotes-grid">
       <figure class="pull-quote">
-        <blockquote class="quote">Excellent at spotting bottlenecks.</blockquote>
-        <figcaption class="attribution">MakeUseOf</figcaption>
+        <blockquote class="quote">A tiny app that does one thing, does it well.</blockquote>
+        <figcaption class="attribution">Dwight Silverman, Houston Chronicle</figcaption>
+      </figure>
+      <figure class="pull-quote">
+        <blockquote class="quote">WhatCable does a fine job of analyzing the cables attached to your Mac.</blockquote>
+        <figcaption class="attribution">David Nield, Lifehacker</figcaption>
       </figure>
       <figure class="pull-quote">
         <blockquote class="quote">Finally tells you what your USB-C cables can actually do.</blockquote>
-        <figcaption class="attribution">MakeUseOf</figcaption>
+        <figcaption class="attribution">Brady Snyder, MakeUseOf</figcaption>
       </figure>
     </div>
   </div>
