@@ -517,6 +517,25 @@
   so a 20W charger is unlikely to trigger the read). Try a higher-wattage charger if you're not sure.
 </p>
 
+<h2>Pro from the command line</h2>
+<p>
+  WhatCable Pro adds live power telemetry plus licence management from the terminal.
+  Activations sync with the menu bar app on the same Mac, so activating from one unlocks
+  Pro in the other.
+</p>
+<pre><code><span class="prompt">$</span> whatcable --monitor                        <span class="comment"># live power telemetry, Ctrl+C to exit</span>
+<span class="prompt">$</span> whatcable --monitor-json                   <span class="comment"># newline-delimited JSON, for scripting</span>
+<span class="prompt">$</span> whatcable --activate XXXX-XXXX-XXXX-XXXX   <span class="comment"># validate and store a licence</span>
+<span class="prompt">$</span> whatcable --licence                        <span class="comment"># show current licence status</span>
+<span class="prompt">$</span> whatcable --deactivate                     <span class="comment"># remove stored licence from this machine</span>
+<span class="prompt">$</span> whatcable --pro                            <span class="comment"># show Pro features, open purchase page</span></code></pre>
+<p>
+  Unlicensed users see a one-line footer at the end of plain text output pointing at
+  <code>whatcable --pro</code>. Run <code>whatcable --silence-pro-hints</code> to hide it,
+  <code>whatcable --show-pro-hints</code> to bring it back. The footer is suppressed
+  automatically when output is piped, redirected, or used with <code>--json</code>.
+</p>
+
 <h2>All flags</h2>
 <pre><code><span class="prompt">$</span> whatcable --help
 
