@@ -396,6 +396,70 @@ struct DataLinkDiagnosticTests {
             "Expected 80 Gbps host max from Type7 supportedSpeed mask, got: \(String(describing: diag?.facts.hostGbps))")
     }
 
+    @Test("Per-port supportedSpeed beats the switch aggregate (asymmetric controller)")
+    func perPortSupportedSpeedBeatsAggregate() {
+        // Build an asymmetric host root: port socket "1" supports only
+        // TB4 (per-port mask 0xC), while the switch-level aggregate is
+        // 0xE (TB3 + TB4 + TB5) -- the shape the OR-the-lane-ports
+        // fallback would produce on a switch with another TB5-capable
+        // lane elsewhere. Using `root.supportedSpeed.maxTotalGbps`
+        // would falsely report 80 Gbps for the socket-1 user. The
+        // matched port's own mask must win.
+        let socket1Port = IOThunderboltPort(
+            portNumber: 1, socketID: "1", adapterType: .lane,
+            currentSpeed: .usb4Tb4, currentWidth: LinkWidth(rawValue: 0x2),
+            targetWidth: nil, rawTargetSpeed: nil, linkBandwidthRaw: nil,
+            supportedSpeed: SupportedSpeedMask(rawValue: 0xC)   // TB3 + TB4 only
+        )
+        let socket9Port = IOThunderboltPort(
+            portNumber: 9, socketID: "9", adapterType: .lane,
+            currentSpeed: .tb5, currentWidth: LinkWidth(rawValue: 0x2),
+            targetWidth: nil, rawTargetSpeed: nil, linkBandwidthRaw: nil,
+            supportedSpeed: SupportedSpeedMask(rawValue: 0xE)   // TB3 + TB4 + TB5
+        )
+        let asymmetricRoot = IOThunderboltSwitch(
+            id: 100,
+            className: "IOThunderboltSwitchType7",
+            vendorID: 1452,
+            vendorName: "Apple Inc.",
+            modelName: "Mac",
+            routerID: 0,
+            depth: 0,
+            routeString: 0,
+            upstreamPortNumber: 0,
+            maxPortNumber: 8,
+            supportedSpeed: SupportedSpeedMask(rawValue: 0xE),  // misleading aggregate
+            ports: [socket1Port, socket9Port],
+            parentSwitchUID: nil
+        )
+        let diag = DataLinkDiagnostic(
+            port: makePort(),                                   // serviceName Port-USB-C@1 → socket "1"
+            identities: [],
+            devices: [],
+            usb3Transports: [usb3(signaling: 2)],
+            cio: nil,
+            thunderboltSwitches: [asymmetricRoot]
+        )
+        #expect(diag?.facts.hostGbps == 40,
+            "Expected 40 Gbps from port-1's own mask, not 80 Gbps from the switch aggregate. Got: \(String(describing: diag?.facts.hostGbps))")
+    }
+
+    @Test("Zero supportedSpeed mask returns nil (no host blame)")
+    func zeroMaskReturnsNil() {
+        // A switch with no supported-speed bits at all (mask 0) must
+        // produce nil hostGbps so the diagnostic never blames the host.
+        let host = hostSwitch(socketID: "1", supportedRaw: 0, activeSpeed: .usb4Tb4)
+        let diag = DataLinkDiagnostic(
+            port: makePort(),
+            identities: [],
+            devices: [],
+            usb3Transports: [usb3(signaling: 2)],
+            cio: nil,
+            thunderboltSwitches: [host]
+        )
+        #expect(diag?.facts.hostGbps == nil)
+    }
+
     @Test("Explicit hostMaxGbps wins over the inference")
     func explicitHostMaxGbpsWins() {
         // Caller passes 5 Gbps explicitly even though the switch graph

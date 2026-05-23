@@ -294,6 +294,14 @@ extension DataLinkDiagnostic {
     /// switch's `supportedSpeed` mask. This is what the chip can negotiate,
     /// not what is currently active. Returns `nil` for non-TB USB-C ports
     /// (no matching host root) or when the switch graph isn't loaded yet.
+    ///
+    /// Uses the specific lane port matching the user's socket ID when one
+    /// is present, not the switch-level aggregate. On a hypothetical
+    /// controller with per-port asymmetric capabilities (e.g. one port
+    /// configured for TB5 and another for TB4), the switch aggregate would
+    /// overstate the capability of any port that doesn't have every bit.
+    /// The per-port mask avoids that. Falls back to the switch aggregate
+    /// only when the matched port has no `supportedSpeed` of its own.
     static func hostMaxGbpsFromSwitches(
         port: AppleHPMInterface,
         switches: [IOThunderboltSwitch]
@@ -302,6 +310,11 @@ extension DataLinkDiagnostic {
               let socketID = ThunderboltTopology.socketID(fromServiceName: port.serviceName),
               let root = ThunderboltTopology.hostRoot(forSocketID: socketID, in: switches) else {
             return nil
+        }
+        if let portMask = root.ports
+            .first(where: { $0.adapterType.isLane && $0.socketID == socketID })?
+            .supportedSpeed {
+            return portMask.maxTotalGbps
         }
         return root.supportedSpeed.maxTotalGbps
     }
