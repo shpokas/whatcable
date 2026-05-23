@@ -96,4 +96,28 @@ public struct USBDevice: Identifiable, Hashable {
         default: return nil
         }
     }
+
+    /// First directly-attached SuperSpeed device on this port (one non-zero
+    /// locationID nibble, `speedRaw >= 3`). The conservative primary signal
+    /// for labelling a USB-C port's negotiated link.
+    public static func rootSuperSpeed(in devices: [USBDevice]) -> USBDevice? {
+        devices.first { $0.isRootDevice && ($0.speedRaw ?? 0) >= 3 }
+    }
+
+    /// Highest-speed SuperSpeed device matched to this port by name
+    /// (`controllerPortName`, sourced from IOKit's `UsbIOPort` mapping).
+    /// Use only as a last-resort fallback when both `rootSuperSpeed(in:)`
+    /// and the HPM transport label are unavailable: on Apple Silicon front
+    /// USB-C ports the controller sits behind an internal virtual root
+    /// that inflates locationID nibbles, so directly-attached devices fail
+    /// `isRootDevice` even though their named port mapping is intact.
+    ///
+    /// Deliberately excludes devices that matched only by `busIndex`: those
+    /// can include peripherals several hubs deep whose `Device Speed` could
+    /// overstate the port's upstream link.
+    public static func portMatchedSuperSpeed(in devices: [USBDevice]) -> USBDevice? {
+        devices
+            .filter { $0.controllerPortName != nil && ($0.speedRaw ?? 0) >= 3 }
+            .max { ($0.speedRaw ?? 0) < ($1.speedRaw ?? 0) }
+    }
 }

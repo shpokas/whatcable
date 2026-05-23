@@ -156,10 +156,13 @@ private struct PortDTO: Codable {
         // TransportsActive, not just the transport-derived fallback.
         let usb3Speed: String?
         if port.transportsActive.contains("USB3") {
-            let deviceUsb3Speed = usbDevices
-                .first { $0.isRootDevice && ($0.speedRaw ?? 0) >= 3 }?
-                .usb3SpeedLabel
-            usb3Speed = deviceUsb3Speed ?? usb3Transports.first?.speedLabel
+            // Selection order mirrors PortSummary: root device first,
+            // then HPM transport, then controller-port-name fallback for
+            // Apple Silicon front USB-C ports whose internal virtual root
+            // hides the actual root device.
+            let rootDeviceSpeed = USBDevice.rootSuperSpeed(in: usbDevices)?.usb3SpeedLabel
+            let portMatchedSpeed = USBDevice.portMatchedSuperSpeed(in: usbDevices)?.usb3SpeedLabel
+            usb3Speed = rootDeviceSpeed ?? usb3Transports.first?.speedLabel ?? portMatchedSpeed
         } else {
             usb3Speed = nil
         }

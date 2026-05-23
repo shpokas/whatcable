@@ -925,6 +925,48 @@ struct PortSummaryTests {
         )
     }
 
+    /// Issue #190 follow-up: iPhone 17 Pro on a Mac Studio front USB-C port
+    /// shows "5 Gbps or faster" instead of "USB 3.2 Gen 2 (10 Gbps)" even
+    /// though the device section correctly reports 10 Gbps. Apple Silicon
+    /// front USB-C ports route through an internal virtual root that
+    /// inflates the locationID by an extra nibble, so directly-attached
+    /// devices fail `isRootDevice`. With no HPM transport reading
+    /// (SuperSpeedSignaling==0 on these ports) the bullet falls through to
+    /// the generic "SuperSpeed USB" string. The port-matched fallback,
+    /// driven by `controllerPortName`, recovers the real speed.
+    @Test("Issue #190: virtual-root port reports device speed via controllerPortName")
+    func issue190VirtualRootPortReportsViaControllerPortName() {
+        let port = makePort(connected: true, active: ["USB3"], supported: ["CC", "USB3"])
+        // Transport service exists but signaling is 0 (USB3Transport.speedLabel
+        // returns nil for this case after commit 90fce0b).
+        let transport = USB3Transport(
+            id: 210, portKey: "2/1", signaling: 0,
+            signalingDescription: "None", dataRole: "host"
+        )
+        // Directly-attached device, but locationID has two non-zero nibbles
+        // because of Apple's internal virtual root in front of the port.
+        let device = USBDevice(
+            id: 410, locationID: 0x0021_0000,
+            vendorID: 0x05AC, productID: 0x12A8,
+            vendorName: "Apple", productName: "iPhone",
+            serialNumber: nil, usbVersion: "3.2",
+            speedRaw: 4, busPowerMA: 500, currentMA: 500,
+            controllerPortName: "Port-USB-C@1",
+            rawProperties: [:]
+        )
+        let summary = PortSummary(
+            port: port, devices: [device], usb3Transports: [transport]
+        )
+        #expect(
+            summary.bullets.contains(where: { $0.contains("USB 3.2 Gen 2 (10 Gbps)") }),
+            "Should report device speed via controllerPortName fallback, got: \(summary.bullets)"
+        )
+        #expect(
+            summary.bullets.contains(where: { $0.contains("5 Gbps or faster") }) == false,
+            "Generic fallback should not fire when device speed is available, got: \(summary.bullets)"
+        )
+    }
+
     // MARK: - Real cable reproductions (from issue reports)
 
     /// Issue #131: Apple Thunderbolt 5 data cable (A3189) on M4 MBA.

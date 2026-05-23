@@ -123,24 +123,46 @@ extension PortSummary {
                 bullets.append(contentsOf: tbBullets)
             }
         } else if hasUSB3 {
-            // Pick the root USB device on this port (directly attached to the
-            // host controller, not behind a hub). Its Device Speed reflects
-            // the upstream link, which is what the bullet describes. With a
-            // hub, downstream devices can negotiate faster than the upstream
-            // link and would be misleading.
-            let rootDevice = devices.first { $0.isRootDevice && ($0.speedRaw ?? 0) >= 3 }
-            let deviceSpeedLabel = rootDevice?.usb3SpeedLabel
+            // Speed selection order:
+            //   1. Root device (directly attached, `isRootDevice`). Its
+            //      `Device Speed` reflects the upstream link end-to-end and
+            //      can't be inflated by a hub in the middle.
+            //   2. HPM transport's `SuperSpeedSignaling`, when present
+            //      (non-nil after the signaling==0 fix). Authoritative for
+            //      the port-side link generation.
+            //   3. Port-matched-by-name fallback: highest-speed device that
+            //      maps to this port via `controllerPortName`. Covers Apple
+            //      Silicon front USB-C ports whose internal virtual root
+            //      inflates locationID nibbles, hiding the actual root
+            //      device from step 1. Only fires when both 1 and 2 are
+            //      empty so a known-Gen-1 HPM reading still beats a
+            //      seemingly-Gen-2 downstream device (see Codex review).
+            let rootDeviceLabel = USBDevice.rootSuperSpeed(in: devices)?.usb3SpeedLabel
             let transportLabel = usb3Transports
                 .first { $0.portKey == port.portKey }?
                 .speedLabel
+            let portMatchedLabel = USBDevice.portMatchedSuperSpeed(in: devices)?.usb3SpeedLabel
 
-            if let deviceLabel = deviceSpeedLabel, let hpmLabel = transportLabel,
+            if let deviceLabel = rootDeviceLabel, let hpmLabel = transportLabel,
                deviceLabel != hpmLabel {
                 let portName = port.serviceName
                 _portSummaryLog.warning("USB3 speed mismatch on \(portName): device=\(deviceLabel) HPM=\(hpmLabel)")
             }
 
-            if let label = deviceSpeedLabel ?? transportLabel {
+            // Second-tier disagreement: no root device qualified, but the
+            // controller-port-name-matched device disagrees with the HPM
+            // transport. Transport wins (see selection order), but log so
+            // we have visibility if Apple's virtual-root behaviour changes
+            // or a deeply-hubbed device sneaks past the controllerPortName
+            // filter.
+            if rootDeviceLabel == nil,
+               let portLabel = portMatchedLabel, let hpmLabel = transportLabel,
+               portLabel != hpmLabel {
+                let portName = port.serviceName
+                _portSummaryLog.warning("USB3 speed mismatch on \(portName): portMatched=\(portLabel) HPM=\(hpmLabel)")
+            }
+
+            if let label = rootDeviceLabel ?? transportLabel ?? portMatchedLabel {
                 bullets.append(label)
             } else {
                 bullets.append(String(localized: "SuperSpeed USB (5 Gbps or faster)", bundle: _coreLocalizedBundle))
