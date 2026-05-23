@@ -25,6 +25,19 @@ struct WhatCableCLI {
             return
         }
 
+        // Validate unknown flags BEFORE dispatching plugin commands. Otherwise
+        // a typo alongside a plugin flag (e.g. `whatcable --pro --bogus`) would
+        // silently run the plugin instead of complaining about the typo.
+        var knownFlags: Set<String> = ["--raw", "--json", "--watch", "--report", "--tb-debug", "-h", "--help", "--version"]
+        for cmd in PluginRegistry.shared.cliCommands {
+            knownFlags.formUnion(cmd.flagNames)
+        }
+        for arg in args where arg.hasPrefix("-") && !knownFlags.contains(arg) {
+            FileHandle.standardError.write(Data("whatcable: unknown option \(arg)\n".utf8))
+            FileHandle.standardError.write(Data(helpText.utf8))
+            exit(2)
+        }
+
         for cmd in PluginRegistry.shared.cliCommands {
             if cmd.matches(args) {
                 await cmd.run(args)
@@ -36,16 +49,6 @@ struct WhatCableCLI {
         let asJSON = args.contains("--json")
         let watch = args.contains("--watch")
         let report = args.contains("--report")
-
-        var knownFlags: Set<String> = ["--raw", "--json", "--watch", "--report", "--tb-debug", "-h", "--help", "--version"]
-        for cmd in PluginRegistry.shared.cliCommands {
-            knownFlags.formUnion(cmd.flagNames)
-        }
-        for arg in args where arg.hasPrefix("-") && !knownFlags.contains(arg) {
-            FileHandle.standardError.write(Data("whatcable: unknown option \(arg)\n".utf8))
-            FileHandle.standardError.write(Data(helpText.utf8))
-            exit(2)
-        }
 
         let provider = makeDefaultSnapshotProvider()
 
