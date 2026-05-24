@@ -44,7 +44,7 @@
 "Currently negotiated: %@ @ %@ (%@)" = "Negociación actual: %1$@ @ %2$@ (%3$@)";
 "Display connected" = "Pantalla conectada";
 "Display connected · %lldW charger" = "Pantalla conectada · cargador de %lld W";
-"DisplayPort video over USB-C alt mode." = "Vídeo DisplayPort a través de modo alternativo USB-C.";
+"DisplayPort video over USB-C Alt Mode." = "Vídeo DisplayPort a través de modo alternativo USB-C.";
 "E-marker claims EPR support but reports only 20V max VBUS" = "El e-marker anuncia soporte EPR pero reporta solo 20 V máx. VBUS";
 "E-marker reports no vendor identity" = "El e-marker no reporta identidad de fabricante";
 "E-marker uses a reserved cable-latency value" = "El e-marker usa un valor de latencia reservado";
@@ -122,7 +122,7 @@
 "Connected device: %@" = "Dispositivo conectado: %@";
 "Connected device: %@, %@ (%@)" = "Dispositivo conectado: %1$@, %2$@ (%3$@)";
 "Data" = "Datos";
-"DisplayPort alt mode" = "Modo alternativo DisplayPort";
+"DisplayPort Alt Mode" = "Modo alternativo DisplayPort";
 
 /* Cable speed / charger status strings (previously missing keys) */
 "20 Gbps capable" = "Compatible con 20 Gbps";
@@ -284,10 +284,10 @@
 "Unrecognised event code from the port controller." = "Código de evento no reconocido del controlador de puerto.";
 "Unregistered cable (no e-marker)" = "Cable no registrado (sin e-marker)";
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "La enumeración VDM no estructurada comenzó (descubriendo capacidades específicas del fabricante).";
-"Unstructured VDM status changed (vendor-specific messaging like alt mode setup)." = "El estado VDM no estructurado cambió (mensajería específica del fabricante como la configuración de modo alternativo).";
+"Unstructured VDM status changed (vendor-specific messaging like Alt Mode setup)." = "El estado VDM no estructurado cambió (mensajería específica del fabricante como la configuración de modo alternativo).";
 "VDO fail count" = "Conteo de fallos VDO";
 "Vendor ID" = "ID de fabricante";
-"Vendor-specific unstructured VDM state changed. Used by Apple for custom alt mode setup and Thunderbolt negotiation." = "El estado VDM no estructurado específico del fabricante cambió. Usado por Apple para la configuración de modo alternativo personalizado y negociación Thunderbolt.";
+"Vendor-specific unstructured VDM state changed. Used by Apple for custom Alt Mode setup and Thunderbolt negotiation." = "El estado VDM no estructurado específico del fabricante cambió. Usado por Apple para la configuración de modo alternativo personalizado y negociación Thunderbolt.";
 "Voltage" = "Tensión";
 "Voltage (V)" = "Tensión (V)";
 "WhatCable Pro" = "WhatCable Pro";

@@ -44,7 +44,7 @@
 "Currently negotiated: %@ @ %@ (%@)" = "Ներկայումս համաձայնեցված է՝ %1$@ @ %2$@ (%3$@)";
 "Display connected" = "Էկրանը միացված է";
 "Display connected · %lldW charger" = "Էկրանը միացված է · %lldW լիցքավորիչ";
-"DisplayPort video over USB-C alt mode." = "DisplayPort տեսանյութ USB-C alt ռեժիմով:";
+"DisplayPort video over USB-C Alt Mode." = "DisplayPort տեսանյութ USB-C alt ռեժիմով:";
 "E-marker claims EPR support but reports only 20V max VBUS" = "E-marker-ը հայտնում է EPR աջակցության մասին, բայց հաղորդում է միայն 20Վ առավելագույն VBUS";
 "E-marker reports no vendor identity" = "E-marker-ը չի հայտնում արտադրողի ինքնությունը";
 "E-marker uses a reserved cable-latency value" = "E-marker-ն օգտագործում է մալուխի ուշացման (latency) պահուստավորված արժեք";
@@ -122,7 +122,7 @@
 "Connected device: %@" = "Միացված սարք՝ %@";
 "Connected device: %@, %@ (%@)" = "Միացված սարք՝ %1$@, %2$@ (%3$@)";
 "Data" = "Տվյալներ";
-"DisplayPort alt mode" = "DisplayPort alt ռեժիմ";
+"DisplayPort Alt Mode" = "DisplayPort alt ռեժիմ";
 
 /* Cable speed / charger status strings (previously missing keys) */
 "20 Gbps capable" = "20 Gbps հնարավորությամբ";
@@ -284,10 +284,10 @@
 "Unrecognised event code from the port controller." = "Չճանաչված իրադարձության կոդ պորտի կարգավորիչից:";
 "Unregistered cable (no e-marker)" = "Չգրանցված մալուխ (e-marker չկա)";
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "Չկառուցվածքավորված VDM թվարկումը սկսվեց (արտադրողին հատուկ հնարավորությունների հայտնաբերում):";
-"Unstructured VDM status changed (vendor-specific messaging like alt mode setup)." = "Չկառուցվածքավորված VDM վիճակը փոխվեց (արտադրողին հատուկ հաղորդակցություն, ինչպիսին է alt ռեժիմի կարգավորումը):";
+"Unstructured VDM status changed (vendor-specific messaging like Alt Mode setup)." = "Չկառուցվածքավորված VDM վիճակը փոխվեց (արտադրողին հատուկ հաղորդակցություն, ինչպիսին է alt ռեժիմի կարգավորումը):";
 "VDO fail count" = "VDO ձախողումների քանակ";
 "Vendor ID" = "Արտադրողի ID";
-"Vendor-specific unstructured VDM state changed. Used by Apple for custom alt mode setup and Thunderbolt negotiation." = "Արտադրողին հատուկ չկառուցվածքավորված VDM վիճակը փոխվեց: Օգտագործվում է Apple-ի կողմից հատուկ alt ռեժիմի կարգավորման և Thunderbolt համաձայնեցման համար:";
+"Vendor-specific unstructured VDM state changed. Used by Apple for custom Alt Mode setup and Thunderbolt negotiation." = "Արտադրողին հատուկ չկառուցվածքավորված VDM վիճակը փոխվեց: Օգտագործվում է Apple-ի կողմից հատուկ alt ռեժիմի կարգավորման և Thunderbolt համաձայնեցման համար:";
 "Voltage" = "Լարում";
 "Voltage (V)" = "Լարում (Վ)";
 "WhatCable Pro" = "WhatCable Pro";

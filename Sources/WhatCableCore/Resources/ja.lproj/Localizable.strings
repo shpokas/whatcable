@@ -44,7 +44,7 @@
 "Currently negotiated: %@ @ %@ (%@)" = "現在のネゴシエーション: %1$@ @ %2$@ (%3$@)";
 "Display connected" = "ディスプレイ接続";
 "Display connected · %lldW charger" = "ディスプレイ接続 · %lld W充電器";
-"DisplayPort video over USB-C alt mode." = "USB-Cオルタネートモード経由のDisplayPort映像。";
+"DisplayPort video over USB-C Alt Mode." = "USB-Cオルタネートモード経由のDisplayPort映像。";
 "E-marker claims EPR support but reports only 20V max VBUS" = "e-markerはEPR対応を通知していますがVBUS最大20 Vのみを報告";
 "E-marker reports no vendor identity" = "e-markerがベンダーIDを報告していません";
 "E-marker uses a reserved cable-latency value" = "e-markerが予約済みのケーブルレイテンシ値を使用";
@@ -122,7 +122,7 @@
 "Connected device: %@" = "接続デバイス: %@";
 "Connected device: %@, %@ (%@)" = "接続デバイス: %1$@、%2$@ (%3$@)";
 "Data" = "データ";
-"DisplayPort alt mode" = "DisplayPort オルタネートモード";
+"DisplayPort Alt Mode" = "DisplayPort オルタネートモード";
 
 
 /* Cable speed / charger status strings (previously missing keys) */
@@ -285,10 +285,10 @@
 "Unrecognised event code from the port controller." = "ポートコントローラーからの認識できないイベントコード。";
 "Unregistered cable (no e-marker)" = "未登録ケーブル（e-markerなし）";
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "非構造化VDM列挙を開始（ベンダー固有性能を検出中）。";
-"Unstructured VDM status changed (vendor-specific messaging like alt mode setup)." = "非構造化VDMステータスが変更（オルタネートモード設定などのベンダー固有メッセージング）。";
+"Unstructured VDM status changed (vendor-specific messaging like Alt Mode setup)." = "非構造化VDMステータスが変更（オルタネートモード設定などのベンダー固有メッセージング）。";
 "VDO fail count" = "VDO失敗回数";
 "Vendor ID" = "ベンダーID";
-"Vendor-specific unstructured VDM state changed. Used by Apple for custom alt mode setup and Thunderbolt negotiation." = "ベンダー固有の非構造化VDM状態が変更。Appleがカスタムオルタネートモード設定とThunderboltネゴシエーションに使用。";
+"Vendor-specific unstructured VDM state changed. Used by Apple for custom Alt Mode setup and Thunderbolt negotiation." = "ベンダー固有の非構造化VDM状態が変更。Appleがカスタムオルタネートモード設定とThunderboltネゴシエーションに使用。";
 "Voltage" = "電圧";
 "Voltage (V)" = "電圧 (V)";
 "WhatCable Pro" = "WhatCable Pro";

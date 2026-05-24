@@ -44,7 +44,7 @@
 "Currently negotiated: %@ @ %@ (%@)" = "Pašlaik saskaņots: %1$@ @ %2$@ (%3$@)";
 "Display connected" = "Displejs pievienots";
 "Display connected · %lldW charger" = "Displejs pievienots · %lld W lādētājs";
-"DisplayPort video over USB-C alt mode." = "DisplayPort video caur USB-C alt režīmu.";
+"DisplayPort video over USB-C Alt Mode." = "DisplayPort video caur USB-C alt režīmu.";
 "E-marker claims EPR support but reports only 20V max VBUS" = "E-marķieris norāda EPR atbalstu, bet ziņo tikai 20 V maks. VBUS";
 "E-marker reports no vendor identity" = "E-marķieris neziņo ražotāja identitāti";
 "E-marker uses a reserved cable-latency value" = "E-marķieris izmanto rezervētu kabeļa latentuma vērtību";
@@ -135,7 +135,7 @@
 "Connected device: %@" = "Savienotā ierīce: %@";
 "Connected device: %@, %@ (%@)" = "Savienotā ierīce: %1$@, %2$@ (%3$@)";
 "Data" = "Dati";
-"DisplayPort alt mode" = "DisplayPort alt režīms";
+"DisplayPort Alt Mode" = "DisplayPort alt režīms";
 
 /* Pro plugin UI strings */
 "%@ (spec, not measured)" = "%@ (specifikācija, nav mērīts)";
@@ -283,10 +283,10 @@
 "Unrecognised event code from the port controller." = "Neatpazīts notikuma kods no porta kontrollera.";
 "Unregistered cable (no e-marker)" = "Nereģistrēts kabelis (nav e-marķiera)";
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "Nestrukturēta VDM uzskaitīšana sākta (atklāj ražotāja specifiskās spējas).";
-"Unstructured VDM status changed (vendor-specific messaging like alt mode setup)." = "Nestrukturēts VDM statuss mainījies (ražotāja specifiskā ziņojumapmaiņa, piemēram, alt režīma iestatīšana).";
+"Unstructured VDM status changed (vendor-specific messaging like Alt Mode setup)." = "Nestrukturēts VDM statuss mainījies (ražotāja specifiskā ziņojumapmaiņa, piemēram, alt režīma iestatīšana).";
 "VDO fail count" = "VDO kļūmju skaits";
 "Vendor ID" = "Ražotāja ID";
-"Vendor-specific unstructured VDM state changed. Used by Apple for custom alt mode setup and Thunderbolt negotiation." = "Ražotāja specifisks nestrukturēts VDM stāvoklis mainījies. Apple izmanto pielāgotai alt režīma iestatīšanai un Thunderbolt saskaņošanai.";
+"Vendor-specific unstructured VDM state changed. Used by Apple for custom Alt Mode setup and Thunderbolt negotiation." = "Ražotāja specifisks nestrukturēts VDM stāvoklis mainījies. Apple izmanto pielāgotai alt režīma iestatīšanai un Thunderbolt saskaņošanai.";
 "Voltage" = "Spriegums";
 "Voltage (V)" = "Spriegums (V)";
 "WhatCable Pro" = "WhatCable Pro";

@@ -44,7 +44,7 @@
 "Currently negotiated: %@ @ %@ (%@)" = "Aktuelle Aushandlung: %1$@ @ %2$@ (%3$@)";
 "Display connected" = "Display verbunden";
 "Display connected · %lldW charger" = "Display verbunden · %lld-W-Ladegerät";
-"DisplayPort video over USB-C alt mode." = "DisplayPort-Video über USB-C-Alt-Mode.";
+"DisplayPort video over USB-C Alt Mode." = "DisplayPort-Video über USB-C-Alt-Mode.";
 "E-marker claims EPR support but reports only 20V max VBUS" = "e-Marker meldet EPR-Unterstützung, aber nur max. 20 V VBUS";
 "E-marker reports no vendor identity" = "e-Marker meldet keine Herstelleridentität";
 "E-marker uses a reserved cable-latency value" = "e-Marker verwendet einen reservierten Kabellatentwert";
@@ -122,7 +122,7 @@
 "Connected device: %@" = "Verbundenes Gerät: %@";
 "Connected device: %@, %@ (%@)" = "Verbundenes Gerät: %1$@, %2$@ (%3$@)";
 "Data" = "Daten";
-"DisplayPort alt mode" = "DisplayPort Alt Mode";
+"DisplayPort Alt Mode" = "DisplayPort Alt Mode";
 
 /* Cable speed / charger status strings (previously missing keys) */
 "20 Gbps capable" = "20 Gbps fähig";
@@ -284,10 +284,10 @@
 "Unrecognised event code from the port controller." = "Nicht erkannter Ereigniscode vom Anschlusscontroller.";
 "Unregistered cable (no e-marker)" = "Nicht registriertes Kabel (kein e-Marker)";
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "Unstrukturierte VDM-Aufzählung begonnen (Erkennung herstellerspezifischer Fähigkeiten).";
-"Unstructured VDM status changed (vendor-specific messaging like alt mode setup)." = "Unstrukturierter VDM-Status geändert (herstellerspezifische Kommunikation wie Alt-Mode-Einrichtung).";
+"Unstructured VDM status changed (vendor-specific messaging like Alt Mode setup)." = "Unstrukturierter VDM-Status geändert (herstellerspezifische Kommunikation wie Alt-Mode-Einrichtung).";
 "VDO fail count" = "VDO-Fehleranzahl";
 "Vendor ID" = "Hersteller-ID";
-"Vendor-specific unstructured VDM state changed. Used by Apple for custom alt mode setup and Thunderbolt negotiation." = "Herstellerspezifischer unstrukturierter VDM-Status geändert. Von Apple für benutzerdefinierte Alt-Mode-Einrichtung und Thunderbolt-Aushandlung verwendet.";
+"Vendor-specific unstructured VDM state changed. Used by Apple for custom Alt Mode setup and Thunderbolt negotiation." = "Herstellerspezifischer unstrukturierter VDM-Status geändert. Von Apple für benutzerdefinierte Alt-Mode-Einrichtung und Thunderbolt-Aushandlung verwendet.";
 "Voltage" = "Spannung";
 "Voltage (V)" = "Spannung (V)";
 "WhatCable Pro" = "WhatCable Pro";

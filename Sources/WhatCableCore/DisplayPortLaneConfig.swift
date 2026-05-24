@@ -50,7 +50,7 @@ public struct DisplayPortLaneConfig: Hashable {
         case .twoLane:
             return String(localized: "2 DP lanes + USB3 data", bundle: _coreLocalizedBundle)
         case .unknown:
-            return String(localized: "DisplayPort alt mode", bundle: _coreLocalizedBundle)
+            return String(localized: "DisplayPort Alt Mode", bundle: _coreLocalizedBundle)
         }
     }
 }

@@ -44,7 +44,7 @@
 "Currently negotiated: %@ @ %@ (%@)" = "वर्तमान नेगोशिएशन: %1$@ @ %2$@ (%3$@)";
 "Display connected" = "डिस्प्ले कनेक्टेड";
 "Display connected · %lldW charger" = "डिस्प्ले कनेक्टेड · %lld W चार्जर";
-"DisplayPort video over USB-C alt mode." = "USB-C ऑल्ट मोड पर DisplayPort वीडियो।";
+"DisplayPort video over USB-C Alt Mode." = "USB-C ऑल्ट मोड पर DisplayPort वीडियो।";
 "E-marker claims EPR support but reports only 20V max VBUS" = "e-marker EPR सपोर्ट बताता है लेकिन अधिकतम 20 V VBUS रिपोर्ट करता है";
 "E-marker reports no vendor identity" = "e-marker कोई वेंडर पहचान रिपोर्ट नहीं करता";
 "E-marker uses a reserved cable-latency value" = "e-marker एक आरक्षित केबल-लेटेंसी मान का उपयोग करता है";
@@ -122,7 +122,7 @@
 "Connected device: %@" = "कनेक्टेड डिवाइस: %@";
 "Connected device: %@, %@ (%@)" = "कनेक्टेड डिवाइस: %1$@, %2$@ (%3$@)";
 "Data" = "डेटा";
-"DisplayPort alt mode" = "DisplayPort ऑल्ट मोड";
+"DisplayPort Alt Mode" = "DisplayPort ऑल्ट मोड";
 
 /* Cable speed / charger status strings (previously missing keys) */
 "20 Gbps capable" = "20 Gbps सक्षम";
@@ -283,10 +283,10 @@
 "Unrecognised event code from the port controller." = "पोर्ट कंट्रोलर से अपरिचित इवेंट कोड।";
 "Unregistered cable (no e-marker)" = "अपंजीकृत केबल (e-marker नहीं)";
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "अनसंरचित VDM एन्यूमरेशन शुरू (वेंडर-विशिष्ट क्षमताओं की खोज)।";
-"Unstructured VDM status changed (vendor-specific messaging like alt mode setup)." = "अनसंरचित VDM स्थिति बदली (ऑल्ट मोड सेटअप जैसी वेंडर-विशिष्ट मैसेजिंग)।";
+"Unstructured VDM status changed (vendor-specific messaging like Alt Mode setup)." = "अनसंरचित VDM स्थिति बदली (ऑल्ट मोड सेटअप जैसी वेंडर-विशिष्ट मैसेजिंग)।";
 "VDO fail count" = "VDO विफलता गणना";
 "Vendor ID" = "वेंडर ID";
-"Vendor-specific unstructured VDM state changed. Used by Apple for custom alt mode setup and Thunderbolt negotiation." = "वेंडर-विशिष्ट अनसंरचित VDM स्थिति बदली। Apple द्वारा कस्टम ऑल्ट मोड सेटअप और Thunderbolt नेगोशिएशन के लिए उपयोग किया जाता है।";
+"Vendor-specific unstructured VDM state changed. Used by Apple for custom Alt Mode setup and Thunderbolt negotiation." = "वेंडर-विशिष्ट अनसंरचित VDM स्थिति बदली। Apple द्वारा कस्टम ऑल्ट मोड सेटअप और Thunderbolt नेगोशिएशन के लिए उपयोग किया जाता है।";
 "Voltage" = "वोल्टेज";
 "Voltage (V)" = "वोल्टेज (V)";
 "WhatCable Pro" = "WhatCable Pro";

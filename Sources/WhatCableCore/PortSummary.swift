@@ -403,7 +403,7 @@ extension PortSummary {
             } else {
                 self.headline = String(localized: "Display connected", bundle: _coreLocalizedBundle) + cableLimitSuffix
             }
-            self.subtitle = String(localized: "DisplayPort video over USB-C alt mode.", bundle: _coreLocalizedBundle)
+            self.subtitle = String(localized: "DisplayPort video over USB-C Alt Mode.", bundle: _coreLocalizedBundle)
         } else if hasUSB3 {
             self.status = .dataDevice
             if let w = chargerW {

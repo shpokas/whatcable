@@ -44,7 +44,7 @@
 "Currently negotiated: %@ @ %@ (%@)" = "当前协商：%1$@ @ %2$@（%3$@）";
 "Display connected" = "已连接显示器";
 "Display connected · %lldW charger" = "已连接显示器 · %lldW 充电器";
-"DisplayPort video over USB-C alt mode." = "通过 USB-C alt mode 传输 DisplayPort 视频。";
+"DisplayPort video over USB-C Alt Mode." = "通过 USB-C Alt Mode 传输 DisplayPort 视频。";
 "E-marker claims EPR support but reports only 20V max VBUS" = "E-marker 声称支持 EPR，但报告的最大 VBUS 只有 20V";
 "E-marker reports no vendor identity" = "E-marker 未报告厂商身份";
 "E-marker uses a reserved cable-latency value" = "E-marker 使用了保留的线缆延迟值";
@@ -122,7 +122,7 @@
 "Connected device: %@" = "已连接设备：%@";
 "Connected device: %@, %@ (%@)" = "已连接设备：%1$@，%2$@ (%3$@)";
 "Data" = "数据";
-"DisplayPort alt mode" = "DisplayPort 替代模式";
+"DisplayPort Alt Mode" = "DisplayPort 替代模式";
 
 /* Cable speed / charger status strings (previously missing keys) */
 "20 Gbps capable" = "支持 20 Gbps";
@@ -284,10 +284,10 @@
 "Unrecognised event code from the port controller." = "来自端口控制器的无法识别的事件代码。";
 "Unregistered cable (no e-marker)" = "未注册线缆（无 e-marker）";
 "Unstructured VDM enumeration began (discovering vendor-specific capabilities)." = "非结构化 VDM 枚举已开始（正在发现厂商特定能力）。";
-"Unstructured VDM status changed (vendor-specific messaging like alt mode setup)." = "非结构化 VDM 状态已更改（厂商特定消息，如 alt mode 设置）。";
+"Unstructured VDM status changed (vendor-specific messaging like Alt Mode setup)." = "非结构化 VDM 状态已更改（厂商特定消息，如 Alt Mode 设置）。";
 "VDO fail count" = "VDO 失败次数";
 "Vendor ID" = "Vendor ID";
-"Vendor-specific unstructured VDM state changed. Used by Apple for custom alt mode setup and Thunderbolt negotiation." = "厂商特定的非结构化 VDM 状态已更改。Apple 用于自定义 alt mode 设置和 Thunderbolt 协商。";
+"Vendor-specific unstructured VDM state changed. Used by Apple for custom Alt Mode setup and Thunderbolt negotiation." = "厂商特定的非结构化 VDM 状态已更改。Apple 用于自定义 Alt Mode 设置和 Thunderbolt 协商。";
 "Voltage" = "电压";
 "Voltage (V)" = "电压 (V)";
 "WhatCable Pro" = "WhatCable Pro";
