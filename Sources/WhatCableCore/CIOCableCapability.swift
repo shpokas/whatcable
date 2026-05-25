@@ -19,9 +19,10 @@ public struct CIOCableCapability: Identifiable, Hashable, Sendable {
 
     /// Likely cable Gen 4 capability from `PORT_CS_18.CG4` (bit 21),
     /// populated via VDM during link bring-up. Working hypothesis:
-    /// 1 = cable is Gen 3 only, 2 = cable supports Gen 4. Consistent
-    /// with all 27 data points but not yet confirmed by controlled
-    /// cable swap. Do not derive any user-facing label from it yet.
+    /// 1 = cable is Gen 3 only, 2 = cable supports Gen 4. Not yet
+    /// confirmed by controlled cable swap. Known to be unstable on
+    /// ~12% of sampled ports (different value in successive reads
+    /// <1s apart). Do not derive any user-facing label from it yet.
     public let cableGeneration: Int?
     /// Negotiated link generation from `LANE_ADP_CS_1.CURRENT_SPEED`.
     /// Confirmed: 2 = 20 Gbps (TB3), 3 = 40 Gbps (TB4), 4 = 80 Gbps
