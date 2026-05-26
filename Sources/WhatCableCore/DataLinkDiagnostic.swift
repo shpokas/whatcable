@@ -80,6 +80,8 @@ public struct DataLinkDiagnostic {
         public let cableGbps: Double?
         /// The fastest connected device's speed.
         public let deviceGbps: Double?
+        /// Name of the device used for `deviceGbps`, for display in tiles.
+        public let deviceName: String?
         /// The speed the link actually negotiated.
         public let activeGbps: Double
     }
@@ -267,12 +269,20 @@ extension DataLinkDiagnostic {
         // Capture the resolved figures for the Pro breakdown. Every
         // constructed instance flows through here (the only earlier return
         // is the no-active-speed guard, which yields no instance).
+        let deviceLabel: String?
+        if let partner {
+            deviceLabel = partner.modelName
+        } else {
+            deviceLabel = fastestDevice?.productName
+        }
+
         self.facts = Facts(
             hostGbps: resolvedHostMaxGbps,
             cableEmarkerGbps: emarkerGbps,
             cableControllerGbps: cioGbps,
             cableGbps: cableMaxGbps,
             deviceGbps: deviceMaxGbps,
+            deviceName: deviceLabel,
             activeGbps: active
         )
 

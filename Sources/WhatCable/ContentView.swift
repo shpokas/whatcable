@@ -564,6 +564,18 @@ struct PortCard: View {
                     .padding(.leading, 48)
             }
 
+            if let dataDiag = DataLinkDiagnostic(
+                port: port,
+                identities: identities,
+                devices: devices,
+                usb3Transports: usb3Transports,
+                cio: cioCapability,
+                thunderboltSwitches: thunderboltSwitches
+            ) {
+                DataLinkBanner(diagnostic: dataDiag)
+                    .padding(.leading, 48)
+            }
+
             if !summary.bullets.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(summary.bullets, id: \.self) { bullet in
@@ -580,8 +592,9 @@ struct PortCard: View {
             if !devices.isEmpty {
                 let tree = USBDeviceNode.flatten(USBDeviceNode.buildTree(from: devices))
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(String(localized: "Connected devices:", bundle: _appLocalizedBundle))
-                        .scaledFont(.caption).foregroundStyle(.secondary)
+                    Text(String(localized: "Connected devices", bundle: _appLocalizedBundle))
+                        .scaledFont(.subheadline, weight: .semibold)
+                        .foregroundStyle(.secondary)
                     ForEach(tree) { node in
                         let name = node.device.productName ?? String(localized: "Unknown", bundle: _appLocalizedBundle)
                         let prefix = node.depth > 0 ? "\u{21B3} " : "\u{2022} "
@@ -591,23 +604,13 @@ struct PortCard: View {
                     }
                 }
                 .padding(.leading, 48)
-            }
-
-            if let dataDiag = DataLinkDiagnostic(
-                port: port,
-                identities: identities,
-                devices: devices,
-                usb3Transports: usb3Transports,
-                cio: cioCapability,
-                thunderboltSwitches: thunderboltSwitches
-            ) {
-                DataLinkBanner(diagnostic: dataDiag)
-                    .padding(.leading, 48)
+                .padding(.top, 4)
             }
 
             if !powerSources.isEmpty && isLive {
                 PowerSourceList(sources: powerSources)
                     .padding(.leading, 48)
+                    .padding(.top, 4)
             }
 
             if let cable = cableEmarker {
@@ -755,7 +758,8 @@ struct PowerSourceList: View {
                     VStack(alignment: .leading, spacing: 2) {
                         let srcName = src.name
                         Text(String(localized: "\(srcName) profiles", bundle: _appLocalizedBundle))
-                            .scaledFont(.caption).foregroundStyle(.secondary)
+                            .scaledFont(.subheadline, weight: .semibold)
+                            .foregroundStyle(.secondary)
                         ForEach(src.options.sorted(by: { $0.voltageMV < $1.voltageMV }), id: \.self) { opt in
                             let isWinning = opt == src.winning
                             HStack(spacing: 6) {
