@@ -18,9 +18,10 @@ import Foundation
 /// capped to 60 Hz by a weak cable would read as "fine".
 ///
 /// Pure value type, no platform imports, so it compiles on every target.
-/// Only the 128-byte base block is parsed; CTA-861 extension blocks (which
-/// can advertise additional high-refresh modes) are deferred to a later
-/// version.
+/// The 128-byte base block drives the preferred mode and the 0xFD ceiling;
+/// the CTA-861 extension block (when present) is scanned for detailed
+/// timings so a top mode declared only there still counts toward the max.
+/// Other extension data (DSC capability, audio, HDR) is not yet parsed.
 public struct EDIDInfo: Hashable, Sendable {
     /// Monitor name from the 0xFC descriptor, e.g. "LEN G34w-10". Not every
     /// EDID includes one, so optional.
@@ -147,9 +148,51 @@ public struct EDIDInfo: Hashable, Sendable {
                 break
             }
         }
+        // The 0xFD descriptor gives a ceiling, but some monitors declare their
+        // top mode only as a detailed timing, sometimes in the CTA-861
+        // extension block. Scan every detailed timing (base block and
+        // extension) and take the higher of that and the 0xFD ceiling, so the
+        // ceiling isn't understated for those monitors.
+        let highestDTD = Self.highestDTDPixelClockHz(bytes)
         self.maxRefreshHz = maxRefresh
-        self.maxPixelClockHz = maxPixelClock
+        self.maxPixelClockHz = [maxPixelClock, highestDTD].compactMap { $0 }.max()
         self.monitorName = name
+    }
+
+    /// Highest pixel clock (Hz) across every detailed timing descriptor in the
+    /// EDID: the four base-block slots and, when present, the CTA-861 extension
+    /// block's detailed timings. Returns nil when no detailed timing is found.
+    static func highestDTDPixelClockHz(_ bytes: [UInt8]) -> Int? {
+        var highest = 0
+
+        // Base-block detailed timing slots.
+        for off in [54, 72, 90, 108] where off + 1 < bytes.count {
+            let pclk10kHz = Int(bytes[off]) | (Int(bytes[off + 1]) << 8)
+            if pclk10kHz > 0 { highest = max(highest, pclk10kHz * 10_000) }
+        }
+
+        // Extension blocks. EDID can carry several 128-byte blocks (the count
+        // is in base-block byte 126). Scan each CTA-861 block (tag 0x02): byte
+        // 2 of the block is the offset to its first detailed timing (a value
+        // below 4 means none). Timings then run in 18-byte chunks up to the
+        // block's checksum, ending at a zero pixel clock.
+        let extensionCount = bytes.count > 126 ? Int(bytes[126]) : 0
+        for block in 0..<extensionCount {
+            let base = 128 + 128 * block
+            guard base + 128 <= bytes.count, bytes[base] == 0x02 else { continue }
+            let dtdOffsetInExt = Int(bytes[base + 2])
+            guard dtdOffsetInExt >= 4 else { continue }
+            let blockChecksum = base + 127
+            var off = base + dtdOffsetInExt
+            while off + 18 <= blockChecksum {
+                let pclk10kHz = Int(bytes[off]) | (Int(bytes[off + 1]) << 8)
+                if pclk10kHz == 0 { break } // padding marks the end
+                highest = max(highest, pclk10kHz * 10_000)
+                off += 18
+            }
+        }
+
+        return highest > 0 ? highest : nil
     }
 
     /// Decode a 13-byte EDID text payload (monitor name / serial). The string

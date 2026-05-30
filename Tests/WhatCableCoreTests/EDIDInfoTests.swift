@@ -22,6 +22,27 @@ struct EDIDInfoTests {
         0x00, 0x4c, 0x45, 0x4e, 0x20, 0x47, 0x33, 0x34, 0x77, 0x2d, 0x31, 0x30, 0x0a, 0x20, 0x01, 0x49,
     ]
 
+    /// The CTA-861 extension block (128 bytes) of the same G34w-10, captured
+    /// live. Starts with the CTA tag 0x02; its detailed timings are all lower
+    /// than the base block's modes. Appended to `g34wBaseBlock` to form the
+    /// full 256-byte EDID without re-transcribing the proven base bytes.
+    static let g34wExtensionHex =
+        "020331f34b0102030405901213141f4e230907078301000067030c001000384267" +
+        "d85dc401788000681a000001013064ed44d070a0d0a02950584045001d4e3100001e" +
+        "662156aa51001e30468f33001d4e3100001e6a5e00a0a0a02950302035001d4e3100" +
+        "001e226870a0d0a02950302035001d4e3100001a00000000000081"
+
+    static func hexBytes(_ hex: String) -> [UInt8] {
+        var out: [UInt8] = []
+        var i = hex.startIndex
+        while i < hex.endIndex {
+            let j = hex.index(i, offsetBy: 2)
+            out.append(UInt8(hex[i..<j], radix: 16)!)
+            i = j
+        }
+        return out
+    }
+
     @Test("Parses the real G34w-10 base block: preferred mode")
     func parsesPreferredMode() throws {
         let edid = try #require(EDIDInfo(Data(Self.g34wBaseBlock)))
@@ -39,6 +60,52 @@ struct EDIDInfoTests {
         // compare the link against this, not the preferred mode.
         #expect(edid.maxRefreshHz == 100)
         #expect(edid.maxPixelClockHz == 600_000_000)
+    }
+
+    // MARK: - CTA-861 extension
+
+    @Test("Parses the full 256-byte EDID with CTA extension: ceiling unchanged")
+    func parsesFullBlockWithExtension() throws {
+        let bytes = Self.g34wBaseBlock + Self.hexBytes(Self.g34wExtensionHex)
+        #expect(bytes.count == 256)
+        let edid = try #require(EDIDInfo(Data(bytes)))
+        // The extension's detailed timings are all below the base block's, so
+        // the preferred mode and the ceiling are identical to the base parse.
+        #expect(edid.preferredWidth == 3440)
+        #expect(edid.maxPixelClockHz == 600_000_000)
+    }
+
+    @Test("Detailed-timing scan reads both base and extension descriptors")
+    func scansAllDetailedTimings() {
+        let bytes = Self.g34wBaseBlock + Self.hexBytes(Self.g34wExtensionHex)
+        // The G34w declares its top mode (3440x1440 at ~100 Hz, 533.16 MHz) as
+        // a detailed timing in the CTA extension, above the base block's 60 Hz
+        // preferred (319.89 MHz). The scan must find it. The 0xFD ceiling
+        // (600 MHz) still covers it, so the diagnostic's max is unchanged, but
+        // this proves the extension scan reads a real higher mode that the base
+        // block alone misses.
+        #expect(EDIDInfo.highestDTDPixelClockHz(bytes) == 533_160_000)
+    }
+
+    @Test("A higher mode in the CTA extension raises the max ceiling")
+    func extensionModeRaisesCeiling() throws {
+        // Base block (0xFD ceiling = 600 MHz) plus a synthetic CTA extension
+        // whose detailed timing is 640 MHz, above the base ceiling. This is the
+        // case that needs the extension scan: a real monitor where the top mode
+        // lives only in the extension. The max must follow it.
+        var bytes = Self.g34wBaseBlock
+        var ext = [UInt8](repeating: 0, count: 128)
+        ext[0] = 0x02 // CTA-861 tag
+        ext[1] = 0x03 // revision
+        ext[2] = 0x04 // detailed timings start right after the 4-byte header
+        // Detailed timing at extension offset 4: pixel clock 640 MHz = 64000
+        // (0xFA00) in 10 kHz units, little-endian.
+        ext[4] = 0x00
+        ext[5] = 0xFA
+        ext[6] = 0x80 // arbitrary non-zero h-active, irrelevant to the scan
+        bytes.append(contentsOf: ext)
+        let edid = try #require(EDIDInfo(Data(bytes)))
+        #expect(edid.maxPixelClockHz == 640_000_000)
     }
 
     @Test("Parses the monitor name and EDID version")
