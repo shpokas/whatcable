@@ -19,6 +19,7 @@
 "Cable identified as %@" = "Kabel identifisert som %@";
 "Cable made by %@" = "Kabel laget av %@";
 "Cable rated for %@ at up to %lldV (~%lldW)" = "Kabel dimensjonert for %1$@ opptil %2$lld V (~%3$lld W)";
+"Cable rated to %lldV / %@, delivers up to %lldW (USB-PD caps at 48V)" = "Cable rated to %1$lldV / %2$@, delivers up to %3$lldW (USB-PD caps at 48V)";
 "Cable speed: %@" = "Kabelhastighet: %@";
 "Cable trust signals:" = "Tillitssignaler for kabel:";
 "Carrying DisplayPort video" = "Overfører DisplayPort-video";

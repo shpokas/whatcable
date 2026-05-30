@@ -992,12 +992,14 @@ struct PortSummaryTests {
             vdos: vdos, specRevision: 0
         )
 
-        // Verify the cable VDO decodes to Gen 4 / 80 Gbps / 250W passive.
+        // Verify the cable VDO decodes to Gen 4 / 80 Gbps / 50V-rated passive.
         let cv = cable.cableVDO!
         #expect(cv.speed == .usb4Gen4)
         #expect(cv.current == .fiveAmp)
         #expect(cv.maxVolts == 50)
-        #expect(cv.maxWatts == 250)
+        // Deliverable power is clamped to USB-PD's 48V ceiling: 48 * 5 = 240W,
+        // not the 50 * 5 = 250W the raw rating field would imply.
+        #expect(cv.maxWatts == 240)
         #expect(cv.cableType == .passive)
         #expect(cv.decodeWarnings.isEmpty)
 
@@ -1020,8 +1022,8 @@ struct PortSummaryTests {
             "Cable maker bullet should show Apple, got: \(summary.bullets)"
         )
         #expect(
-            summary.bullets.contains(where: { $0.contains("250W") }),
-            "Cable power bullet should show 250W, got: \(summary.bullets)"
+            summary.bullets.contains(where: { $0.contains("240W") && $0.contains("USB-PD caps at 48V") }),
+            "Cable power bullet should show the 240W deliverable with the 48V cap note, got: \(summary.bullets)"
         )
     }
 

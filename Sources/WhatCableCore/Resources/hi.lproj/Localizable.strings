@@ -19,6 +19,7 @@
 "Cable identified as %@" = "Cable identified as %@";
 "Cable made by %@" = "निर्माता: %@";
 "Cable rated for %@ at up to %lldV (~%lldW)" = "केबल रेटिंग: %1$@, अधिकतम %2$lld V (~%3$lld W)";
+"Cable rated to %lldV / %@, delivers up to %lldW (USB-PD caps at 48V)" = "Cable rated to %1$lldV / %2$@, delivers up to %3$lldW (USB-PD caps at 48V)";
 "Cable speed: %@" = "केबल गति: %@";
 "Cable trust signals:" = "केबल विश्वसनीयता संकेत:";
 "Carrying DisplayPort video" = "DisplayPort वीडियो प्रसारित हो रहा है";
