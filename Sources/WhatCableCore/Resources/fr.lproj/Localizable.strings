@@ -19,6 +19,7 @@
 "Cable identified as %@" = "Câble identifié comme %@";
 "Cable made by %@" = "Câble fabriqué par %@";
 "Cable rated for %@ at up to %lldV (~%lldW)" = "Câble certifié pour %1$@ jusqu'à %2$lld V (~%3$lld W)";
+"Cable rated to %lldV / %@, delivers up to %lldW (USB-PD caps at 48V)" = "Cable rated to %1$lldV / %2$@, delivers up to %3$lldW (USB-PD caps at 48V)";
 "Cable speed: %@" = "Vitesse du câble : %@";
 "Cable trust signals:" = "Signaux de confiance du câble :";
 "Carrying DisplayPort video" = "Transport vidéo DisplayPort";

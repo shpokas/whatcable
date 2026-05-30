@@ -137,7 +137,12 @@ public enum PDVDO {
     public struct CableVDO: Hashable {
         public let speed: CableSpeed
         public let current: CableCurrent
-        /// Approx max wattage at the highest negotiated voltage (20V) the cable can carry.
+        /// Approximate maximum power the cable can actually deliver: the
+        /// highest real USB-PD voltage it carries (capped at the spec's 48V
+        /// EPR ceiling) times its current rating. Deliberately not
+        /// `ratingVoltage × current`: a 50V-rated cable's rating field is
+        /// insulation headroom, not a delivery voltage, so the raw multiply
+        /// would report 250W when USB-PD tops out at 240W.
         public let maxWatts: Int
         public let cableType: CableType
         public let vbusThroughCable: Bool
@@ -280,7 +285,15 @@ public enum PDVDO {
         default: volts = 20
         }
         let amps = current.maxAmps
-        let watts = Int((volts * amps).rounded())
+        // USB-PD never delivers above 48V: the fixed EPR power levels top out
+        // at 48V (28/36/48V) and EPR adjustable voltage caps there too. The
+        // 50V "Maximum VBUS Voltage" e-marker field is an insulation rating,
+        // not a delivery voltage, so clamp to 48V before computing power.
+        // Without this a 50V/5A cable reports 250W, which USB-PD can't carry
+        // (the real EPR ceiling is 48V × 5A = 240W). The 20/30/40V cases are
+        // untouched: adjustable voltage genuinely reaches those.
+        let deliverableVolts = min(volts, 48)
+        let watts = Int((deliverableVolts * amps).rounded())
 
         return CableVDO(
             speed: speed,

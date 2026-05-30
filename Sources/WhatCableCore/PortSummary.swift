@@ -272,7 +272,16 @@ extension PortSummary {
             let currentLabel = cv.current.label
             let maxVolts = cv.maxVolts
             let maxWatts = cv.maxWatts
-            bullets.append(String(localized: "Cable rated for \(currentLabel) at up to \(maxVolts)V (~\(maxWatts)W)", bundle: _coreLocalizedBundle))
+            if maxVolts > 48 {
+                // The cable's voltage rating (50V) sits above USB-PD's 48V
+                // delivery ceiling, so rating × current overstates the power.
+                // Show the rating and the deliverable figure as separate facts
+                // with the reason, so the two numbers don't read as a broken
+                // multiply (50 × 5 = 250, but the cable can only carry 240W).
+                bullets.append(String(localized: "Cable rated to \(maxVolts)V / \(currentLabel), delivers up to \(maxWatts)W (USB-PD caps at 48V)", bundle: _coreLocalizedBundle))
+            } else {
+                bullets.append(String(localized: "Cable rated for \(currentLabel) at up to \(maxVolts)V (~\(maxWatts)W)", bundle: _coreLocalizedBundle))
+            }
             if cv.cableType == .active {
                 if let v2 = cable.activeCableVDO2 {
                     let medium = v2.physicalConnection.label.lowercased()
