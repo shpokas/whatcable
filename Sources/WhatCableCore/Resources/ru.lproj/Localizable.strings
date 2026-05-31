@@ -311,7 +311,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Ввести ключ лицензии…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac doesn't report power per port, so the live input is shown in the System Power Input chart below." = "Это максимум, согласованный зарядным устройством и вашим Mac, а не измерение в реальном времени. Ваш Mac не сообщает мощность по каждому порту, поэтому текущий вход показан на графике «Вход системного питания» ниже.";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Это максимум, о котором договорились зарядное устройство и ваш Mac, а не текущее показание. Mac сообщает текущее значение только как системный итог, показанный на графике «Вход системного питания» ниже.";
 "No power data for this port right now." = "Сейчас нет данных о питании для этого порта.";
 "Waiting for power telemetry from macOS..." = "Ожидание телеметрии питания от macOS…";
 "Upgrade to WhatCable Pro" = "Перейти на WhatCable Pro";
@@ -414,3 +414,10 @@
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "Возможно, дисплей использует сжатие для достижения своего максимального режима";
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "Ваш %@ может работать в режиме %@, для которого без сжатия потребовалось бы около %@. Это соединение уже использует все линии на высокой скорости и передаёт около %@ (%@). Многие дисплеи высокого разрешения используют сжатие (DSC), чтобы передать свой максимальный режим через такое соединение, поэтому только по скорости соединения нельзя определить, находитесь ли вы уже в наилучшем режиме. Если изображение выглядит правильно, скорее всего, так и есть.";
+
+/* Power Monitor system power source indicator. */
+"Battery" = "Аккумулятор";
+"Source" = "Источник";
+"Battery Power" = "Мощность аккумулятора";
+"Negotiating…" = "Согласование…";
+"Waiting for live reading…" = "Ожидание текущих показаний…";

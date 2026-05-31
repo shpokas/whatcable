@@ -312,7 +312,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Skriv inn lisensnøkkel…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac doesn't report power per port, so the live input is shown in the System Power Input chart below." = "Dette er det maksimale laderen og Mac-en din ble enige om, ikke en sanntidsmåling. Mac-en din rapporterer ikke effekt per port, så sanntidsinngangen vises i diagrammet Systemstrøminngang nedenfor.";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Dette er det meste laderen og Macen ble enige om, ikke en sanntidsmåling. Macen rapporterer sanntidsverdien bare som en systemtotal, vist i diagrammet «Systemstrøminngang» nedenfor.";
 "No power data for this port right now." = "Ingen strømdata for denne porten akkurat nå.";
 "Waiting for power telemetry from macOS..." = "Venter på strømtelemetri fra macOS...";
 "Upgrade to WhatCable Pro" = "Oppgrader til WhatCable Pro";
@@ -352,7 +352,7 @@
 "Cable" = "Cable";
 "Device" = "Device";
 "Negotiated" = "Negotiated";
-"Charger" = "Charger";
+"Charger" = "Lader";
 "bottleneck" = "bottleneck";
 "Cable signals disagree" = "Cable signals disagree";
 "an unknown speed" = "an unknown speed";
@@ -415,3 +415,10 @@
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "Skjermen bruker kanskje komprimering for å nå sitt beste modus";
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "%@-en din kan kjøre %@, som ukomprimert ville trengt omtrent %@. Denne forbindelsen bruker allerede alle baner med høy hastighet og overfører omtrent %@ (%@). Mange skjermer med høy oppløsning bruker komprimering (DSC) for å få sitt beste modus gjennom en slik forbindelse, så forbindelseshastigheten alene kan ikke fortelle om du allerede er i ditt beste modus. Hvis bildet ser riktig ut, er det mest sannsynlig det.";
+
+/* Power Monitor system power source indicator. */
+"Battery" = "Batteri";
+"Source" = "Kilde";
+"Battery Power" = "Batterieffekt";
+"Negotiating…" = "Forhandler…";
+"Waiting for live reading…" = "Venter på sanntidsavlesning…";

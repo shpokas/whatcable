@@ -311,7 +311,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Ievadiet licences atslēgu…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac doesn't report power per port, so the live input is shown in the System Power Input chart below." = "Šī ir maksimālā vērtība, par kuru vienojās lādētājs un jūsu Mac, nevis reāllaika mērījums. Jūsu Mac neuzrāda jaudu katram portam atsevišķi, tāpēc reāllaika ievade redzama zemāk diagrammā \"Sistēmas strāvas ievade\".";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Šī ir maksimālā vērtība, par kuru vienojās lādētājs un jūsu Mac, nevis tiešais rādījums. Jūsu Mac ziņo tiešo vērtību tikai kā sistēmas kopsummu, kas redzama zemāk esošajā diagrammā „Sistēmas strāvas ievade“.";
 "No power data for this port right now." = "Pašlaik nav strāvas datu par šo portu.";
 "Waiting for power telemetry from macOS..." = "Gaida strāvas telemetriju no macOS...";
 "Upgrade to WhatCable Pro" = "Jaunināt uz WhatCable Pro";
@@ -414,3 +414,10 @@
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "Iespējams, displejs izmanto saspiešanu, lai sasniegtu savu maksimālo režīmu";
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "Tavs %@ var darboties ar %@, kam nesaspiestā veidā būtu nepieciešami aptuveni %@. Šis savienojums jau izmanto visas līnijas ar augstu ātrumu un pārraida aptuveni %@ (%@). Daudzi augstas izšķirtspējas displeji izmanto saspiešanu (DSC), lai izvadītu savu maksimālo režīmu caur šādu savienojumu, tāpēc tikai pēc savienojuma ātruma vien nevar noteikt, vai jau esi savā labākajā režīmā. Ja attēls izskatās pareizs, tas, visticamāk, tāds arī ir.";
+
+/* Power Monitor system power source indicator. */
+"Battery" = "Akumulators";
+"Source" = "Avots";
+"Battery Power" = "Akumulatora jauda";
+"Negotiating…" = "Notiek vienošanās…";
+"Waiting for live reading…" = "Gaida tiešo rādījumu…";

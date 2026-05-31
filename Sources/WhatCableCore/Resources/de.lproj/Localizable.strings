@@ -312,7 +312,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Lizenzschlüssel eingeben…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac doesn't report power per port, so the live input is shown in the System Power Input chart below." = "Dies ist das Maximum, das Ladegerät und Mac ausgehandelt haben, keine Live-Messung. Dein Mac meldet die Leistung nicht pro Anschluss, daher wird die Live-Eingangsleistung unten im Diagramm \"System-Stromeingang\" angezeigt.";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Dies ist das Maximum, auf das sich Ladegerät und Mac geeinigt haben, keine Live-Messung. Dein Mac meldet den Live-Wert nur als Systemsumme, sichtbar im Diagramm „System-Stromeingang“ unten.";
 "No power data for this port right now." = "Derzeit keine Stromdaten für diesen Anschluss.";
 "Waiting for power telemetry from macOS..." = "Warte auf Stromtelemetrie von macOS...";
 "Upgrade to WhatCable Pro" = "Auf WhatCable Pro upgraden";
@@ -352,7 +352,7 @@
 "Cable" = "Cable";
 "Device" = "Device";
 "Negotiated" = "Negotiated";
-"Charger" = "Charger";
+"Charger" = "Ladegerät";
 "bottleneck" = "bottleneck";
 "Cable signals disagree" = "Cable signals disagree";
 "an unknown speed" = "an unknown speed";
@@ -415,3 +415,10 @@
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "Das Display nutzt möglicherweise Komprimierung, um seinen besten Modus zu erreichen";
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "Dein %@ kann %@ darstellen, was unkomprimiert etwa %@ benötigen würde. Diese Verbindung nutzt bereits jede Lane mit hoher Rate und überträgt etwa %@ (%@). Viele hochauflösende Displays nutzen Komprimierung (DSC), um ihren besten Modus durch eine solche Verbindung zu bringen. Daher lässt sich allein an der Verbindungsrate nicht erkennen, ob du bereits im besten Modus bist. Wenn das Bild richtig aussieht, ist es das höchstwahrscheinlich.";
+
+/* Power Monitor system power source indicator. */
+"Battery" = "Batterie";
+"Source" = "Quelle";
+"Battery Power" = "Batterieleistung";
+"Negotiating…" = "Aushandeln…";
+"Waiting for live reading…" = "Warten auf Live-Messwert…";

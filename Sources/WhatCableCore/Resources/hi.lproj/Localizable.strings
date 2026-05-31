@@ -311,7 +311,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "लाइसेंस कुंजी दर्ज करें…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac doesn't report power per port, so the live input is shown in the System Power Input chart below." = "यह आपके चार्जर और Mac के बीच तय हुई अधिकतम सीमा है, कोई लाइव माप नहीं। आपका Mac हर पोर्ट की पावर अलग से रिपोर्ट नहीं करता, इसलिए लाइव इनपुट नीचे सिस्टम पावर इनपुट चार्ट में दिखाया गया है।";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "यह वह अधिकतम मान है जिस पर चार्जर और आपके Mac ने सहमति दी है, यह कोई लाइव रीडिंग नहीं है। आपका Mac लाइव मान केवल सिस्टम कुल के रूप में रिपोर्ट करता है, जो नीचे «सिस्टम पावर इनपुट» चार्ट में दिखाया गया है।";
 "No power data for this port right now." = "इस पोर्ट के लिए अभी कोई पावर डेटा नहीं।";
 "Waiting for power telemetry from macOS..." = "macOS से पावर टेलीमेट्री की प्रतीक्षा...";
 "Upgrade to WhatCable Pro" = "WhatCable Pro में अपग्रेड करें";
@@ -351,7 +351,7 @@
 "Cable" = "Cable";
 "Device" = "Device";
 "Negotiated" = "Negotiated";
-"Charger" = "Charger";
+"Charger" = "चार्जर";
 "bottleneck" = "bottleneck";
 "Cable signals disagree" = "Cable signals disagree";
 "an unknown speed" = "an unknown speed";
@@ -414,3 +414,10 @@
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "डिस्प्ले अपने सर्वोच्च मोड तक पहुँचने के लिए संपीड़न का उपयोग कर रहा हो सकता है";
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "आपका %@ %@ तक चल सकता है, जिसे बिना संपीड़न के लगभग %@ की आवश्यकता होगी. यह लिंक पहले से ही हर लेन को उच्च दर पर चला रहा है और लगभग %@ (%@) ले जा रहा है. कई उच्च-रिज़ॉल्यूशन डिस्प्ले अपने सर्वोच्च मोड को ऐसे लिंक से गुज़ारने के लिए संपीड़न (DSC) का उपयोग करते हैं, इसलिए केवल लिंक दर से यह नहीं पता चलता कि आप पहले से ही अपने सर्वोत्तम मोड पर हैं या नहीं. अगर तस्वीर सही दिखती है, तो सबसे अधिक संभावना है कि वह सही है.";
+
+/* Power Monitor system power source indicator. */
+"Battery" = "बैटरी";
+"Source" = "स्रोत";
+"Battery Power" = "बैटरी पावर";
+"Negotiating…" = "समझौता हो रहा है…";
+"Waiting for live reading…" = "लाइव रीडिंग की प्रतीक्षा…";

@@ -30,7 +30,10 @@ public final class PowerTelemetryWatcher: ObservableObject {
         pollTask = Task { @MainActor in
             while !Task.isCancelled {
                 refresh()
-                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                // 1s for a snappier live monitor. Only runs while the Power
+                // Monitor window (or `whatcable --monitor`) is open, so the
+                // extra IOKit reads are bounded to that session.
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
             }
         }
     }
@@ -74,11 +77,36 @@ public final class PowerTelemetryWatcher: ObservableObject {
         }
 
         appendRegressionSamples(from: portSamples)
+        // Battery discharge, so the System Power card keeps tracking on battery.
+        // Voltage is the pack voltage; power prefers the reported BatteryPower,
+        // falling back to SystemLoad (the system's draw).
+        let batteryVoltageMV = wcInt(dict["Voltage"])
+        let reportedBatteryPower = abs(wcInt(telemetry["BatteryPower"]))
+        let batteryPowerMW = reportedBatteryPower != 0 ? reportedBatteryPower : wcInt(telemetry["SystemLoad"])
+        // Pack current. Apple Silicon usually reports 0 for Amperage /
+        // InstantAmperage, so when those are blank derive it from the measured
+        // power and voltage: P = V x I, hence I[mA] = P[mW] x 1000 / V[mV].
+        // Exact, not a guess, and consistent with the displayed P and V.
+        let instant = wcInt(dict["InstantAmperage"])
+        let measuredCurrent = abs(instant != 0 ? instant : wcInt(dict["Amperage"]))
+        let batteryCurrentMA = measuredCurrent != 0
+            ? measuredCurrent
+            : (batteryVoltageMV > 0 ? batteryPowerMW * 1000 / batteryVoltageMV : 0)
+        // A winning contract can linger for a moment after unplug on this
+        // stack, so gate hasContract on a live connection. A contract only
+        // means anything while a charger is actually plugged in.
+        let externalConnected = wcBool(dict["ExternalConnected"])
         let snapshot = PowerMonitorSnapshot(
             timestamp: timestamp,
             systemSample: system,
             portSamples: portSamples,
-            resistanceEstimate: resistanceEstimate()
+            resistanceEstimate: resistanceEstimate(),
+            externalConnected: externalConnected,
+            batteryInstalled: wcBool(dict["BatteryInstalled"]),
+            batteryVoltageMV: batteryVoltageMV,
+            batteryCurrentMA: batteryCurrentMA,
+            batteryPowerMW: batteryPowerMW,
+            hasContract: externalConnected && sources.contains { $0.winning != nil }
         )
         latestSnapshot = snapshot
         continuation?.yield(snapshot)

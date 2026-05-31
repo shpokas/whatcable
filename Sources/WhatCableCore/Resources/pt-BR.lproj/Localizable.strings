@@ -311,7 +311,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Inserir chave de licença…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac doesn't report power per port, so the live input is shown in the System Power Input chart below." = "Este é o máximo que o carregador e o seu Mac acordaram, não uma medição ao vivo. O seu Mac não informa a energia por porta, então a entrada ao vivo é mostrada no gráfico Entrada de energia do sistema abaixo.";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Este é o máximo que o carregador e o seu Mac acordaram, não uma leitura ao vivo. O seu Mac informa o valor ao vivo apenas como um total do sistema, mostrado no gráfico «Entrada de energia do sistema» abaixo.";
 "No power data for this port right now." = "Sem dados de energia para esta porta no momento.";
 "Upgrade to WhatCable Pro" = "Atualizar para WhatCable Pro";
 "not reported in this state" = "não informado neste estado";
@@ -414,3 +414,10 @@
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "A tela pode estar usando compressão para alcançar seu modo máximo";
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "Seu %@ pode funcionar a %@, o que sem compressão precisaria de cerca de %@. Este link já usa todas as faixas em alta velocidade e transporta cerca de %@ (%@). Muitas telas de alta resolução usam compressão (DSC) para passar seu modo máximo por um link como este, então a velocidade do link sozinha não diz se você já está no seu melhor modo. Se a imagem parece correta, é muito provável que esteja.";
+
+/* Power Monitor system power source indicator. */
+"Battery" = "Bateria";
+"Source" = "Fonte";
+"Battery Power" = "Potência da bateria";
+"Negotiating…" = "Negociando…";
+"Waiting for live reading…" = "Aguardando leitura ao vivo…";

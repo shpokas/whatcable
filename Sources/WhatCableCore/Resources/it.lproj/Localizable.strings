@@ -311,7 +311,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Inserisci chiave di licenza…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac doesn't report power per port, so the live input is shown in the System Power Input chart below." = "Questo è il massimo concordato tra il caricatore e il Mac, non una misurazione in tempo reale. Il Mac non riporta la potenza per porta, quindi l'ingresso in tempo reale è visualizzato qui sotto nel grafico 'Ingresso alimentazione sistema'.";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Questo è il massimo concordato tra il caricatore e il tuo Mac, non una lettura in tempo reale. Il tuo Mac riporta il valore in tempo reale solo come totale di sistema, mostrato nel grafico «Ingresso alimentazione di sistema» qui sotto.";
 "No power data for this port right now." = "Nessun dato di alimentazione per questa porta al momento.";
 "Waiting for power telemetry from macOS..." = "In attesa dei dati di alimentazione da macOS...";
 "Upgrade to WhatCable Pro" = "Passa a WhatCable Pro";
@@ -414,3 +414,10 @@
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "Il display potrebbe usare la compressione per raggiungere la sua modalità massima";
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "Il tuo %@ può funzionare a %@, che senza compressione richiederebbe circa %@. Questo collegamento usa già tutte le linee a una velocità elevata e trasporta circa %@ (%@). Molti display ad alta risoluzione usano la compressione (DSC) per far passare la loro modalità massima attraverso un collegamento come questo, quindi la sola velocità del collegamento non indica se sei già alla tua modalità migliore. Se l'immagine appare corretta, è molto probabile che lo sia.";
+
+/* Power Monitor system power source indicator. */
+"Battery" = "Batteria";
+"Source" = "Sorgente";
+"Battery Power" = "Potenza batteria";
+"Negotiating…" = "Negoziazione…";
+"Waiting for live reading…" = "In attesa della lettura dal vivo…";

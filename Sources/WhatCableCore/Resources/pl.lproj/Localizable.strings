@@ -311,7 +311,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Wprowadź klucz licencji…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac doesn't report power per port, so the live input is shown in the System Power Input chart below." = "To maksimum uzgodnione przez ładowarkę i Twojego Maca, a nie pomiar na żywo. Twój Mac nie raportuje mocy dla poszczególnych portów, więc bieżące wejście jest widoczne na wykresie Wejście zasilania systemu poniżej.";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "To maksymalna wartość uzgodniona przez ładowarkę i Maca, a nie odczyt na żywo. Mac podaje wartość na żywo tylko jako sumę systemową, widoczną na wykresie „Wejście zasilania systemu“ poniżej.";
 "No power data for this port right now." = "Brak danych o zasilaniu dla tego portu w tej chwili.";
 "Waiting for power telemetry from macOS..." = "Oczekiwanie na dane telemetryczne z macOS...";
 "Upgrade to WhatCable Pro" = "Przejdź na WhatCable Pro";
@@ -351,7 +351,7 @@
 "Cable" = "Cable";
 "Device" = "Device";
 "Negotiated" = "Negotiated";
-"Charger" = "Charger";
+"Charger" = "Ładowarka";
 "bottleneck" = "bottleneck";
 "Cable signals disagree" = "Cable signals disagree";
 "an unknown speed" = "an unknown speed";
@@ -414,3 +414,10 @@
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "Wyświetlacz może używać kompresji, aby osiągnąć swój najlepszy tryb";
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "Twój %@ może działać w trybie %@, co bez kompresji wymagałoby około %@. To łącze już korzysta ze wszystkich linii z wysoką prędkością i przesyła około %@ (%@). Wiele wyświetlaczy o wysokiej rozdzielczości używa kompresji (DSC), aby przepuścić swój najlepszy tryb przez takie łącze, więc sama prędkość łącza nie wskazuje, czy jesteś już w najlepszym trybie. Jeśli obraz wygląda poprawnie, najprawdopodobniej tak jest.";
+
+/* Power Monitor system power source indicator. */
+"Battery" = "Bateria";
+"Source" = "Źródło";
+"Battery Power" = "Moc baterii";
+"Negotiating…" = "Negocjowanie…";
+"Waiting for live reading…" = "Oczekiwanie na odczyt na żywo…";

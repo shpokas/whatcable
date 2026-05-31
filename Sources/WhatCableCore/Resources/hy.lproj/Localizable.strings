@@ -312,7 +312,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "Մուտքագրեք լիցենզիայի բանալին…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac doesn't report power per port, so the live input is shown in the System Power Input chart below." = "Սա լիցքավորիչի և ձեր Mac-ի միջև համաձայնեցված առավելագույնն է, ոչ թե կենդանի չափում։ Ձեր Mac-ը չի հաղորդում հզորությունն ըստ առանձին պորտերի, ուստի կենդանի մուտքը ցույց է տրված ստորև «Համակարգի սնուցման մուտք» գծապատկերում։";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "Սա առավելագույնն է, ինչի շուրջ պայմանավորվել են լիցքավորիչը և ձեր Mac-ը, ոչ թե կենդանի չափում։ Ձեր Mac-ը կենդանի արժեքը հաղորդում է միայն որպես համակարգի ընդհանուր գումար, որը ցուցադրված է ստորև՝ «Համակարգի սնուցման մուտք» գծապատկերում։";
 "No power data for this port right now." = "Այս պորտի համար այս պահին սնուցման տվյալներ չկան:";
 "Waiting for power telemetry from macOS..." = "Waiting for power telemetry from macOS...";
 "Upgrade to WhatCable Pro" = "Անցնել WhatCable Pro-ի";
@@ -352,7 +352,7 @@
 "Cable" = "Cable";
 "Device" = "Device";
 "Negotiated" = "Negotiated";
-"Charger" = "Charger";
+"Charger" = "Լիցքավորիչ";
 "bottleneck" = "bottleneck";
 "Cable signals disagree" = "Cable signals disagree";
 "an unknown speed" = "an unknown speed";
@@ -415,3 +415,10 @@
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "Հնարավոր է՝ էկրանն օգտագործում է սեղմում՝ իր լավագույն ռեժիմին հասնելու համար";
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "Ձեր %@-ը կարող է աշխատել %@, որն առանց սեղմման կպահանջեր մոտ %@: Այս կապն արդեն օգտագործում է բոլոր գծերը բարձր արագությամբ՝ փոխանցելով մոտ %@ (%@): Շատ բարձր լուծաչափի էկրաններ օգտագործում են սեղմում (DSC)՝ իրենց լավագույն ռեժիմն այսպիսի կապով անցկացնելու համար, ուստի միայն կապի արագությունից հնարավոր չէ իմանալ՝ արդեն լավագույն ռեժիմում եք, թե ոչ: Եթե պատկերը ճիշտ տեսք ունի, ապա ամենայն հավանականությամբ այդպես է:";
+
+/* Power Monitor system power source indicator. */
+"Battery" = "Մարտկոց";
+"Source" = "Աղբյուր";
+"Battery Power" = "Մարտկոցի հզորություն";
+"Negotiating…" = "Համաձայնեցում…";
+"Waiting for live reading…" = "Սպասում է կենդանի ցուցմունքի…";

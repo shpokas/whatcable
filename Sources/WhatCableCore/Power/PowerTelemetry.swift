@@ -214,16 +214,58 @@ public struct PowerMonitorSnapshot: Codable, Sendable, Equatable {
     public let systemSample: PowerSample
     public let portSamples: [PortPowerSample]
     public let resistanceEstimate: CableResistanceEstimate?
+    /// True when an external power source (a charger) is connected. Drives the
+    /// "Charger" vs "Battery" indicator and chart colour. Defaults to true so a
+    /// desktop Mac (no battery) reads as plugged in.
+    public let externalConnected: Bool
+    /// True when a battery is present (a laptop). Desktops report false, so they
+    /// never show "on battery".
+    public let batteryInstalled: Bool
+
+    /// Battery discharge, used when on battery so the card keeps tracking
+    /// voltage/current/power instead of going blank (there is no power *in*
+    /// from a charger then). All magnitudes (mV / mA / mW), already abs'd.
+    public let batteryVoltageMV: Int
+    public let batteryCurrentMA: Int
+    public let batteryPowerMW: Int
+
+    /// True when at least one port has a struck power contract (a winning
+    /// `IOPortFeaturePowerSource`). Carried in the snapshot so the System Power
+    /// card decides "negotiating vs waiting for live data" from one atomic
+    /// source, not a second watcher on a different clock.
+    public let hasContract: Bool
+
+    /// On battery means a battery is installed and no charger is connected.
+    public var onBattery: Bool { batteryInstalled && !externalConnected }
+
+    /// What the System Power card displays: the charger input when plugged in,
+    /// the battery discharge when on battery. One set of numbers tracks the
+    /// active source.
+    public var activeVoltageMV: Int { onBattery ? batteryVoltageMV : systemSample.systemVoltageIn }
+    public var activeCurrentMA: Int { onBattery ? batteryCurrentMA : systemSample.systemCurrentIn }
+    public var activePowerMW: Int { onBattery ? batteryPowerMW : systemSample.systemPowerIn }
 
     public init(
         timestamp: Date,
         systemSample: PowerSample,
         portSamples: [PortPowerSample],
-        resistanceEstimate: CableResistanceEstimate?
+        resistanceEstimate: CableResistanceEstimate?,
+        externalConnected: Bool = true,
+        batteryInstalled: Bool = false,
+        batteryVoltageMV: Int = 0,
+        batteryCurrentMA: Int = 0,
+        batteryPowerMW: Int = 0,
+        hasContract: Bool = false
     ) {
         self.timestamp = timestamp
         self.systemSample = systemSample
         self.portSamples = portSamples
         self.resistanceEstimate = resistanceEstimate
+        self.externalConnected = externalConnected
+        self.batteryInstalled = batteryInstalled
+        self.batteryVoltageMV = batteryVoltageMV
+        self.batteryCurrentMA = batteryCurrentMA
+        self.batteryPowerMW = batteryPowerMW
+        self.hasContract = hasContract
     }
 }

@@ -313,7 +313,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "ライセンスキーを入力…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac doesn't report power per port, so the live input is shown in the System Power Input chart below." = "これは充電器とお使いのMacが合意した最大値であり、実際の測定値ではありません。Macはポートごとの電力を報告しないため、実際の入力は下の「システム電源入力」グラフに表示されます。";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "これは充電器とMacが合意した最大値であり、ライブの測定値ではありません。Macはライブの値をシステム全体の合計としてのみ報告し、下の「システム電源入力」グラフに表示されます。";
 "No power data for this port right now." = "現在このポートの電力データはありません。";
 "Waiting for power telemetry from macOS..." = "macOSから電力データの受信を待機中...";
 "Upgrade to WhatCable Pro" = "WhatCable Proにアップグレード";
@@ -353,7 +353,7 @@
 "Cable" = "Cable";
 "Device" = "Device";
 "Negotiated" = "Negotiated";
-"Charger" = "Charger";
+"Charger" = "充電器";
 "bottleneck" = "bottleneck";
 "Cable signals disagree" = "Cable signals disagree";
 "an unknown speed" = "an unknown speed";
@@ -416,3 +416,10 @@
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "ディスプレイは最高モードを実現するために圧縮を使用している可能性があります";
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "%@は%@で動作できますが、非圧縮では約%@が必要です。このリンクはすでにすべてのレーンを高速で使用しており、約%@（%@）を伝送しています。多くの高解像度ディスプレイは、このようなリンクで最高モードを通すために圧縮（DSC）を使用します。そのため、リンク速度だけでは、すでに最高モードになっているかどうかは判断できません。映像が正しく見えていれば、おそらく最高モードです。";
+
+/* Power Monitor system power source indicator. */
+"Battery" = "バッテリー";
+"Source" = "電源";
+"Battery Power" = "バッテリー電力";
+"Negotiating…" = "ネゴシエーション中…";
+"Waiting for live reading…" = "ライブ測定値を待機中…";

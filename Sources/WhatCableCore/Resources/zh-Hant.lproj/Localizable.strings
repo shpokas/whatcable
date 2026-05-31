@@ -311,7 +311,7 @@
 
 /* Pro plugin strings missing from prior export */
 "Enter Licence Key…" = "輸入授權金鑰…";
-"This is the most the charger and your Mac agreed to, not a live reading. Your Mac doesn't report power per port, so the live input is shown in the System Power Input chart below." = "這是充電器與您的 Mac 協商出的最大值，而非即時測量值。您的 Mac 不會逐一回報每個連接埠的功率，因此即時輸入會顯示在下方的「系統電源輸入」圖表中。";
+"This is the most the charger and your Mac agreed to, not a live reading. Your Mac reports the live figure only as a system total, shown in the System Power Input chart below." = "這是充電器與您的 Mac 協商的最大值，並非即時讀數。您的 Mac 僅將即時數值作為系統總量回報，顯示在下方的「系統電源輸入」圖表中。";
 "No power data for this port right now." = "此連接埠目前沒有電源資料。";
 "Waiting for power telemetry from macOS..." = "正在等待 macOS 電源資料...";
 "Upgrade to WhatCable Pro" = "升級到 WhatCable Pro";
@@ -414,3 +414,10 @@
 /* Display dimension: compression at the link ceiling (issue #246). */
 "Display may be using compression to reach its top mode" = "顯示器可能正在使用壓縮來達到其最高模式";
 "Your %@ can run %@, which uncompressed would need about %@. This link is already running every lane at a high rate, carrying about %@ (%@). Many high-resolution displays use compression (DSC) to fit their top mode through a link like this, so the link rate alone can't tell whether you're already at your best mode. If the picture looks right, it most likely is." = "您的 %@ 可以執行 %@，未壓縮時大約需要 %@。此連線已經以高速率使用每一條通道，傳輸約 %@（%@）。許多高解析度顯示器使用壓縮（DSC）讓最高模式通過這樣的連線，因此僅憑連線速率無法判斷您是否已處於最佳模式。如果畫面看起來正常，那很可能就是最佳模式。";
+
+/* Power Monitor system power source indicator. */
+"Battery" = "電池";
+"Source" = "電源";
+"Battery Power" = "電池功率";
+"Negotiating…" = "正在協商…";
+"Waiting for live reading…" = "正在等待即時讀數…";
