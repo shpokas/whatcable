@@ -176,7 +176,9 @@ public struct CableResistanceEstimate: Codable, Sendable, Equatable {
         case good
         /// Within the budget but approaching the ceiling.
         case marginal
-        /// At or over the spec budget: out of spec for this cable's rating.
+        /// Over the spec budget: out of spec for this cable's rating.
+        /// (A reading exactly at the budget is `.marginal`; only strictly
+        /// over is `.high`.)
         case high
     }
 
