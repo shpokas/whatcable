@@ -15,7 +15,6 @@ secrets/
 # Local scratch docs (kept uncommitted by convention)
 # planning/ is tracked here; .public-exclude keeps it out of the mirror.
 technical-docs/
-CLAUDE.md
 BUILDING.md
 
 # Release notes are staged here, then copied into the homebrew-whatcable tap
