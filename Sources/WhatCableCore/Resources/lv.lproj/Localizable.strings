@@ -57,7 +57,7 @@
 "E-marker uses an invalid cable-termination value" = "E-marķieris izmanto nederīgu kabeļa terminācijas vērtību";
 "Fingerprint shared across %@" = "Fingerprint shared across %@";
 "Last leg drops from %@ to %@" = "Pēdējais posms samazinās no %1$@ uz %2$@";
-"Legitimate USB-IF members ship cables with a non-zero vendor ID. A zeroed VID is a common counterfeit signature." = "Leģitīmi USB-IF biedri piegādā kabeļus ar ražotāja ID, kas nav nulle. Nulles VID ir bieži sastopama viltojuma pazīme.";
+"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "Šī kabeļa e-marker neuzrāda ražotāja ID, kas oriģināliem kabeļiem ir izplatīta parādība. Tuvāk ieskatīties ir vērts tikai tad, ja arī pārējie kabeļa iespēju dati ir pretrunīgi.";
 "Linked at %@" = "Savienots ar %@";
 "Negotiation hasn't completed yet." = "Saskaņošana vēl nav pabeigta.";
 "No USB-C / MagSafe ports were found on this Mac." = "Šajā Mac netika atrasti USB-C / MagSafe porti.";

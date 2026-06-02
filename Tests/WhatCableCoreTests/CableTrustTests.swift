@@ -7,7 +7,7 @@ struct CableTrustTests {
     // A spec-encoding flag and an identity flag. In the behaviour-first model
     // both are *notes only*: neither sets the tier.
     private static let specFlag: TrustFlag = .reservedSpeedEncoding(5)
-    private static let identityFlag: TrustFlag = .zeroVendorID
+    private static let identityFlag: TrustFlag = .zeroVendorID(corroborated: false)
 
     // MARK: Green (confirmed delivery)
 

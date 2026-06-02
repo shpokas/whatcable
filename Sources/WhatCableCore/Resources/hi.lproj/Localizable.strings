@@ -57,7 +57,7 @@
 "E-marker uses an invalid cable-termination value" = "e-marker एक अमान्य केबल-टर्मिनेशन मान का उपयोग करता है";
 "Fingerprint shared across %@" = "Fingerprint shared across %@";
 "Last leg drops from %@ to %@" = "अंतिम खंड %1$@ से %2$@ तक गिरता है";
-"Legitimate USB-IF members ship cables with a non-zero vendor ID. A zeroed VID is a common counterfeit signature." = "वैध USB-IF सदस्य गैर-शून्य वेंडर ID वाले केबल भेजते हैं। शून्य VID नकली केबल की आम पहचान है।";
+"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "इस केबल का e-marker कोई वेंडर आईडी नहीं बताता, जो असली केबल में आम बात है। करीब से देखना तभी सार्थक है जब केबल का बाकी कैपेबिलिटी डेटा भी असंगत हो।";
 "Linked at %@" = "%@ पर लिंक्ड";
 "Negotiation hasn't completed yet." = "नेगोशिएशन अभी पूरा नहीं हुआ है।";
 "No USB-C / MagSafe ports were found on this Mac." = "इस Mac पर कोई USB-C / MagSafe पोर्ट नहीं मिला।";

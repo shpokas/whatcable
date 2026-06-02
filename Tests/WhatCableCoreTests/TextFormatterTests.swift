@@ -118,16 +118,20 @@ struct TextFormatterTests {
         )
     }
 
-    @Test("Trust signals render when flag fires")
-    func trustSignalsRenderWhenFlagFires() {
+    @Test("Blank-VID note renders calmly when the VDO is well-formed")
+    func blankVIDNoteRendersCalmly() {
         let port = makePort()
+        // Default VDO is clean, so a blank VID is corroborated: it should
+        // render as a calm "Cable note", not a warning-level "trust signals"
+        // block, but still carry its title and detail.
         let cable = cableIdentity(portNumber: port.portNumber ?? 1, vendorID: 0)
         let output = TextFormatter.render(
             ports: [port], sources: [], identities: [cable], showRaw: false
         )
-        #expect(output.contains("Cable trust signals"))
-        #expect(output.contains(TrustFlag.zeroVendorID.title))
-        #expect(output.contains(TrustFlag.zeroVendorID.detail))
+        #expect(output.contains("Cable note"))
+        #expect(output.contains("Cable trust signals") == false)
+        #expect(output.contains(TrustFlag.zeroVendorID(corroborated: true).title))
+        #expect(output.contains(TrustFlag.zeroVendorID(corroborated: true).detail))
     }
 
     @Test("Multiple trust flags all render")

@@ -57,7 +57,7 @@
 "E-marker uses an invalid cable-termination value" = "E-marker-ն օգտագործում է մալուխի ավարտավորման (termination) անվավեր արժեք";
 "Fingerprint shared across %@" = "Fingerprint shared across %@";
 "Last leg drops from %@ to %@" = "Վերջին հատվածում արագությունը նվազում է %1$@-ից %2$@-ի";
-"Legitimate USB-IF members ship cables with a non-zero vendor ID. A zeroed VID is a common counterfeit signature." = "USB-IF օրինական անդամները մատակարարում են մալուխներ ոչ զրոյական արտադրողի ID-ով (VID): Զրոյական VID-ը կեղծման տարածված նշան է:";
+"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "Այս մալուխի e-marker-ը չի հաղորդում արտադրողի ID, ինչը սովորական է իսկական մալուխների համար: Ավելի մանրամասն ուսումնասիրությունն արժե միայն այն դեպքում, երբ մալուխի մյուս հնարավորությունների տվյալները նույնպես հակասական են:";
 "Linked at %@" = "Կապված է %@ արագությամբ";
 "Negotiation hasn't completed yet." = "Համաձայնեցումը դեռ չի ավարտվել:";
 "No USB-C / MagSafe ports were found on this Mac." = "Այս Mac-ի վրա USB-C կամ MagSafe պորտեր չեն գտնվել:";

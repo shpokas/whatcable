@@ -57,7 +57,7 @@
 "E-marker uses an invalid cable-termination value" = "E-marker использует недопустимое значение окончания кабеля";
 "Fingerprint shared across %@" = "Отпечаток общий для %@";
 "Last leg drops from %@ to %@" = "Последнее звено снижает скорость с %1$@ до %2$@";
-"Legitimate USB-IF members ship cables with a non-zero vendor ID. A zeroed VID is a common counterfeit signature." = "Легитимные участники USB-IF поставляют кабели с ненулевым идентификатором производителя. Нулевой VID — частый признак подделки.";
+"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "E-marker этого кабеля не сообщает идентификатор производителя, что обычно для подлинных кабелей. Присматриваться стоит только если другие данные о возможностях кабеля тоже противоречивы.";
 "Linked at %@" = "Связь на уровне %@";
 "Negotiation hasn't completed yet." = "Согласование ещё не завершено.";
 "No USB-C / MagSafe ports were found on this Mac." = "На этом Mac не найдено портов USB-C / MagSafe.";

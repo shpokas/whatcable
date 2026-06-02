@@ -139,8 +139,8 @@ struct CableTrustProbeSweepTests {
             "\(probe): plug identifies the cable as a registered vendor, so the blank e-marker must soften to a note"
         )
         #expect(
-            !report.flags.contains(.zeroVendorID),
-            "\(probe): the counterfeit flag must not fire when the cable is registered at the plug"
+            !report.flags.contains { $0.code == "zeroVendorID" },
+            "\(probe): the blank-VID flag must not fire when the cable is registered at the plug"
         )
     }
 
@@ -158,7 +158,7 @@ struct CableTrustProbeSweepTests {
             return
         }
         #expect(
-            report.flags.contains(.zeroVendorID),
+            report.flags.contains { $0.code == "zeroVendorID" },
             "\(probe): the plug is a device, not the cable, so the blank e-marker must still flag"
         )
     }

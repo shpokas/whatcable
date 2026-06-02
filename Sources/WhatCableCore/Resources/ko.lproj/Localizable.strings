@@ -57,7 +57,7 @@
 "E-marker uses an invalid cable-termination value" = "e-marker가 유효하지 않은 케이블 종단 값을 사용함";
 "Fingerprint shared across %@" = "지문이 %@에서 공유됨";
 "Last leg drops from %@ to %@" = "마지막 구간이 %1$@에서 %2$@(으)로 떨어짐";
-"Legitimate USB-IF members ship cables with a non-zero vendor ID. A zeroed VID is a common counterfeit signature." = "정식 USB-IF 회원사는 0이 아닌 벤더 ID로 케이블을 출시합니다. VID가 0인 것은 흔한 위조 케이블의 특징이에요.";
+"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "이 케이블의 e-marker가 제조사 ID를 보고하지 않지만, 이는 정품 케이블에서도 흔한 일입니다. 케이블의 다른 성능 데이터도 일관되지 않을 때에만 자세히 살펴볼 가치가 있습니다.";
 "Linked at %@" = "%@로 연결됨";
 "Negotiation hasn't completed yet." = "협상이 아직 완료되지 않았어요.";
 "No USB-C / MagSafe ports were found on this Mac." = "이 Mac에서 USB-C / MagSafe 포트를 찾을 수 없었어요.";

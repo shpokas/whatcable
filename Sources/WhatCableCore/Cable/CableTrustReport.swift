@@ -1,8 +1,10 @@
 import Foundation
 
 /// Heuristic flags raised against a cable's e-marker data. We trust the
-/// e-marker by design, so wording is hedged: "looks unusual," "common
-/// counterfeit pattern," never "this cable is fake."
+/// e-marker by design, so wording is hedged: "looks unusual," never "this
+/// cable is fake." A blank vendor ID in particular reads as a calm note
+/// when the rest of the e-marker is well-formed (see `zeroVendorID`); it
+/// only escalates to a warning when other capability data is inconsistent.
 public struct CableTrustReport: Hashable {
     public let flags: [TrustFlag]
 
@@ -41,24 +43,34 @@ public struct CableTrustReport: Hashable {
             $0.identifiesAsCable && $0.vendorID != 0 && VendorDB.isRegistered($0.vendorID)
         } ?? false
 
+        // A blank vendor ID reads very differently depending on whether the
+        // rest of the e-marker holds up. A cable that still presents a
+        // well-formed Cable VDO (in-spec capability bits, no decode warnings)
+        // but no vendor ID is overwhelmingly a genuine cable that simply
+        // never had a USB-IF VID burned in: across the customer-probe corpus,
+        // every zeroed-VID cable pairs the blank ID with a valid capability
+        // word (e.g. issue #252's Native Union 240W cable). A blank ID with a
+        // missing or malformed VDO is the shape that actually warrants
+        // caution. This corroboration drives the flag's severity, note vs
+        // warning, not whether it fires.
+        let cableVDOCorroborates = identity.cableVDO.map { $0.decodeWarnings.isEmpty } ?? false
+
         // Vendor ID handling:
-        //   0x0000 — no value. A blank e-marker VID is a common counterfeit
-        //            signature, so it fires zeroVendorID — UNLESS the plug
-        //            identifies the same cable as a registered vendor, in
-        //            which case it's a neutral note (the cable does have an
-        //            identity, just at a different address).
-        //   0xFFFF — spec-defined "vendor opted out of USB-IF
-        //            registration." Legitimate per spec, so this is
-        //            neutral metadata, not a trust flag. Surfaced via
-        //            the vendor-name path (see VendorDB.name) so the
-        //            UI describes it without flagging a warning.
-        //   anything else not in the bundled USB-IF list — fires
-        //            vidNotInUSBIFList (H3).
+        //   0x0000: no value. Fires zeroVendorID UNLESS the plug identifies
+        //           the same cable as a registered vendor, in which case it's
+        //           a neutral note (the cable does have an identity, just at a
+        //           different address).
+        //   0xFFFF: spec-defined "vendor opted out of USB-IF registration."
+        //           Legitimate per spec, so this is neutral metadata, not a
+        //           trust flag. Surfaced via the vendor-name path (see
+        //           VendorDB.name) so the UI describes it without a warning.
+        //   anything else not in the bundled USB-IF list: fires
+        //           vidNotInUSBIFList (H3).
         if identity.vendorID == 0 {
             if partnerIsRegisteredCable, let partner {
                 collected.append(.eMarkerVIDBlankRegisteredPartner(partner.vendorID))
             } else {
-                collected.append(.zeroVendorID)
+                collected.append(.zeroVendorID(corroborated: cableVDOCorroborates))
             }
         } else if identity.vendorID == 0xFFFF {
             // Intentionally no flag.
@@ -99,14 +111,20 @@ public enum TrustFlag: Hashable {
         case warning
     }
 
-    /// E-marker present but vendor ID is zero. Legitimate USB-IF members
-    /// have non-zero VIDs, so this is a common counterfeit signature.
+    /// E-marker present but vendor ID is zero. Many genuine cables ship
+    /// without a USB-IF vendor ID, so this is not a fault on its own. The
+    /// associated `corroborated` flag is true when the cable still presents
+    /// a well-formed Cable VDO (real capability bits, no decode warnings):
+    /// in that case the blank ID is a calm `.note`. When the VDO is missing
+    /// or malformed, `corroborated` is false and the flag reads as a
+    /// `.warning`, since a blank ID alongside bad capability data is the
+    /// shape worth a closer look.
     ///
-    /// Note: the *spec-defined* sentinel `0xFFFF` (vendor opted out of
-    /// USB-IF registration) is intentionally NOT a TrustFlag — it's
+    /// Note: the spec-defined sentinel `0xFFFF` (vendor opted out of
+    /// USB-IF registration) is intentionally NOT a TrustFlag: it's
     /// allowed by the PD spec, so flagging it as a warning would be
     /// misleading. It's surfaced via VendorDB / the cable report instead.
-    case zeroVendorID
+    case zeroVendorID(corroborated: Bool)
 
     /// The e-marker's vendor ID is blank, but the plug (SOP partner)
     /// identifies this same cable as a USB-IF-registered vendor. The cable
@@ -150,6 +168,12 @@ public enum TrustFlag: Hashable {
         switch self {
         case .eMarkerVIDBlankRegisteredPartner:
             return .note
+        case .zeroVendorID(let corroborated):
+            // A blank vendor ID next to a well-formed capability word is
+            // overwhelmingly a genuine no-VID cable, so it reads as a calm
+            // note. A blank ID with a missing or malformed VDO keeps the
+            // warning.
+            return corroborated ? .note : .warning
         default:
             return .warning
         }
@@ -198,7 +222,7 @@ public enum TrustFlag: Hashable {
     public var detail: String {
         switch self {
         case .zeroVendorID:
-            return String(localized: "Legitimate USB-IF members ship cables with a non-zero vendor ID. A zeroed VID is a common counterfeit signature.", bundle: _coreLocalizedBundle)
+            return String(localized: "This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent.", bundle: _coreLocalizedBundle)
         case .eMarkerVIDBlankRegisteredPartner(let vid):
             let hex = String(format: "0x%04X", vid)
             let vendor = VendorDB.name(for: vid) ?? hex

@@ -50,7 +50,7 @@ struct CableTrustReportTests {
     @Test("Zero vendor ID flags")
     func zeroVendorIDFlags() {
         let report = CableTrustReport(identity: cableIdentity(vendorID: 0))
-        #expect(report.flags == [.zeroVendorID])
+        #expect(report.flags == [.zeroVendorID(corroborated: true)])
     }
 
     @Test("Reserved speed encoding flags")
@@ -74,8 +74,10 @@ struct CableTrustReportTests {
         // VID=0, speed=6 (reserved), current=3 (reserved), valid latency
         let vdo = UInt32(0b110) | UInt32(3 << 5) | Self.validLatency
         let report = CableTrustReport(identity: cableIdentity(vendorID: 0, cableVDO: vdo))
+        // Reserved speed/current bits mean the VDO is malformed, so the
+        // blank VID is NOT corroborated and stays a warning.
         #expect(report.flags == [
-            .zeroVendorID,
+            .zeroVendorID(corroborated: false),
             .reservedSpeedEncoding(6),
             .reservedCurrentEncoding(3)
         ])
@@ -177,7 +179,7 @@ struct CableTrustReportTests {
         // VID 0 fires zeroVendorID (stronger signal); we don't also
         // want H3 firing as a noisier "0x0000 not registered" message.
         let report = CableTrustReport(identity: cableIdentity(vendorID: 0))
-        #expect(report.flags == [.zeroVendorID])
+        #expect(report.flags == [.zeroVendorID(corroborated: true)])
         #expect(report.flags.contains { flag in
             if case .vidNotInUSBIFList = flag { return true }
             return false
@@ -226,7 +228,7 @@ struct CableTrustReportTests {
     @Test("Flag codes are stable")
     func flagCodesAreStable() {
         // Codes are part of the JSON contract; pin them.
-        #expect(TrustFlag.zeroVendorID.code == "zeroVendorID")
+        #expect(TrustFlag.zeroVendorID(corroborated: true).code == "zeroVendorID")
         #expect(TrustFlag.reservedSpeedEncoding(5).code == "reservedSpeedEncoding")
         #expect(TrustFlag.reservedCurrentEncoding(3).code == "reservedCurrentEncoding")
         #expect(TrustFlag.reservedCableLatencyEncoding(0).code == "reservedCableLatencyEncoding")
@@ -291,27 +293,27 @@ struct CableTrustReportTests {
     @Test("A registered device plug does NOT soften the blank e-marker")
     func blankEmarkerNotSoftenedByDevicePlug() {
         // The 20 corpus cases: the plug is a peripheral/dock with a registered
-        // VID that belongs to the device, not the cable. The counterfeit flag
-        // must still fire.
+        // VID that belongs to the device, not the cable. The blank-VID flag
+        // must still fire as zeroVendorID (not the softened partner note).
         let partner = partnerIdentity(vendorID: 0x05AC, productType: 2) // peripheral
         let report = CableTrustReport(identity: cableIdentity(vendorID: 0), partner: partner)
-        #expect(report.flags == [.zeroVendorID])
+        #expect(report.flags == [.zeroVendorID(corroborated: true)])
     }
 
     @Test("An unregistered cable plug does NOT soften the blank e-marker")
     func blankEmarkerNotSoftenedByUnregisteredCablePlug() {
         // Registered-only rule: a non-zero but unregistered plug VID is weaker
-        // proof, so we keep the counterfeit flag rather than going silent.
+        // proof, so we keep the blank-VID flag rather than going silent.
         let partner = partnerIdentity(vendorID: 0xDEAD, productType: 3) // passive cable
         let report = CableTrustReport(identity: cableIdentity(vendorID: 0), partner: partner)
-        #expect(report.flags == [.zeroVendorID])
+        #expect(report.flags == [.zeroVendorID(corroborated: true)])
     }
 
-    @Test("With no plug, a blank e-marker still fires the counterfeit flag")
+    @Test("With no plug, a blank e-marker still fires the blank-VID flag")
     func blankEmarkerStillFiresWithoutPartner() {
         // Default behaviour is preserved when there's no SOP partner.
         let report = CableTrustReport(identity: cableIdentity(vendorID: 0))
-        #expect(report.flags == [.zeroVendorID])
+        #expect(report.flags == [.zeroVendorID(corroborated: true)])
     }
 
     @Test("Softened note names the plug's vendor")

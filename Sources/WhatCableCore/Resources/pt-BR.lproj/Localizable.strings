@@ -57,7 +57,7 @@
 "E-marker uses an invalid cable-termination value" = "O e-marker usa um valor inválido de terminação do cabo";
 "Fingerprint shared across %@" = "Impressão digital compartilhada entre %@";
 "Last leg drops from %@ to %@" = "O último trecho cai de %1$@ para %2$@";
-"Legitimate USB-IF members ship cables with a non-zero vendor ID. A zeroed VID is a common counterfeit signature." = "Membros legítimos do USB-IF enviam cabos com ID de fornecedor diferente de zero. Um VID zerado é um sinal comum de falsificação.";
+"This cable's e-marker doesn't report a vendor ID, which is common on genuine cables. It's only worth a closer look if the cable's other capability data is also inconsistent." = "O e-marker deste cabo não informa um ID de fabricante, o que é comum em cabos genuínos. Só vale uma análise mais detalhada se os demais dados de capacidade do cabo também estiverem inconsistentes.";
 "Linked at %@" = "Link em %@";
 "Negotiation hasn't completed yet." = "A negociação ainda não terminou.";
 "No USB-C / MagSafe ports were found on this Mac." = "Nenhuma porta USB-C/MagSafe foi encontrada neste Mac.";
