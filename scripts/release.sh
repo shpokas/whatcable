@@ -18,10 +18,13 @@
 #       prove the uploaded asset matches the locally built one.
 #   8.  Copy release-notes/v<version>.md into the tap and amend the cask
 #       commit with it, then push the tap.
+#   9.  Close public issues referenced by closing keywords in commits since
+#       the previous tag, commenting "Fixed in v<version>.".
 #
-# Anything in steps 5-8 can be re-run idempotently if the script is interrupted
+# Anything in steps 5-9 can be re-run idempotently if the script is interrupted
 # (gh release create is the one place that errors loudly on re-run; you can
-# `gh release delete` and try again).
+# `gh release delete` and try again). Step 9 skips issues that are already
+# closed, so a re-run is a no-op.
 #
 # --dry-run prints what each step would do but skips: commits, tag push, the
 # notarised build, gh release create, cask push. It still runs the sanity
@@ -251,6 +254,55 @@ if [[ "${DRY_RUN}" == "0" && -n "${TAP_DIR:-}" ]]; then
         git -C "${TAP_DIR}" commit --amend --no-edit
     fi
     git -C "${TAP_DIR}" push --force-with-lease
+fi
+
+# ---- 9. Close fixed issues on the public repo ----------------------------
+
+# Issues live on the public repo (darrylmorley/whatcable), but the fix
+# commits land here via PRs whose messages use closing keywords. The mirror
+# flattens history into a single "Mirror from private" commit, so GitHub
+# never sees the keyword on public and can't auto-close. Do it explicitly
+# here, once the release is actually live, referencing the version. Only
+# closing keywords ("Closes/Fixes/Resolves #N") match, so a bare "(#NN)" PR
+# suffix is ignored.
+# `|| true` keeps a no-match grep (exit 1) from aborting the whole release
+# under `set -euo pipefail`; the empty result then trips the guards below.
+PREV_TAG=$(git tag --list 'v*' --sort=-version:refname | grep -vxF "v${VERSION}" | head -1 || true)
+if [[ -z "${PREV_TAG}" ]]; then
+    echo "==> No previous tag found; skipping issue auto-close"
+else
+    # Bind the range to the published tag, not HEAD, so the issue set is
+    # frozen to what shipped and a re-run stays a no-op even if new commits
+    # have landed since the tag.
+    FIXED_ISSUES=$(git log "${PREV_TAG}..v${VERSION}" --pretty=%B \
+        | grep -ioE '(close[sd]?|fix(es|ed)?|resolve[sd]?) +#[0-9]+' \
+        | grep -oE '[0-9]+' \
+        | sort -un || true)
+    if [[ -z "${FIXED_ISSUES}" ]]; then
+        echo "==> No issues referenced with closing keywords since ${PREV_TAG}"
+    elif [[ "${DRY_RUN}" == "1" ]]; then
+        echo "==> Would close on darrylmorley/whatcable (since ${PREV_TAG}):"
+        for n in ${FIXED_ISSUES}; do echo "      #${n}"; done
+    else
+        echo "==> Closing fixed issues on darrylmorley/whatcable (since ${PREV_TAG})"
+        for n in ${FIXED_ISSUES}; do
+            STATE=$(gh issue view "${n}" --repo darrylmorley/whatcable \
+                --json state --jq .state 2>/dev/null) || {
+                echo "    #${n} is not an issue (or not found), skipping"
+                continue
+            }
+            if [[ "${STATE}" == "OPEN" ]]; then
+                if gh issue close "${n}" --repo darrylmorley/whatcable \
+                       --comment "Fixed in v${VERSION}." >/dev/null 2>&1; then
+                    echo "    closed #${n}"
+                else
+                    echo "    failed to close #${n} (left open)" >&2
+                fi
+            else
+                echo "    #${n} already ${STATE}, skipping"
+            fi
+        done
+    fi
 fi
 
 echo
