@@ -180,6 +180,7 @@ cat > "${CONTENTS_DIR}/Info.plist" <<PLIST
         <string>it</string>
         <string>ja</string>
         <string>nb</string>
+        <string>nl</string>
         <string>pl</string>
         <string>zh-Hans</string>
     </array>
