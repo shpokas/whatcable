@@ -389,6 +389,8 @@ struct UpdateBanner: View {
             Text(String(localized: "Installing, WhatCable will relaunch", bundle: _appLocalizedBundle))
         case .failed(let message):
             Text(String(localized: "Install failed: \(message)", bundle: _appLocalizedBundle)).foregroundStyle(.red)
+        case .blocked(let message):
+            Text(message).foregroundStyle(.orange)
         }
     }
 
@@ -411,6 +413,13 @@ struct UpdateBanner: View {
                     .controlSize(.small)
                 }
             }
+        case .blocked:
+            // Self-update can't run here; only offer the manual download path.
+            Button(String(localized: "View release", bundle: _appLocalizedBundle)) {
+                NSWorkspace.shared.open(update.url)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
         case .downloading, .verifying, .installing:
             ProgressView().controlSize(.small)
         }

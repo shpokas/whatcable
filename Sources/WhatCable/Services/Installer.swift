@@ -18,6 +18,10 @@ final class Installer: ObservableObject {
         case verifying
         case installing
         case failed(String)
+        /// The update can't be applied here (e.g. a non-admin account that
+        /// can't write to /Applications). Distinct from `failed` so the UI can
+        /// show the guidance verbatim, without the "Install failed:" prefix.
+        case blocked(String)
     }
 
     @Published private(set) var state: State = .idle
@@ -30,6 +34,18 @@ final class Installer: ObservableObject {
             state = .failed("No download asset for this release")
             return
         }
+
+        // A standard (non-admin) account can't write to /Applications, so the
+        // in-place bundle swap at the end would fail. That swap runs in a
+        // detached script after we quit, with its output sent to /dev/null, so
+        // the failure used to be completely invisible (issue #287). Catch the
+        // unwritable location up front and tell the user how to update instead.
+        let installDir = Bundle.main.bundleURL.deletingLastPathComponent()
+        if !FileManager.default.isWritableFile(atPath: installDir.path) {
+            state = .blocked(String(localized: "This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew.", bundle: _appLocalizedBundle))
+            return
+        }
+
         state = .downloading
 
         Task {

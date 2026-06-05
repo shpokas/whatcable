@@ -26,6 +26,7 @@
 "Host (%@)" = "Hôte (%@)";
 "Include Mac model and macOS version" = "Inclure le modèle du Mac et la version de macOS";
 "Install failed: %@" = "Échec de l'installation : %@";
+"This account can't update apps in this location. Download the new version from whatcable.uk, or update with Homebrew." = "Ce compte ne peut pas mettre à jour les apps à cet emplacement. Téléchargez la nouvelle version sur whatcable.uk ou mettez à jour avec Homebrew.";
 "Install update" = "Installer la mise à jour";
 "Installing, WhatCable will relaunch" = "Installation en cours, WhatCable va redémarrer";
 "Keep window open" = "Garder la fenêtre ouverte";
