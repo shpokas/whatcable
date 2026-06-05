@@ -32,6 +32,13 @@
 "Language" = "भाषा";
 "Launch at login" = "लॉगिन पर लॉन्च करें";
 "Lives in the menu bar with no Dock icon." = "Dock आइकन के बिना मेन्यू बार में रहता है।";
+"Menu bar icon" = "मेनू बार आइकन";
+/* Menu bar icon choices */
+"Cable" = "केबल";
+"Cable, horizontal" = "केबल, क्षैतिज";
+"Bolt" = "बोल्ट";
+"Power plug" = "पावर प्लग";
+"Power cord" = "पावर कॉर्ड";
 "No" = "नहीं";
 "No USB-C ports detected" = "कोई USB-C पोर्ट नहीं मिला";
 "Nothing connected" = "कुछ भी कनेक्ट नहीं";

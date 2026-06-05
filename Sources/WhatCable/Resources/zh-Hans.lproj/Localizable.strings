@@ -34,6 +34,13 @@
 "Language" = "语言";
 "Launch at login" = "登录时启动";
 "Lives in the menu bar with no Dock icon." = "驻留在菜单栏，不显示 Dock 图标。";
+"Menu bar icon" = "菜单栏图标";
+/* Menu bar icon choices */
+"Cable" = "线缆";
+"Cable, horizontal" = "线缆（横向）";
+"Bolt" = "闪电";
+"Power plug" = "电源插头";
+"Power cord" = "电源线";
 "No" = "否";
 "No USB-C ports detected" = "未检测到 USB-C 端口";
 "Nothing connected" = "未连接任何设备";

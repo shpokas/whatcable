@@ -32,6 +32,13 @@
 "Language" = "Dil";
 "Launch at login" = "Oturum açıldığında başlat";
 "Lives in the menu bar with no Dock icon." = "Dock simgesi olmadan menü çubuğunda çalışır.";
+"Menu bar icon" = "Menü çubuğu simgesi";
+/* Menu bar icon choices */
+"Cable" = "Kablo";
+"Cable, horizontal" = "Kablo, yatay";
+"Bolt" = "Şimşek";
+"Power plug" = "Fiş";
+"Power cord" = "Güç kablosu";
 "No" = "Hayır";
 "No USB-C ports detected" = "USB-C bağlantı noktası algılanmadı";
 "Nothing connected" = "Hiçbir şey bağlı değil";

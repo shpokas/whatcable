@@ -32,6 +32,13 @@
 "Language" = "Valoda";
 "Launch at login" = "Palaist piesakoties";
 "Lives in the menu bar with no Dock icon." = "Atrodas izvēlņu joslā bez Dock ikonas.";
+"Menu bar icon" = "Izvēlņu joslas ikona";
+/* Menu bar icon choices */
+"Cable" = "Kabelis";
+"Cable, horizontal" = "Kabelis, horizontāls";
+"Bolt" = "Zibens";
+"Power plug" = "Kontaktdakša";
+"Power cord" = "Barošanas vads";
 "No" = "Nē";
 "No USB-C ports detected" = "Nav atklāti USB-C porti";
 "Nothing connected" = "Nekas nav pievienots";

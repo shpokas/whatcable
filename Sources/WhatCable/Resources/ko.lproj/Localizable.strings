@@ -32,6 +32,13 @@
 "Language" = "언어";
 "Launch at login" = "로그인 시 실행";
 "Lives in the menu bar with no Dock icon." = "Dock 아이콘 없이 메뉴 막대에 계속 표시됩니다.";
+"Menu bar icon" = "메뉴 막대 아이콘";
+/* Menu bar icon choices */
+"Cable" = "케이블";
+"Cable, horizontal" = "케이블, 가로";
+"Bolt" = "번개";
+"Power plug" = "전원 플러그";
+"Power cord" = "전원 코드";
 "No" = "아니요";
 "No USB-C ports detected" = "감지된 USB-C 포트 없음";
 "Nothing connected" = "연결되지 않음";

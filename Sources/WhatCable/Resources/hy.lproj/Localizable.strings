@@ -32,6 +32,13 @@
 "Language" = "Լեզու";
 "Launch at login" = "Գործարկել համակարգ մուտք գործելիս";
 "Lives in the menu bar with no Dock icon." = "Գտնվում է մենյուի տողում՝ առանց Dock-ի պատկերակի:";
+"Menu bar icon" = "Մենյուի գոտու պատկերակ";
+/* Menu bar icon choices */
+"Cable" = "Մալուխ";
+"Cable, horizontal" = "Մալուխ, հորիզոնական";
+"Bolt" = "Կայծակ";
+"Power plug" = "Խրոց";
+"Power cord" = "Սնման լար";
 "No" = "Ոչ";
 "No USB-C ports detected" = "USB-C պորտեր չեն հայտնաբերվել";
 "Nothing connected" = "Ոչինչ միացված չէ";

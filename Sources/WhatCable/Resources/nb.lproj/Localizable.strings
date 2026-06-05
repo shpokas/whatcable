@@ -32,6 +32,13 @@
 "Language" = "Språk";
 "Launch at login" = "Start ved innlogging";
 "Lives in the menu bar with no Dock icon." = "Ligger i menylinjen uten Dock-ikon.";
+"Menu bar icon" = "Menylinjeikon";
+/* Menu bar icon choices */
+"Cable" = "Kabel";
+"Cable, horizontal" = "Kabel, horisontal";
+"Bolt" = "Lyn";
+"Power plug" = "Støpsel";
+"Power cord" = "Strømkabel";
 "No" = "Nei";
 "No USB-C ports detected" = "Ingen USB-C-porter oppdaget";
 "Nothing connected" = "Ingenting tilkoblet";

@@ -8,24 +8,19 @@ struct TestKitSettingsSection: View {
     @State private var showingConsent = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(String(localized: "COMMUNITY", bundle: _appLocalizedBundle))
-                .scaledFont(.caption, weight: .semibold)
-                .foregroundStyle(.secondary)
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 8) {
-                    Button(action: { showingConsent = true }) {
-                        Label(String(localized: "Contribute Diagnostic Data", bundle: _appLocalizedBundle), systemImage: "waveform.path.ecg")
-                    }
-                    .disabled(runner.isRunning)
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-
-                    statusLabel
-                }
+        // Rows only. The section header is supplied by the enclosing Form
+        // section in SettingsView so it matches the other settings groups.
+        HStack(spacing: 8) {
+            Button(action: { showingConsent = true }) {
+                Label(String(localized: "Contribute Diagnostic Data", bundle: _appLocalizedBundle), systemImage: "waveform.path.ecg")
             }
-            .scaledFont(.body)
+            .disabled(runner.isRunning)
+            .buttonStyle(.bordered)
             .controlSize(.small)
+
+            statusLabel
+
+            Spacer(minLength: 0)
         }
         .sheet(isPresented: $showingConsent) {
             TestKitConsentView {

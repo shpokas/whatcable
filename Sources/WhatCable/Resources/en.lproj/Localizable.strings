@@ -32,6 +32,13 @@
 "Language" = "Language";
 "Launch at login" = "Launch at login";
 "Lives in the menu bar with no Dock icon." = "Lives in the menu bar with no Dock icon.";
+"Menu bar icon" = "Menu bar icon";
+/* Menu bar icon choices */
+"Cable" = "Cable";
+"Cable, horizontal" = "Cable, horizontal";
+"Bolt" = "Bolt";
+"Power plug" = "Power plug";
+"Power cord" = "Power cord";
 "No" = "No";
 "No USB-C ports detected" = "No USB-C ports detected";
 "Nothing connected" = "Nothing connected";

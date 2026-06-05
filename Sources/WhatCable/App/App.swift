@@ -120,6 +120,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
             }
             .store(in: &cancellables)
 
+        // Live-swap the menu bar glyph when the user picks a new one.
+        AppSettings.shared.$menuBarIcon
+            .removeDuplicates()
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] symbolName in
+                self?.updateMenuBarIcon(symbolName)
+            }
+            .store(in: &cancellables)
+
         // Pin toggle: the menu item and the in-app button both write
         // RefreshSignal.keepOpen; this applies it to the live popover.
         Self.refreshSignal.$keepOpen
@@ -241,11 +251,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         if statusItem == nil {
             let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
             if let button = item.button {
-                button.image = NSImage(systemSymbolName: "cable.connector", accessibilityDescription: AppInfo.name)
-                if button.image == nil {
-                    log.warning("menuBar: cable.connector SF Symbol returned nil, using text fallback")
-                    button.title = "WC"
-                }
+                applyMenuBarIcon(to: button, symbolName: AppSettings.shared.menuBarIcon)
                 button.target = self
                 button.action = #selector(handleClick(_:))
                 button.sendAction(on: [.leftMouseUp, .rightMouseUp])
@@ -258,6 +264,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
             statusItem = item
             log.notice("menuBar: statusItem created, isVisible=\(item.isVisible)")
         }
+    }
+
+    /// Set the status-item glyph, falling back to a short text label if the
+    /// SF Symbol is unavailable on this macOS (keeps the menu bar usable).
+    private func applyMenuBarIcon(to button: NSStatusBarButton, symbolName: String) {
+        let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: AppInfo.name)
+        if let image {
+            button.image = image
+            button.title = ""
+        } else {
+            log.warning("menuBar: SF Symbol \(symbolName, privacy: .public) returned nil, using text fallback")
+            button.image = nil
+            button.title = "WC"
+        }
+    }
+
+    /// Swap the live menu bar glyph when the user picks a new one in Settings.
+    private func updateMenuBarIcon(_ symbolName: String) {
+        guard let button = statusItem?.button else { return }
+        applyMenuBarIcon(to: button, symbolName: symbolName)
     }
 
     private func tearDownMenuBarMode() {

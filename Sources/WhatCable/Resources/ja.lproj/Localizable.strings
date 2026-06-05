@@ -32,6 +32,13 @@
 "Language" = "言語";
 "Launch at login" = "ログイン時に起動";
 "Lives in the menu bar with no Dock icon." = "Dockアイコンなしでメニューバーに常駐します。";
+"Menu bar icon" = "メニューバーアイコン";
+/* Menu bar icon choices */
+"Cable" = "ケーブル";
+"Cable, horizontal" = "ケーブル（横）";
+"Bolt" = "稲妻";
+"Power plug" = "電源プラグ";
+"Power cord" = "電源コード";
 "No" = "いいえ";
 "No USB-C ports detected" = "USB-Cポートが検出されません";
 "Nothing connected" = "未接続";

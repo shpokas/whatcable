@@ -32,6 +32,13 @@
 "Language" = "Мова";
 "Launch at login" = "Запускати при вході";
 "Lives in the menu bar with no Dock icon." = "Живе в рядку меню без значка в Dock.";
+"Menu bar icon" = "Значок рядка меню";
+/* Menu bar icon choices */
+"Cable" = "Кабель";
+"Cable, horizontal" = "Кабель, горизонтальний";
+"Bolt" = "Блискавка";
+"Power plug" = "Вилка";
+"Power cord" = "Кабель живлення";
 "No" = "Ні";
 "No USB-C ports detected" = "USB-C портів не виявлено";
 "Nothing connected" = "Нічого не підключено";

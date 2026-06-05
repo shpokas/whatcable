@@ -17,6 +17,7 @@ final class AppSettings: ObservableObject {
         static let useMenuBarMode = "useMenuBarMode"
         static let showTechnicalDetails = "showTechnicalDetails"
         static let fontSize = "fontSize"
+        static let menuBarIcon = "menuBarIcon"
         static let preferredLanguage = "preferredLanguage"
         static let testKitLastRunVersion = "testKitLastRunVersion"
         static let hasCompletedOnboarding = "hasCompletedOnboarding"
@@ -91,6 +92,37 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// SF Symbol name shown in the menu bar status item. The curated list
+    /// keeps users to glyphs we know render; an unknown stored value (e.g.
+    /// a symbol dropped in a future macOS) falls back to the default.
+    static let defaultMenuBarIcon = "cable.connector"
+    static let menuBarIconChoices: [String] = [
+        "cable.connector",
+        "cable.connector.horizontal",
+        "bolt.fill",
+        "powerplug.fill",
+        "powercord.fill",
+    ]
+
+    /// Clamp a raw icon name to the curated list, falling back to the default
+    /// so a stray value can't leave the menu bar with a blank icon. Shared by
+    /// `init` and the `menuBarIcon` setter.
+    static func validatedMenuBarIcon(_ raw: String) -> String {
+        menuBarIconChoices.contains(raw) ? raw : defaultMenuBarIcon
+    }
+
+    @Published var menuBarIcon: String {
+        didSet {
+            let validated = Self.validatedMenuBarIcon(menuBarIcon)
+            if validated != menuBarIcon {
+                menuBarIcon = validated
+                return
+            }
+            guard menuBarIcon != oldValue else { return }
+            UserDefaults.standard.set(menuBarIcon, forKey: Keys.menuBarIcon)
+        }
+    }
+
     var testKitLastRunVersion: String? {
         get { UserDefaults.standard.string(forKey: Keys.testKitLastRunVersion) }
         set { UserDefaults.standard.set(newValue, forKey: Keys.testKitLastRunVersion) }
@@ -131,6 +163,8 @@ final class AppSettings: ObservableObject {
         let stored = UserDefaults.standard.double(forKey: Keys.fontSize)
         let raw = stored > 0 ? stored : 1.0
         self.fontSize = min(max(raw, Self.fontSizeRange.lowerBound), Self.fontSizeRange.upperBound)
+        let savedIcon = UserDefaults.standard.string(forKey: Keys.menuBarIcon) ?? Self.defaultMenuBarIcon
+        self.menuBarIcon = Self.validatedMenuBarIcon(savedIcon)
     }
 
     private func applyLaunchAtLogin(_ enabled: Bool) {

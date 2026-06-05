@@ -32,6 +32,13 @@
 "Language" = "Lingua";
 "Launch at login" = "Esegui all'accesso";
 "Lives in the menu bar with no Dock icon." = "Si trova nella barra dei menu senza l'icona del Dock.";
+"Menu bar icon" = "Icona della barra dei menu";
+/* Menu bar icon choices */
+"Cable" = "Cavo";
+"Cable, horizontal" = "Cavo, orizzontale";
+"Bolt" = "Fulmine";
+"Power plug" = "Spina";
+"Power cord" = "Cavo di alimentazione";
 "No" = "No";
 "No USB-C ports detected" = "Nessuna porta USB-C rilevata";
 "Nothing connected" = "Nessun dispositivo collegato";

@@ -32,6 +32,13 @@
 "Language" = "Sprache";
 "Launch at login" = "Bei Anmeldung starten";
 "Lives in the menu bar with no Dock icon." = "Befindet sich in der Menüleiste ohne Dock-Symbol.";
+"Menu bar icon" = "Menüleistensymbol";
+/* Menu bar icon choices */
+"Cable" = "Kabel";
+"Cable, horizontal" = "Kabel, horizontal";
+"Bolt" = "Blitz";
+"Power plug" = "Stecker";
+"Power cord" = "Netzkabel";
 "No" = "Nein";
 "No USB-C ports detected" = "Keine USB-C-Anschlüsse erkannt";
 "Nothing connected" = "Nichts verbunden";

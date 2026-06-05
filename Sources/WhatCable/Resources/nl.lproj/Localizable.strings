@@ -32,6 +32,13 @@
 "Language" = "Taal";
 "Launch at login" = "Starten bij aanmelden";
 "Lives in the menu bar with no Dock icon." = "Staat in de menubalk zonder Dock-icoon.";
+"Menu bar icon" = "Menubalkpictogram";
+/* Menu bar icon choices */
+"Cable" = "Kabel";
+"Cable, horizontal" = "Kabel, horizontaal";
+"Bolt" = "Bliksem";
+"Power plug" = "Stekker";
+"Power cord" = "Netsnoer";
 "No" = "Nee";
 "No USB-C ports detected" = "Geen USB-C-poorten gevonden";
 "Nothing connected" = "Niets verbonden";
