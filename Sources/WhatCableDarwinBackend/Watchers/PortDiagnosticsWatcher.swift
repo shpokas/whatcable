@@ -37,7 +37,10 @@ public final class PortDiagnosticsWatcher: ObservableObject {
         let cb: IOServiceMatchingCallback = { refcon, iterator in
             guard let refcon else { return }
             let watcher = Unmanaged<PortDiagnosticsWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in
+            // Capture weakly so that if the watcher is torn down before this
+            // task runs, it becomes a no-op rather than touching freed memory.
+            Task { @MainActor [weak watcher] in
+                guard let watcher else { return }
                 while case let service = IOIteratorNext(iterator), service != 0 {
                     IOObjectRelease(service)
                 }

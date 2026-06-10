@@ -47,12 +47,14 @@ public final class VDMIdentityWatcher: ObservableObject {
         let added: IOServiceMatchingCallback = { refcon, iterator in
             guard let refcon else { return }
             let watcher = Unmanaged<VDMIdentityWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in watcher.handleAdded(iterator) }
+            // Capture weakly so that if the watcher is torn down before this
+            // task runs, it becomes a no-op rather than touching freed memory.
+            Task { @MainActor [weak watcher] in watcher?.handleAdded(iterator) }
         }
         let removed: IOServiceMatchingCallback = { refcon, iterator in
             guard let refcon else { return }
             let watcher = Unmanaged<VDMIdentityWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in watcher.handleRemoved(iterator) }
+            Task { @MainActor [weak watcher] in watcher?.handleRemoved(iterator) }
         }
 
         for className in Self.matchedClasses {
