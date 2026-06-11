@@ -1,5 +1,19 @@
 [
   {
+    "brand" : "UGreen retractable 100W (L531), zeroed e-marker",
+    "cableVDO" : "0x00082040",
+    "issueNum" : "#302",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/302",
+    "pid" : "0x0000",
+    "power" : "5 A \/ 20 V (100 W)",
+    "registered" : true,
+    "speed" : "USB 2.0 (480 Mbps)",
+    "type" : "passive",
+    "vendor" : "(zeroed)",
+    "vid" : "0x0000",
+    "xid" : "none"
+  },
+  {
     "brand" : "Dockcase 100 W 10 Gbps 0.5 m (VID\/PID zeroed)",
     "cableVDO" : "0x00082042",
     "issueNum" : "#92",
@@ -246,6 +260,20 @@
     "power" : "5 A \/ 50 V (240 W)",
     "registered" : true,
     "speed" : "USB4 Gen 3 (40 Gbps, Thunderbolt 4 class)",
+    "type" : "passive",
+    "vendor" : "(zeroed)",
+    "vid" : "0x0000",
+    "xid" : "none"
+  },
+  {
+    "brand" : "Unbranded TB5-class 80 Gbps, zeroed e-marker",
+    "cableVDO" : "0x000A4644",
+    "issueNum" : "#309",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/309",
+    "pid" : "0x0000",
+    "power" : "5 A \/ 50 V (240 W)",
+    "registered" : true,
+    "speed" : "USB4 Gen 4（80 Gbps，Thunderbolt 5 级）",
     "type" : "passive",
     "vendor" : "(zeroed)",
     "vid" : "0x0000",
@@ -588,6 +616,20 @@
     "xid" : "none"
   },
   {
+    "brand" : "Plugable TB3 dock bundled cable",
+    "cableVDO" : "0x41082052",
+    "issueNum" : "#276",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/276",
+    "pid" : "0x0009",
+    "power" : "5 A \/ 20 V (100 W)",
+    "registered" : true,
+    "speed" : "USB 3.2 Gen 2 (10 Gbps)",
+    "type" : "passive",
+    "vendor" : "Sumitomo Electric Ind., Ltd., Optical Comm. R&D Lab",
+    "vid" : "0x20C2",
+    "xid" : "none"
+  },
+  {
     "brand" : "SanDisk Extreme SSD bundled cable",
     "cableVDO" : "0x00082022",
     "issueNum" : "#202",
@@ -834,6 +876,20 @@
     "power" : "5 A \/ 20 V (100 W)",
     "registered" : true,
     "speed" : "USB4 Gen 3 (20 \/ 40 Gbps)",
+    "type" : "passive",
+    "vendor" : "Chengdu Convenientpower Semiconductor Co., LTD",
+    "vid" : "0x315C",
+    "xid" : "none"
+  },
+  {
+    "brand" : "Acasis TB501Pro enclosure bundled cable",
+    "cableVDO" : "0x00022643",
+    "issueNum" : "#307",
+    "issueURL" : "https:\/\/github.com\/darrylmorley\/whatcable\/issues\/307",
+    "pid" : "0x0000",
+    "power" : "5 A \/ 50 V (240 W)",
+    "registered" : true,
+    "speed" : "USB4 Gen 3 (40 Gbps, Thunderbolt 4 class)",
     "type" : "passive",
     "vendor" : "Chengdu Convenientpower Semiconductor Co., LTD",
     "vid" : "0x315C",

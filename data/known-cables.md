@@ -107,6 +107,10 @@ hand-maintained markdown table; format may change once the consumer exists.
 | Apple USB-C cable from iPad A16 box | `0x0000` | `0x0000` |  | (zeroed) | none | (none advertised) | (not advertised) | passive | [#263](https://github.com/darrylmorley/whatcable/issues/263) |
 | j5create USB4 40 Gbps coaxial cable, braided, OfficeDepot | `0x2DE5` | `0x2601` | `0x12084043` | KaiJet Technology International Limited, Inc. dba j5create | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 20 V (100 W) | passive | [#258](https://github.com/darrylmorley/whatcable/issues/258) |
 | Satechi USB4 Pro cable 1.2 m | `0x310E` | `0x03B7` | `0x110A4E43` | Sariana LLC (dba SATECHI) | `0x384E` | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#267](https://github.com/darrylmorley/whatcable/issues/267) |
+| Plugable TB3 dock bundled cable | `0x20C2` | `0x0009` | `0x41082052` | Sumitomo Electric Ind., Ltd., Optical Comm. R&D Lab | none | USB 3.2 Gen 2 (10 Gbps) | 5 A / 20 V (100 W) | passive | [#276](https://github.com/darrylmorley/whatcable/issues/276) |
+| Acasis TB501Pro enclosure bundled cable | `0x315C` | `0x0000` | `0x00022643` | Chengdu Convenientpower Semiconductor Co., LTD | none | USB4 Gen 3 (40 Gbps, Thunderbolt 4 class) | 5 A / 50 V (240 W) | passive | [#307](https://github.com/darrylmorley/whatcable/issues/307) |
+| UGreen retractable 100W (L531), zeroed e-marker | `0x0000` | `0x0000` | `0x00082040` | (zeroed) | none | USB 2.0 (480 Mbps) | 5 A / 20 V (100 W) | passive | [#302](https://github.com/darrylmorley/whatcable/issues/302) |
+| Unbranded TB5-class 80 Gbps, zeroed e-marker | `0x0000` | `0x0000` | `0x000A4644` | (zeroed) | none | USB4 Gen 4（80 Gbps，Thunderbolt 5 级） | 5 A / 50 V (240 W) | passive | [#309](https://github.com/darrylmorley/whatcable/issues/309) |
 
 Sorted by VID. The zeroed-fingerprint entry is parked at the bottom because it
 is identity-less.
