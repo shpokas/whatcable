@@ -463,3 +463,9 @@
 "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below.";
 "Connected to %lld Thunderbolt devices: %@" = "Connected to %1$lld Thunderbolt devices: %2$@";
 "Thunderbolt fabric:" = "Thunderbolt fabric:";
+
+/* Active-layout contradiction note (DAR-30). The e-marker's ID Header says passive
+   but VDO[3] has the SOP'' Controller Present bit set, which only exists in the
+   active-cable layout. Hedged wording: we describe the structural fact without
+   asserting the cable is fake or definitively active. */
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";

@@ -463,3 +463,6 @@
 "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "已連接顯示器。此連接埠目前未對外供電。輸入功率會顯示在下方的「系統電源輸入」圖表中。";
 "Connected to %lld Thunderbolt devices: %@" = "已連接 %1$lld 個 Thunderbolt 裝置：%2$@";
 "Thunderbolt fabric:" = "Thunderbolt 拓撲：";
+
+/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";

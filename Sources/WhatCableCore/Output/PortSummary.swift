@@ -336,6 +336,22 @@ extension PortSummary {
                 } else {
                     bullets.append(String(localized: "Active cable (contains signal-conditioning electronics)", bundle: _coreLocalizedBundle))
                 }
+            } else if cv.cableType == .passive && cable.hasActiveLayoutContradiction {
+                // The cable's ID Header says passive, but VDO[3] has the
+                // "SOP'' Controller Present" bit set, a field that only exists
+                // in the active-cable layout. That structural contradiction
+                // suggests this is really an active cable with a mis-programmed
+                // e-marker (confirmed real case: CalDigit 2M Thunderbolt 4).
+                // Surface the note with hedged wording; VDO[3] is kept decoded
+                // under the passive layout to avoid raising false trust flags.
+                bullets.append(String(localized: "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)", bundle: _coreLocalizedBundle))
+                if let v2 = cable.activeCableVDO2 {
+                    let medium = v2.physicalConnection.label.lowercased()
+                    let element = v2.activeElement.label.lowercased()
+                    // Reuses the same key as the normal active-cable VDO2 line
+                    // so no new localisation key is needed for the medium/element.
+                    bullets.append(String(localized: "Active \(medium) cable, \(element)", bundle: _coreLocalizedBundle))
+                }
             } else if cv.cableType == .passive && hasTB {
                 if let cio = cioCapability,
                    let speed = cio.cableSpeed,

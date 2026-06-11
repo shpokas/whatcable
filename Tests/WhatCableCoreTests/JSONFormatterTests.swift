@@ -405,6 +405,52 @@ struct JSONFormatterTests {
 
     // MARK: - Raw properties gating
 
+    // MARK: - Active-layout contradiction field (DAR-30)
+
+    /// Contradiction fixture: passive ID Header (Product Type 3) but VDO[3] bit 3 set.
+    /// Matches the CalDigit 2M TB4 cable from corpus.
+    private func contradictionCableIdentity() -> USBPDSOP {
+        let caldigitVDO3: UInt32 = 0x3208485A
+        return USBPDSOP(
+            id: 1, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0x97,
+            vdos: [
+                (3 << 27) | UInt32(0x2B1D),
+                0,
+                0x19010097,
+                caldigitVDO3
+            ],
+            specRevision: 3
+        )
+    }
+
+    @Test("activeLayoutContradiction is true for contradiction cable")
+    func activeLayoutContradictionTrueForContradictionCable() throws {
+        let port = makePort()
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [contradictionCableIdentity()], showRaw: false
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        let cable = try #require(portObj["cable"] as? [String: Any])
+        #expect(cable["activeLayoutContradiction"] as? Bool == true)
+    }
+
+    @Test("activeLayoutContradiction is false for normal passive cable")
+    func activeLayoutContradictionFalseForNormalPassive() throws {
+        let port = makePort()
+        // Clean passive cable: bit 3 clear in VDO[3].
+        let passive = cableIdentity(vendorID: 0x05AC, cableVDO: (0b10 << 5) | 0b011 | Self.validLatency)
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [passive], showRaw: false
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        let cable = try #require(portObj["cable"] as? [String: Any])
+        #expect(cable["activeLayoutContradiction"] as? Bool == false)
+    }
+
     @Test("Raw properties omitted by default")
     func rawPropertiesOmittedByDefault() throws {
         let json = try JSONFormatter.render(

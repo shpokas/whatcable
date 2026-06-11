@@ -463,3 +463,6 @@
 "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Ekran bağlı. Bu porttan güç gönderilmiyor. Gelen güç aşağıdaki Sistem Güç Girişi bölümünde gösteriliyor.";
 "Connected to %lld Thunderbolt devices: %@" = "%1$lld Thunderbolt aygıtına bağlandı: %2$@";
 "Thunderbolt fabric:" = "Thunderbolt topolojisi:";
+
+/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";

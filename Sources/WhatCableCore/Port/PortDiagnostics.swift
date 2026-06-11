@@ -233,4 +233,23 @@ public struct VDMIdentity: Codable, Sendable, Equatable {
         self.productType = productType
         self.productTypeDescription = productTypeDescription
     }
+
+    /// Reads `vdos[3]` as a little-endian UInt32 and returns its value,
+    /// or nil when VDO[3] is absent or malformed. Used by the diagnostic
+    /// view to check the SOP'' Controller Present bit without depending on
+    /// the USBPDSOP / PDVDO decode path.
+    public var cableVDO3Value: UInt32? {
+        guard vdos.count > 3, vdos[3].count == 4 else { return nil }
+        let b = vdos[3]
+        return UInt32(b[0]) | (UInt32(b[1]) << 8) | (UInt32(b[2]) << 16) | (UInt32(b[3]) << 24)
+    }
+
+    /// True when the cable's ID Header self-reports as passive (Product Type = 3)
+    /// but VDO[3] bit 3 is set. Mirrors `USBPDSOP.hasActiveLayoutContradiction`.
+    /// Used in the Pro diagnostic view which works from `VDMIdentity` rather
+    /// than `USBPDSOP`.
+    public var hasActiveLayoutContradiction: Bool {
+        guard productType == 3, let vdo3 = cableVDO3Value else { return false }
+        return (vdo3 >> 3) & 1 == 1
+    }
 }

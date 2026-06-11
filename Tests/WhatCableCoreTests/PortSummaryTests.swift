@@ -1519,6 +1519,72 @@ struct PortSummaryTests {
         )
     }
 
+    // MARK: - Active-layout contradiction (DAR-30)
+
+    /// Builds the CalDigit-style fixture: passive ID Header (Product Type 3)
+    /// but VDO[3] has bit 3 set (SOP'' Controller Present, active-cable layout).
+    /// VDO[4] encodes an optical re-timer so activeCableVDO2 can decode.
+    private func contradictionCable() -> USBPDSOP {
+        // VDO[3]: CalDigit 2M TB4 cable from issue #111.
+        let caldigitVDO3: UInt32 = 0x3208485A
+        // VDO[4]: optical (bit 10) + re-timer (bit 9).
+        let vdo4: UInt32 = (1 << 10) | (1 << 9)
+        return USBPDSOP(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x2B1D, productID: 0x1901, bcdDevice: 0x97,
+            vdos: [
+                (3 << 27) | UInt32(0x2B1D), // passive ID Header, VID Lintes
+                0,
+                0x19010097,
+                caldigitVDO3,
+                vdo4
+            ],
+            specRevision: 3
+        )
+    }
+
+    @Test("Contradiction cable: surfaces the hedged note in bullets")
+    func contradictionCableSurfacesNote() {
+        // The CalDigit 2M TB4 cable reports passive in its ID Header but has
+        // the SOP'' Controller Present bit set in VDO[3]. PortSummary should
+        // emit a hedged bullet describing the structural contradiction.
+        let port = makePort(active: ["CIO", "USB3"], supported: ["CC", "CIO", "USB3"])
+        let summary = PortSummary(port: port, identities: [contradictionCable()])
+        #expect(
+            summary.bullets.contains(where: {
+                $0.contains("passive") && $0.contains("active-cable structure")
+            }),
+            "expected a contradiction bullet, got: \(summary.bullets)"
+        )
+    }
+
+    @Test("Contradiction cable: does not surface note for normal passive (regression guard)")
+    func normalPassiveCableDoesNotSurfaceContradictionNote() {
+        // 154 out of 157 passive cables in the corpus have bit 3 clear.
+        // This guard ensures we don't flag them.
+        let port = makePort(active: ["USB3"], superSpeed: true)
+        let cable = USBPDSOP(
+            id: 99, endpoint: .sopPrime,
+            parentPortType: 2, parentPortNumber: 1,
+            vendorID: 0x05AC, productID: 0, bcdDevice: 0,
+            vdos: [
+                (3 << 27) | UInt32(0x05AC),
+                0,
+                0,
+                UInt32(0b011) | UInt32(2 << 5) | UInt32(1 << 13) // bit 3 clear
+            ],
+            specRevision: 3
+        )
+        let summary = PortSummary(port: port, identities: [cable])
+        #expect(
+            summary.bullets.contains(where: {
+                $0.contains("passive") && $0.contains("active-cable structure")
+            }) == false,
+            "normal passive cable must not trigger contradiction note, got: \(summary.bullets)"
+        )
+    }
+
     @Test("Charger identity bullet appears before the wattage advertisement")
     func chargerIdentityBulletOrdering() {
         // Bullet ordering: "Charger: Apple Inc. 140W USB-C Power Adapter"

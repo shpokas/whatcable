@@ -464,3 +464,6 @@
 "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Skjerm tilkoblet. Det sendes ingen strøm ut av denne porten. Innkommende strøm vises nedenfor under «Systemstrøminngang».";
 "Connected to %lld Thunderbolt devices: %@" = "Tilkoblet %1$lld Thunderbolt-enheter: %2$@";
 "Thunderbolt fabric:" = "Thunderbolt-fabric:";
+
+/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";

@@ -102,10 +102,19 @@ public struct USBPDSOP: Identifiable, Hashable {
     /// cables. Carries info that doesn't fit in VDO[3]: physical medium
     /// (copper/optical), active element (re-driver/re-timer), thermal
     /// limits, idle-state power, and per-lane / per-protocol support.
+    ///
+    /// Also decoded when `hasActiveLayoutContradiction` is true: a cable
+    /// that mis-reports its ID Header as passive but uses the active-cable
+    /// VDO layout in VDO[3] is likely an active cable with a mis-programmed
+    /// e-marker. Decoding VDO[4] as Active Cable VDO 2 gives richer info
+    /// than leaving it undecoded. The VDO[3] decode is intentionally kept
+    /// as-is (passive layout) to avoid raising false trust flags.
     public var activeCableVDO2: PDVDO.ActiveCableVDO2? {
         guard endpoint == .sopPrime || endpoint == .sopDoublePrime,
-              vdos.count > 4,
-              idHeader?.ufpProductType == .activeCable else { return nil }
+              vdos.count > 4 else { return nil }
+        guard idHeader?.ufpProductType == .activeCable || hasActiveLayoutContradiction else {
+            return nil
+        }
         return PDVDO.decodeActiveCableVDO2(vdos[4])
     }
 

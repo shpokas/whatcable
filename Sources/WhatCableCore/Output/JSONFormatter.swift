@@ -320,6 +320,12 @@ private struct CableDTO: Codable {
     let maxWatts: Int?
     let type: String?
     let active: ActiveCableDTO?
+    /// True when the cable's ID Header self-reports as passive (Product Type 3)
+    /// but VDO[3] bit 3 is set, which only exists in the active-cable layout.
+    /// A genuine passive cable cannot have this bit set; its presence is a
+    /// structural contradiction suggesting a mis-programmed e-marker. See
+    /// `USBPDSOP.hasActiveLayoutContradiction` for the full spec rationale.
+    let activeLayoutContradiction: Bool
     let trustFlags: [TrustFlagDTO]?
 
     init(identity: USBPDSOP, partner: USBPDSOP? = nil) {
@@ -347,6 +353,7 @@ private struct CableDTO: Codable {
         }
 
         self.active = identity.activeCableVDO2.map(ActiveCableDTO.init)
+        self.activeLayoutContradiction = identity.hasActiveLayoutContradiction
 
         let report = CableTrustReport(identity: identity, partner: partner)
         self.trustFlags = report.isEmpty ? nil : report.flags.map(TrustFlagDTO.init)

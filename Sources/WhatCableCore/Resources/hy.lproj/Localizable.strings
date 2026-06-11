@@ -464,3 +464,6 @@
 "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Էկրանը միացված է։ Այս պորտից հզորություն չի ուղարկվում։ Մուտքային հզորությունը ցուցադրվում է ստորև՝ «Համակարգի սնուցման մուտք» բաժնում։";
 "Connected to %lld Thunderbolt devices: %@" = "Միացված է %1$lld Thunderbolt սարքերի՝ %2$@";
 "Thunderbolt fabric:" = "Thunderbolt կառուցվածք՝";
+
+/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";

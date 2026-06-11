@@ -463,3 +463,6 @@
 "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Displejs pievienots. Caur šo portu jauda netiek izvadīta. Ienākošā jauda redzama zemāk sadaļā «Sistēmas strāvas ievade».";
 "Connected to %lld Thunderbolt devices: %@" = "Savienots ar %1$lld Thunderbolt ierīcēm: %2$@";
 "Thunderbolt fabric:" = "Thunderbolt tīkls:";
+
+/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";

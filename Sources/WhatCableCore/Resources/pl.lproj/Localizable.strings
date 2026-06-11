@@ -463,3 +463,6 @@
 "Display connected. No power is being sent out of this port. Incoming power shows in System Power Input below." = "Wyświetlacz podłączony. Przez ten port nie jest wysyłana moc. Moc przychodząca jest pokazana poniżej w sekcji „Wejście zasilania systemu“.";
 "Connected to %lld Thunderbolt devices: %@" = "Połączono z %1$lld urządzeniami Thunderbolt: %2$@";
 "Thunderbolt fabric:" = "Topologia Thunderbolt:";
+
+/* Active-layout contradiction note (DAR-30) - placeholder, see en.lproj */
+"E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)" = "E-marker reports passive, but carries active-cable structure (may be a mis-programmed e-marker)";
