@@ -144,13 +144,15 @@ extension DataLinkDiagnostic {
         // caught here. Belt and braces against the same class of bug.
         guard port.carriesData else { return nil }
 
-        // Pick the port's USB 3 transport (portKey is the correlation key;
-        // fall back to the only entry if the caller pre-filtered). Only
-        // trust the transport's speed when USB3 is in `TransportsActive`:
-        // the HPM port controller can leave a stale USB3 transport service
-        // around when the negotiated link is only USB 2.0 (issue #187).
+        // Pick the port's USB 3 transport. Match by identity (UUID-keyed via
+        // canonicallyMatches, portKey fallback) so the transport binds to the
+        // right physical port; fall back to the only entry if the caller
+        // pre-filtered. Only trust the transport's speed when USB3 is in
+        // `TransportsActive`: the HPM port controller can leave a stale USB3
+        // transport service around when the negotiated link is only USB 2.0
+        // (issue #187).
         let usb3 = port.transportsActive.contains("USB3")
-            ? (usb3Transports.first { $0.portKey == port.portKey } ?? usb3Transports.first)
+            ? (usb3Transports.first { $0.canonicallyMatches(port: port) } ?? usb3Transports.first)
             : nil
 
         // The speed the link actually negotiated: the Thunderbolt link if

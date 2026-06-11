@@ -38,7 +38,10 @@ final class NotificationManager {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             self.knownDeviceIDs = Set(WatcherHub.shared.deviceWatcher.devices.map(\.id))
-            self.knownChargerPortKeys = Set(WatcherHub.shared.powerWatcher.sources.map(\.portKey))
+            // Prime with canonicalJoinKey to match reconcileChargers, so the
+            // baseline and the diff use the same key space (else every connected
+            // charger would fire a spurious "connected" on the first poll).
+            self.knownChargerPortKeys = Set(WatcherHub.shared.powerWatcher.sources.map(\.canonicalJoinKey))
             self.didPrimeBaseline = true
         }
 
@@ -112,7 +115,9 @@ final class NotificationManager {
     /// the same port (USB-PD, Brick ID, TypeC). See issue #227 follow-up.
     private func reconcileChargers() {
         let current = WatcherHub.shared.powerWatcher.sources
-        let currentPortKeys = Set(current.map(\.portKey))
+        // Track chargers by canonicalJoinKey (HPM UUID when present, portKey
+        // fallback) so add/remove detection keys on stable port identity.
+        let currentPortKeys = Set(current.map(\.canonicalJoinKey))
         let addedPortKeys = currentPortKeys.subtracting(knownChargerPortKeys)
         let removedPortKeys = knownChargerPortKeys.subtracting(currentPortKeys)
         knownChargerPortKeys = currentPortKeys
@@ -120,7 +125,7 @@ final class NotificationManager {
         guard AppSettings.shared.notifyOnChanges else { return }
 
         for portKey in addedPortKeys {
-            let portSources = current.filter { $0.portKey == portKey }
+            let portSources = current.filter { $0.canonicalJoinKey == portKey }
             let preferred = PowerSource.preferredChargingSource(in: portSources) ?? portSources.first
             let body = preferred?.winning.map { String(localized: "\($0.wattsLabel) negotiated", bundle: _appLocalizedBundle) }
                 ?? String(localized: "PD source", bundle: _appLocalizedBundle)
