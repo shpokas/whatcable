@@ -41,11 +41,11 @@ public final class AppleTypeCPhyWatcher: ObservableObject {
         let cb: IOServiceMatchingCallback = { refcon, iterator in
             guard let refcon else { return }
             let watcher = Unmanaged<AppleTypeCPhyWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in
+            Task { @MainActor [weak watcher] in
                 while case let s = IOIteratorNext(iterator), s != 0 {
                     IOObjectRelease(s)
                 }
-                watcher.refresh()
+                watcher?.refresh()
             }
         }
 
@@ -179,7 +179,7 @@ public final class AppleTypeCPhyWatcher: ObservableObject {
         let cb: IOServiceInterestCallback = { refcon, _, _, _ in
             guard let refcon else { return }
             let watcher = Unmanaged<AppleTypeCPhyWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in watcher.refresh() }
+            Task { @MainActor [weak watcher] in watcher?.refresh() }
         }
         var notification: io_object_t = 0
         let result = IOServiceAddInterestNotification(

@@ -28,12 +28,12 @@ public final class USB3TransportWatcher: ObservableObject {
         let added: IOServiceMatchingCallback = { refcon, iter in
             guard let refcon else { return }
             let w = Unmanaged<USB3TransportWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in w.handleAdded(iter) }
+            Task { @MainActor [weak w] in w?.handleAdded(iter) }
         }
         let removed: IOServiceMatchingCallback = { refcon, iter in
             guard let refcon else { return }
             let w = Unmanaged<USB3TransportWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in w.handleRemoved(iter) }
+            Task { @MainActor [weak w] in w?.handleRemoved(iter) }
         }
 
         // Only drain the iterator when registration succeeds. The out-parameter

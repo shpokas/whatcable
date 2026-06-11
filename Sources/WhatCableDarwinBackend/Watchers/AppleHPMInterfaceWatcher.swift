@@ -56,7 +56,7 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
         let cb: IOServiceMatchingCallback = { refcon, iterator in
             guard let refcon else { return }
             let watcher = Unmanaged<AppleHPMInterfaceWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in watcher.drain(iterator: iterator) }
+            Task { @MainActor [weak watcher] in watcher?.drain(iterator: iterator) }
         }
 
         for cls in Self.candidateClasses {
@@ -155,7 +155,7 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
         let cb: IOServiceInterestCallback = { refcon, _, _, _ in
             guard let refcon else { return }
             let watcher = Unmanaged<AppleHPMInterfaceWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in watcher.refresh() }
+            Task { @MainActor [weak watcher] in watcher?.refresh() }
         }
         var notification: io_object_t = 0
         let result = IOServiceAddInterestNotification(

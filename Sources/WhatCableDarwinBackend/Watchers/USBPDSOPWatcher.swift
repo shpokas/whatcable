@@ -32,12 +32,12 @@ public final class USBPDSOPWatcher: ObservableObject {
         let added: IOServiceMatchingCallback = { refcon, iter in
             guard let refcon else { return }
             let w = Unmanaged<USBPDSOPWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in w.handleAdded(iter) }
+            Task { @MainActor [weak w] in w?.handleAdded(iter) }
         }
         let removed: IOServiceMatchingCallback = { refcon, iter in
             guard let refcon else { return }
             let w = Unmanaged<USBPDSOPWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in w.handleRemoved(iter) }
+            Task { @MainActor [weak w] in w?.handleRemoved(iter) }
         }
 
         for className in Self.matchedClasses {

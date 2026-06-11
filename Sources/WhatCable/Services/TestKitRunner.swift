@@ -39,6 +39,8 @@ final class TestKitRunner: ObservableObject {
         "36_xhci_port_map",
     ]
 
+    private var runTask: Task<Void, Never>?
+
     private init() {}
 
     var isRunning: Bool {
@@ -49,8 +51,17 @@ final class TestKitRunner: ObservableObject {
     func run() {
         guard !isRunning else { return }
 
-        Task {
+        runTask = Task {
             await runAllProbes()
+            runTask = nil
+        }
+    }
+
+    func cancel() {
+        runTask?.cancel()
+        runTask = nil
+        if isRunning {
+            state = .idle
         }
     }
 
@@ -74,6 +85,11 @@ final class TestKitRunner: ObservableObject {
         var failed = 0
 
         for (index, probeName) in Self.probeNames.enumerated() {
+            guard !Task.isCancelled else {
+                state = .idle
+                return
+            }
+
             state = .running(probe: probeName, current: index + 1, total: total)
 
             let binaryURL = probesDir.appendingPathComponent(probeName)
@@ -136,6 +152,8 @@ final class TestKitRunner: ObservableObject {
                     return
                 }
 
+                // Timer is created only after process.run() succeeds, so the
+                // catch path above cannot leak a live timer source.
                 let timer = DispatchSource.makeTimerSource(queue: .global())
                 timer.schedule(deadline: .now() + 30)
                 timer.setEventHandler {
@@ -144,9 +162,9 @@ final class TestKitRunner: ObservableObject {
                     }
                 }
                 timer.resume()
+                defer { timer.cancel() }
 
                 process.waitUntilExit()
-                timer.cancel()
 
                 let data = pipe.fileHandleForReading.readDataToEndOfFile()
                 let output = String(data: data, encoding: .utf8)

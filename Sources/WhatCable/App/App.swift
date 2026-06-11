@@ -174,6 +174,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
         }
     }
 
+    func applicationWillTerminate(_ notification: Notification) {
+        TestKitRunner.shared.cancel()
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         // In window mode, closing the window quits the app. In menu bar mode
         // there's no window to close, so this is harmless either way.

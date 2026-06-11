@@ -24,13 +24,13 @@ public final class USBWatcher: ObservableObject {
         let addedCallback: IOServiceMatchingCallback = { refcon, iterator in
             guard let refcon else { return }
             let watcher = Unmanaged<USBWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in watcher.handleAdded(iterator: iterator) }
+            Task { @MainActor [weak watcher] in watcher?.handleAdded(iterator: iterator) }
         }
 
         let removedCallback: IOServiceMatchingCallback = { refcon, iterator in
             guard let refcon else { return }
             let watcher = Unmanaged<USBWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in watcher.handleRemoved(iterator: iterator) }
+            Task { @MainActor [weak watcher] in watcher?.handleRemoved(iterator: iterator) }
         }
 
         // IOServiceAddMatchingNotification consumes one reference to the matching

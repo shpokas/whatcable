@@ -42,12 +42,12 @@ public final class DisplayPortTransportWatcher: ObservableObject {
         let added: IOServiceMatchingCallback = { refcon, iterator in
             guard let refcon else { return }
             let watcher = Unmanaged<DisplayPortTransportWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in watcher.handleAdded(iterator) }
+            Task { @MainActor [weak watcher] in watcher?.handleAdded(iterator) }
         }
         let removed: IOServiceMatchingCallback = { refcon, iterator in
             guard let refcon else { return }
             let watcher = Unmanaged<DisplayPortTransportWatcher>.fromOpaque(refcon).takeUnretainedValue()
-            Task { @MainActor in watcher.handleRemoved(iterator) }
+            Task { @MainActor [weak watcher] in watcher?.handleRemoved(iterator) }
         }
 
         if IOServiceAddMatchingNotification(
