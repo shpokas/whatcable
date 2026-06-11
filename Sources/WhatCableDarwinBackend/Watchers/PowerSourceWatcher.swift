@@ -118,13 +118,19 @@ public final class PowerSourceWatcher: ObservableObject {
         let options: [PowerOption] = parseOptions(read("PowerSourceOptions"))
         let winning: PowerOption? = parseOption(read("WinningPowerSourceOption"))
 
+        // Walk the parent chain to get the HPM controller UUID. This is the
+        // same UUID stored on the AppleHPMInterface node two levels above, so
+        // matching by UUID ties a power source to its port with no @N guessing.
+        let uuid = wcHPMControllerUUID(for: service)
+
         return PowerSource(
             id: entryID,
             name: name,
             parentPortType: parent.type,
             parentPortNumber: parent.number,
             options: options,
-            winning: winning
+            winning: winning,
+            hpmControllerUUID: uuid
         )
     }
 
@@ -178,9 +184,9 @@ public final class PowerSourceWatcher: ObservableObject {
 
 extension PowerSourceWatcher {
     /// All power sources attached to a given port.
+    /// Uses UUID-based matching when available (M3+), else portKey fallback.
     public func sources(for port: AppleHPMInterface) -> [PowerSource] {
-        guard let key = port.portKey else { return [] }
-        return sources.filter { $0.portKey == key }
+        return sources.filter { $0.canonicallyMatches(port: port) }
     }
 }
 

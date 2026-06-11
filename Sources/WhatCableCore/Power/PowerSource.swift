@@ -33,6 +33,11 @@ public struct PowerSource: Identifiable, Hashable {
     public let parentPortNumber: Int
     public let options: [PowerOption]
     public let winning: PowerOption?
+    /// HPM controller UUID for this port, captured by walking the IOKit
+    /// parent chain from the `IOPortFeaturePowerSource` node up through the
+    /// HPM interface to the HPM device (`AppleHPMDevice` / `AppleHPMDeviceHALType3`).
+    /// Internal join key only. Never serialised to JSON or text output.
+    public let hpmControllerUUID: String?
 
     public init(
         id: UInt64,
@@ -40,7 +45,8 @@ public struct PowerSource: Identifiable, Hashable {
         parentPortType: Int,
         parentPortNumber: Int,
         options: [PowerOption],
-        winning: PowerOption?
+        winning: PowerOption?,
+        hpmControllerUUID: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -48,6 +54,7 @@ public struct PowerSource: Identifiable, Hashable {
         self.parentPortNumber = parentPortNumber
         self.options = options
         self.winning = winning
+        self.hpmControllerUUID = hpmControllerUUID
     }
 
     public var maxPowerMW: Int {
@@ -59,9 +66,47 @@ public struct PowerSource: Identifiable, Hashable {
 
     /// Match key joining a power source to its port.
     public var portKey: String { "\(parentPortType)/\(parentPortNumber)" }
+
+    /// Canonical in-session join key: normalised UUID (32 lowercase hex chars)
+    /// when one was captured, else `portKey`. Mirrors `AppleHPMInterface.canonicalJoinKey`.
+    /// Internal only; never expose in JSON or text output.
+    public var canonicalJoinKey: String {
+        if let uuid = hpmControllerUUID {
+            let normalised = uuid.replacingOccurrences(of: "-", with: "").lowercased()
+            if normalised.count == 32 { return normalised }
+        }
+        return portKey
+    }
 }
 
 extension PowerSource {
+    /// True when this source belongs to the same physical port as `port`.
+    ///
+    /// Matching is UUID-based when both sides resolved a UUID (M3+, guaranteed
+    /// correct: distinct HPM controller dies have distinct UUIDs). Falls back to
+    /// `portKey` comparison when either side is missing a UUID (M1/M2, or a
+    /// defensive nil from an unusual registry layout). The fallback preserves
+    /// existing behaviour on hardware that predates the UUID probe.
+    ///
+    /// A source that fails to resolve a UUID while the port has one is NOT
+    /// silently dropped: `canonicalJoinKey` falls back to `portKey` on the
+    /// source side, so it still matches the port's `portKey` fallback, and
+    /// the match still fires as long as `ParentPortType/Number` agrees.
+    public func canonicallyMatches(port: AppleHPMInterface) -> Bool {
+        guard let portKey = port.portKey else { return false }
+        // When both sides have a UUID, compare them directly. This is the
+        // collision-proof path on M3+.
+        if let sourceUUID = hpmControllerUUID,
+           let portUUID = port.hpmControllerUUID {
+            let sn = sourceUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            let pn = portUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            if sn.count == 32 && pn.count == 32 { return sn == pn }
+        }
+        // Fallback: compare portKey strings. Works correctly on M1/M2 where
+        // MagSafe and USB-C portKeys already differ by type prefix (17/ vs 2/).
+        return self.portKey == portKey
+    }
+
     public static func preferredChargingSource(in sources: [PowerSource]) -> PowerSource? {
         sources.first { $0.name == "USB-PD" }
             ?? sources.first { $0.name == "Brick ID" }
@@ -90,5 +135,27 @@ extension AppleHPMInterface {
             rawType = rawProperties["PortType"].flatMap { Int($0) } ?? 0x2
         }
         return "\(rawType)/\(n)"
+    }
+
+    /// The canonical in-session join key for this port.
+    ///
+    /// When `hpmControllerUUID` is present, this is the UUID with dashes
+    /// stripped and lowercased (32 hex chars) -- the same normalised form
+    /// `HPMPortUUIDMap` uses. When absent (M1/M2 or defensive nil), it falls
+    /// back to `portKey` so every port still has a key.
+    ///
+    /// **Internal only.** This value must never appear in JSON, text output,
+    /// or the UI. Use `portKey` for all user-visible output.
+    ///
+    /// Two ports that share the same `@N` suffix but belong to different
+    /// physical connectors (MagSafe@1 and USB-C@1, both wired to separate
+    /// HPM controller dies) carry distinct UUIDs. Their canonical join keys
+    /// are therefore distinct even when their `portKey` values would agree.
+    public var canonicalJoinKey: String? {
+        if let uuid = hpmControllerUUID {
+            let normalised = uuid.replacingOccurrences(of: "-", with: "").lowercased()
+            if normalised.count == 32 { return normalised }
+        }
+        return portKey
     }
 }

@@ -103,6 +103,11 @@ public struct IOPortTransportStateDisplayPort: Codable, Sendable, Equatable {
     /// it is correct even for 5K/6K displays whose EDID can't describe their
     /// native mode. Same nil contract as `currentMode`.
     public let maxMode: DisplayCurrentMode?
+    /// HPM controller UUID captured by walking the IOKit parent chain from the
+    /// `IOPortTransportStateDisplayPort` node up to `AppleHPMDeviceHALType3`.
+    /// Internal join key only. Never serialised to JSON or text output.
+    /// Excluded from `CodingKeys` so it never appears in encoded output.
+    public let hpmControllerUUID: String?
 
     public init(
         link: DisplayPortLink,
@@ -138,7 +143,8 @@ public struct IOPortTransportStateDisplayPort: Codable, Sendable, Equatable {
         nominalSignalingFrequenciesHz: [Int] = [],
         index: Int = 0,
         currentMode: DisplayCurrentMode? = nil,
-        maxMode: DisplayCurrentMode? = nil
+        maxMode: DisplayCurrentMode? = nil,
+        hpmControllerUUID: String? = nil
     ) {
         self.link = link
         self.monitor = monitor
@@ -174,6 +180,69 @@ public struct IOPortTransportStateDisplayPort: Codable, Sendable, Equatable {
         self.index = index
         self.currentMode = currentMode
         self.maxMode = maxMode
+        self.hpmControllerUUID = hpmControllerUUID
+    }
+
+    /// `CodingKeys` lists only the serialisable fields. `hpmControllerUUID` is
+    /// intentionally omitted: it is an internal join key and must never appear
+    /// in JSON, text output, or any encoded representation.
+    private enum CodingKeys: String, CodingKey {
+        case link, monitor, dfpType, branchDeviceId, branchDeviceOUI
+        case sinkCount, role, roleDescription
+        case driverStatus, driverStatusDescription
+        case transportType, transportTypeDescription, transportDescription
+        case authorizationRequired, authorizationStatus, authorizationStatusDescription
+        case authenticationRequired, authenticationStatus, authenticationStatusDescription
+        case hashStatus, hashStatusDescription
+        case trmTransportSupervised
+        case parentPortType, parentPortTypeDescription, parentPortNumber
+        case parentPortBuiltIn, parentBuiltInPortType, parentBuiltInPortTypeDescription, parentBuiltInPortNumber
+        case edidChanged, nominalSignalingFrequenciesHz, index
+        case currentMode, maxMode
+        // hpmControllerUUID is deliberately absent from this enum.
+    }
+
+    /// Custom `Decodable` implementation required because `hpmControllerUUID` is
+    /// excluded from `CodingKeys`. It always decodes as `nil`; the watcher sets
+    /// it at construction time via the public `init`, never via decoding.
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        link = try c.decode(DisplayPortLink.self, forKey: .link)
+        monitor = try c.decodeIfPresent(MonitorInfo.self, forKey: .monitor)
+        dfpType = try c.decodeIfPresent(String.self, forKey: .dfpType)
+        branchDeviceId = try c.decodeIfPresent(String.self, forKey: .branchDeviceId)
+        branchDeviceOUI = try c.decodeIfPresent(Data.self, forKey: .branchDeviceOUI)
+        sinkCount = try c.decode(Int.self, forKey: .sinkCount)
+        role = try c.decode(Int.self, forKey: .role)
+        roleDescription = try c.decodeIfPresent(String.self, forKey: .roleDescription)
+        driverStatus = try c.decode(Int.self, forKey: .driverStatus)
+        driverStatusDescription = try c.decodeIfPresent(String.self, forKey: .driverStatusDescription)
+        transportType = try c.decode(Int.self, forKey: .transportType)
+        transportTypeDescription = try c.decodeIfPresent(String.self, forKey: .transportTypeDescription)
+        transportDescription = try c.decodeIfPresent(String.self, forKey: .transportDescription)
+        authorizationRequired = try c.decode(Bool.self, forKey: .authorizationRequired)
+        authorizationStatus = try c.decode(Int.self, forKey: .authorizationStatus)
+        authorizationStatusDescription = try c.decodeIfPresent(String.self, forKey: .authorizationStatusDescription)
+        authenticationRequired = try c.decode(Bool.self, forKey: .authenticationRequired)
+        authenticationStatus = try c.decode(Int.self, forKey: .authenticationStatus)
+        authenticationStatusDescription = try c.decodeIfPresent(String.self, forKey: .authenticationStatusDescription)
+        hashStatus = try c.decode(Int.self, forKey: .hashStatus)
+        hashStatusDescription = try c.decodeIfPresent(String.self, forKey: .hashStatusDescription)
+        trmTransportSupervised = try c.decode(Bool.self, forKey: .trmTransportSupervised)
+        parentPortType = try c.decode(Int.self, forKey: .parentPortType)
+        parentPortTypeDescription = try c.decodeIfPresent(String.self, forKey: .parentPortTypeDescription)
+        parentPortNumber = try c.decode(Int.self, forKey: .parentPortNumber)
+        parentPortBuiltIn = try c.decode(Bool.self, forKey: .parentPortBuiltIn)
+        parentBuiltInPortType = try c.decode(Int.self, forKey: .parentBuiltInPortType)
+        parentBuiltInPortTypeDescription = try c.decodeIfPresent(String.self, forKey: .parentBuiltInPortTypeDescription)
+        parentBuiltInPortNumber = try c.decode(Int.self, forKey: .parentBuiltInPortNumber)
+        edidChanged = try c.decode(Bool.self, forKey: .edidChanged)
+        nominalSignalingFrequenciesHz = try c.decode([Int].self, forKey: .nominalSignalingFrequenciesHz)
+        index = try c.decode(Int.self, forKey: .index)
+        currentMode = try c.decodeIfPresent(DisplayCurrentMode.self, forKey: .currentMode)
+        maxMode = try c.decodeIfPresent(DisplayCurrentMode.self, forKey: .maxMode)
+        // hpmControllerUUID is internal only; always nil when decoded from persisted data.
+        hpmControllerUUID = nil
     }
 }
 
@@ -185,6 +254,28 @@ extension IOPortTransportStateDisplayPort {
     /// port directly. Confirmed against probe 17 (ParentPortType 2 /
     /// ParentPortNumber 4 for the active "Port-USB-C" display).
     public var portKey: String { "\(parentPortType)/\(parentPortNumber)" }
+
+    /// Canonical in-session join key: normalised UUID when captured, else portKey.
+    /// Internal only; never expose in JSON or text output.
+    public var canonicalJoinKey: String {
+        if let uuid = hpmControllerUUID {
+            let n = uuid.replacingOccurrences(of: "-", with: "").lowercased()
+            if n.count == 32 { return n }
+        }
+        return portKey
+    }
+
+    /// True when this DisplayPort node belongs to the same physical port as `port`.
+    /// UUID-keyed when both sides have a UUID, portKey fallback otherwise.
+    public func canonicallyMatches(port: AppleHPMInterface) -> Bool {
+        guard let portKey = port.portKey else { return false }
+        if let srcUUID = hpmControllerUUID, let portUUID = port.hpmControllerUUID {
+            let sn = srcUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            let pn = portUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            if sn.count == 32 && pn.count == 32 { return sn == pn }
+        }
+        return self.portKey == portKey
+    }
 }
 
 @available(*, deprecated, renamed: "IOPortTransportStateDisplayPort")

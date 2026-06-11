@@ -73,4 +73,90 @@ struct USB3TransportTests {
         let t = USB3Transport(id: 42, portKey: "2/3", signaling: 1, signalingDescription: nil, dataRole: nil)
         #expect(t.id == 42)
     }
+
+    // MARK: - canonicallyMatches (DAR-29)
+
+    /// When both the transport and the port carry matching UUIDs, the match
+    /// must use UUID comparison, not portKey. This is the collision-proof
+    /// path on M3+ where MagSafe@1 and USB-C@1 share portNumber 1.
+    @Test("canonicallyMatches uses UUID when both sides have matching UUID")
+    func canonicallyMatchesUUIDOnBothSides() {
+        let uuid = "7C30AF2D-D913-3441-0CD9-435CAC6CFA51"
+        let transport = USB3Transport(id: 1, portKey: "2/1", signaling: 1,
+                                      signalingDescription: "Gen 1", dataRole: "host",
+                                      hpmControllerUUID: uuid)
+        let port = makePort(portNumber: 1, portType: "USB-C", uuid: uuid)
+        #expect(transport.canonicallyMatches(port: port))
+    }
+
+    /// When the transport has no UUID (M1/M2 hardware) but the portKey matches,
+    /// the match must still succeed via the portKey fallback. UUID absence on
+    /// the source side must not silently drop the transport from the join.
+    @Test("canonicallyMatches falls back to portKey when transport has no UUID (M1/M2)")
+    func canonicallyMatchesFallsBackToPortKey() {
+        // Transport has no UUID; port does. The portKey "2/1" matches on both sides.
+        let transport = USB3Transport(id: 2, portKey: "2/1", signaling: 2,
+                                      signalingDescription: "Gen 2", dataRole: "host",
+                                      hpmControllerUUID: nil)
+        let port = makePort(portNumber: 1, portType: "USB-C", uuid: "7C30AF2D-D913-3441-0CD9-435CAC6CFA51")
+        #expect(transport.canonicallyMatches(port: port))
+    }
+
+    /// Issue #195 collision guard: two ports share portNumber 1 but carry
+    /// different UUIDs (MagSafe@1 and USB-C@1). A USB3 transport for the
+    /// USB-C port must NOT match the MagSafe port, even though the portKeys
+    /// would agree if UUID comparison were skipped.
+    @Test("canonicallyMatches rejects UUID mismatch even when portKey collides (issue #195 guard)")
+    func canonicallyMatchesRejectsUUIDMismatch() {
+        let usbcUUID    = "6230AF2D-0000-0000-0000-112233445566"
+        let magSafeUUID = "7C30AF2D-0000-0000-0000-AABBCCDDEEFF"
+
+        // USB3 transport belongs to the USB-C port.
+        let transport = USB3Transport(id: 3, portKey: "2/1", signaling: 1,
+                                      signalingDescription: "Gen 1", dataRole: "host",
+                                      hpmControllerUUID: usbcUUID)
+        // But we try to match it against the MagSafe port (different UUID, same portNumber).
+        let magSafePort = makePort(portNumber: 1, portType: "MagSafe 3", uuid: magSafeUUID)
+
+        // Must NOT match: UUIDs differ, so it is a different physical port.
+        #expect(!transport.canonicallyMatches(port: magSafePort))
+    }
+
+    // MARK: - canonicalJoinKey (DAR-29)
+
+    @Test("canonicalJoinKey returns normalised UUID when UUID is present")
+    func canonicalJoinKeyNormalisedUUID() {
+        let t = USB3Transport(id: 1, portKey: "2/4", signaling: 1, signalingDescription: nil, dataRole: nil,
+                              hpmControllerUUID: "17BD562D-D913-3441-0CD9-435CAC6CFA51")
+        #expect(t.canonicalJoinKey == "17bd562dd91334410cd9435cac6cfa51")
+    }
+
+    @Test("canonicalJoinKey falls back to portKey when UUID is nil")
+    func canonicalJoinKeyFallsBackToPortKey() {
+        let t = USB3Transport(id: 2, portKey: "2/4", signaling: 1, signalingDescription: nil, dataRole: nil,
+                              hpmControllerUUID: nil)
+        #expect(t.canonicalJoinKey == "2/4")
+    }
+
+    // MARK: - Helpers
+
+    private func makePort(portNumber: Int, portType: String, uuid: String?) -> AppleHPMInterface {
+        AppleHPMInterface(
+            id: UInt64(portNumber),
+            serviceName: "Port-\(portType)@\(portNumber)",
+            className: "AppleHPMInterfaceType10",
+            portDescription: nil,
+            portTypeDescription: portType,
+            portNumber: portNumber,
+            connectionActive: nil, activeCable: nil, opticalCable: nil,
+            usbActive: nil, superSpeedActive: nil, usbModeType: nil,
+            usbConnectString: nil,
+            transportsSupported: [], transportsActive: [], transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil,
+            hpmControllerUUID: uuid,
+            rawProperties: ["PortType": portType == "USB-C" ? "2" : "17"]
+        )
+    }
 }

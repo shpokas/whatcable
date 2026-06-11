@@ -1122,4 +1122,49 @@ struct JSONFormatterTests {
         #expect(raw["PortType"] as? String == "2", "PortType must appear in JSON output")
         #expect(raw["VendorID"] as? String == "0x05AC", "VendorID must appear in JSON output")
     }
+
+    /// DAR-29 privacy regression: the HPM controller UUID must never appear in
+    /// JSON output, even when a future readAll path captures a raw "UUID" key.
+    /// The UUID is an internal SMC join key; exposing it would uniquely identify
+    /// the machine on every shared ioreg dump.
+    @Test("--raw JSON output omits UUID (DAR-29 privacy guard)")
+    func rawJSONOmitsHPMControllerUUID() throws {
+        let port = USBCPort(
+            id: 1, serviceName: "Port-USB-C@1",
+            className: "AppleHPMInterfaceType10",
+            portDescription: "Port-USB-C@1",
+            portTypeDescription: "USB-C",
+            portNumber: 1,
+            connectionActive: true,
+            activeCable: nil, opticalCable: nil, usbActive: nil,
+            superSpeedActive: nil, usbModeType: nil, usbConnectString: nil,
+            transportsSupported: ["CC", "USB2", "USB3"],
+            transportsActive: ["USB3"], transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil,
+            // Simulate a future readAll that accidentally captured UUID.
+            rawProperties: [
+                "UUID": "7C30AF2D-FEED-BEEF-CAFE-112233445566",
+                "PortType": "2",
+            ]
+        )
+
+        let json = try JSONFormatter.render(
+            ports: [port], sources: [], identities: [], showRaw: true
+        )
+        let obj = parse(json)
+        let portObj = (obj["ports"] as? [[String: Any]])?.first ?? [:]
+        let raw = portObj["rawProperties"] as? [String: Any] ?? [:]
+
+        #expect(raw["UUID"] == nil, "UUID must be redacted from JSON output (internal join key)")
+        #expect(raw["PortType"] as? String == "2", "PortType must appear in JSON output")
+
+        // Also confirm hpmControllerUUID does not appear anywhere in the JSON as
+        // a field name. It is purely internal and has no JSON representation.
+        #expect(!json.contains("hpmControllerUUID"),
+            "hpmControllerUUID must not appear anywhere in JSON output")
+        #expect(!json.contains("7C30AF2D"),
+            "UUID value must not appear anywhere in JSON output")
+    }
 }

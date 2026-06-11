@@ -319,7 +319,8 @@ private func printCableReports(identities: [USBPDSOP], cioCapabilities: [CIOCabl
             print("=== Cable \(i + 1) of \(cables.count) ===")
             print("")
         }
-        let cio = cioCapabilities.first { $0.portKey == identity.portKey }
+        // Match by canonicalJoinKey: UUID-keyed on M3+, portKey fallback on M1/M2.
+        let cio = cioCapabilities.first { $0.canonicalJoinKey == identity.canonicalJoinKey }
         guard let payload = CableReport.payload(
             for: identity,
             includeSystemInfo: true,

@@ -139,6 +139,11 @@ public final class USBPDSOPWatcher: ObservableObject {
             return PDVDO.vdoFromData(data)
         }
 
+        // Walk the parent chain to capture the HPM controller UUID.
+        // SOP/SOP' nodes sit at Port-USB-C@N/CC/SOP, so the controller is
+        // ~3-4 steps up (CC -> AppleHPMInterfaceType10 -> AppleHPMDeviceHALType3).
+        let uuid = wcHPMControllerUUID(for: service)
+
         return USBPDSOP(
             id: entryID,
             endpoint: endpoint,
@@ -148,7 +153,8 @@ public final class USBPDSOPWatcher: ObservableObject {
             productID: productID,
             bcdDevice: bcdDevice,
             vdos: vdos,
-            specRevision: specRev
+            specRevision: specRev,
+            hpmControllerUUID: uuid
         )
     }
 
@@ -236,8 +242,7 @@ public final class USBPDSOPWatcher: ObservableObject {
     }
 
     public func identities(for port: AppleHPMInterface) -> [USBPDSOP] {
-        guard let key = port.portKey else { return [] }
-        return identities.filter { $0.portKey == key }
+        identities.filter { $0.canonicallyMatches(port: port) }
     }
 }
 

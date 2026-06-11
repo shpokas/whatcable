@@ -349,4 +349,38 @@ struct TextFormatterTests {
         #expect(output.contains("PortType"), "PortType must appear in text output")
         #expect(output.contains("VendorID"), "VendorID must appear in text output")
     }
+
+    /// DAR-29 privacy regression: the HPM controller UUID must never appear in
+    /// text output, even when a future readAll path captures a raw "UUID" key.
+    @Test("--raw text output omits UUID key and value (DAR-29 privacy guard)")
+    func rawTextOmitsHPMControllerUUID() {
+        let port = USBCPort(
+            id: 1, serviceName: "Port-USB-C@1",
+            className: "AppleHPMInterfaceType10",
+            portDescription: "Port-USB-C@1",
+            portTypeDescription: "USB-C",
+            portNumber: 1,
+            connectionActive: true,
+            activeCable: nil, opticalCable: nil, usbActive: nil,
+            superSpeedActive: nil, usbModeType: nil, usbConnectString: nil,
+            transportsSupported: ["CC", "USB2", "USB3"],
+            transportsActive: ["USB3"], transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil,
+            // Simulate a future readAll that accidentally captured UUID.
+            rawProperties: [
+                "UUID": "7C30AF2D-FEED-BEEF-CAFE-112233445566",
+                "PortType": "2",
+            ]
+        )
+
+        let output = TextFormatter.render(
+            ports: [port], sources: [], identities: [], showRaw: true
+        )
+
+        #expect(!output.contains("UUID"), "UUID key must not appear in text output")
+        #expect(!output.contains("7C30AF2D"), "UUID value must not appear in text output")
+        #expect(output.contains("PortType"), "PortType must appear in text output")
+    }
 }

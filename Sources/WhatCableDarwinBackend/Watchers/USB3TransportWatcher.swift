@@ -119,20 +119,25 @@ public final class USB3TransportWatcher: ObservableObject {
         let dataRole = (read("DataRole") as? String)
             ?? (read("PortDataRole") as? String)
 
+        // Walk the parent chain to get the HPM controller UUID so this
+        // transport can be matched to its port by identity, not by @N.
+        let uuid = wcHPMControllerUUID(for: service)
+
         return USB3Transport(
             id: entryID,
             portKey: portKey,
             signaling: signaling,
             signalingDescription: signalingDesc,
-            dataRole: dataRole
+            dataRole: dataRole,
+            hpmControllerUUID: uuid
         )
     }
 }
 
 extension USB3TransportWatcher {
     /// USB3 transports attached to a given port.
+    /// Uses UUID-based matching when available (M3+), else portKey fallback.
     public func transports(for port: AppleHPMInterface) -> [USB3Transport] {
-        guard let key = port.portKey else { return [] }
-        return transports.filter { $0.portKey == key }
+        return transports.filter { $0.canonicallyMatches(port: port) }
     }
 }

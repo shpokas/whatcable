@@ -20,19 +20,46 @@ public struct USB3Transport: Identifiable, Hashable, Sendable {
     public let signalingDescription: String?
     /// Data role as reported by the transport: "host", "device", etc.
     public let dataRole: String?
+    /// HPM controller UUID captured by walking the IOKit parent chain.
+    /// Internal join key only. Never serialised to JSON or text output.
+    public let hpmControllerUUID: String?
 
     public init(
         id: UInt64,
         portKey: String,
         signaling: Int?,
         signalingDescription: String?,
-        dataRole: String?
+        dataRole: String?,
+        hpmControllerUUID: String? = nil
     ) {
         self.id = id
         self.portKey = portKey
         self.signaling = signaling
         self.signalingDescription = signalingDescription
         self.dataRole = dataRole
+        self.hpmControllerUUID = hpmControllerUUID
+    }
+
+    /// Canonical in-session join key: normalised UUID when captured, else portKey.
+    /// Internal only; never expose in JSON or text output.
+    public var canonicalJoinKey: String {
+        if let uuid = hpmControllerUUID {
+            let n = uuid.replacingOccurrences(of: "-", with: "").lowercased()
+            if n.count == 32 { return n }
+        }
+        return portKey
+    }
+
+    /// True when this transport belongs to the same physical port as `port`.
+    /// UUID-keyed when both sides have a UUID, portKey fallback otherwise.
+    public func canonicallyMatches(port: AppleHPMInterface) -> Bool {
+        guard let portKey = port.portKey else { return false }
+        if let srcUUID = hpmControllerUUID, let portUUID = port.hpmControllerUUID {
+            let sn = srcUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            let pn = portUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            if sn.count == 32 && pn.count == 32 { return sn == pn }
+        }
+        return self.portKey == portKey
     }
 
     /// User-facing label for the negotiated USB 3 speed.

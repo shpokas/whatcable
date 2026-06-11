@@ -39,6 +39,20 @@ public struct AppleHPMInterface: Identifiable, Hashable {
     /// Pairs with `USBDevice.busIndex` for device-to-port matching. `nil`
     /// when the parent walk doesn't find an `hpm` node (e.g. M1/M2, MagSafe).
     public let busIndex: Int?
+    /// The HPM power-controller `UUID` for this physical port, read from the
+    /// controller ancestor node (class `AppleHPMDevice` or its subclass
+    /// `AppleHPMDeviceHALType3`). Present on 100% of ports across all chip
+    /// families (M1, M2, M3, M4, M5, Intel) per corpus probe 35 (265/265 ports).
+    ///
+    /// This is an **internal in-session join key only**. It is never serialised
+    /// to JSON or text output and must never appear in `--raw` or `--json`.
+    /// Use it to correlate this port with SMC power channels (the same value
+    /// appears as the SMC `DxUI` key on M3+). Distinct per physical port,
+    /// including MagSafe vs USB-C when they share the same `@N` number.
+    ///
+    /// Stability is within-session. Cross-reboot stability is untested; this
+    /// is fine because the value is only used as a live join key, never persisted.
+    public let hpmControllerUUID: String?
     public let rawProperties: [String: String]
 
     /// Build from a parsed IOKit property dictionary. Returns nil
@@ -52,7 +66,8 @@ public struct AppleHPMInterface: Identifiable, Hashable {
         className: String,
         read: (String) -> Any?,
         readAll: (() -> [String: Any]?)? = nil,
-        busIndex: Int? = nil
+        busIndex: Int? = nil,
+        hpmControllerUUID: String? = nil
     ) -> AppleHPMInterface? {
         // Only return things that actually look like a physical Type-C or
         // MagSafe port. Real ports have a `PortTypeDescription` and a name
@@ -127,6 +142,7 @@ public struct AppleHPMInterface: Identifiable, Hashable {
             accessoryPowerMode: (read("IOAccessoryPowerMode") as? NSNumber)?.intValue,
             accessoryActivePowerMode: (read("IOAccessoryActivePowerMode") as? NSNumber)?.intValue,
             busIndex: busIndex,
+            hpmControllerUUID: hpmControllerUUID,
             rawProperties: raw
         )
     }
@@ -162,6 +178,7 @@ public struct AppleHPMInterface: Identifiable, Hashable {
         accessoryPowerMode: Int? = nil,
         accessoryActivePowerMode: Int? = nil,
         busIndex: Int? = nil,
+        hpmControllerUUID: String? = nil,
         rawProperties: [String: String]
     ) {
         self.id = id
@@ -194,6 +211,7 @@ public struct AppleHPMInterface: Identifiable, Hashable {
         self.accessoryPowerMode = accessoryPowerMode
         self.accessoryActivePowerMode = accessoryActivePowerMode
         self.busIndex = busIndex
+        self.hpmControllerUUID = hpmControllerUUID
         self.rawProperties = rawProperties
     }
 
@@ -201,11 +219,15 @@ public struct AppleHPMInterface: Identifiable, Hashable {
     // subsystems. They are per-machine identity values and must never appear
     // in user-facing output such as --raw or --json, because users paste that
     // output into GitHub issues. The stored rawProperties is left intact so
-    // internal joins (e.g. HPMPortUUIDMap) continue to work; the redaction
-    // happens only at the output boundary via redactedRawProperties below.
+    // internal joins continue to work; the redaction happens only at the
+    // output boundary via redactedRawProperties below.
     private static let privateRawKeys: Set<String> = [
         "ConnectionUUID",   // Per-connection opaque ID on IOAccessoryManager; no
                             // diagnostic value, uniquely identifies the machine.
+        "UUID",             // HPM controller UUID; internal SMC join key (DxUI).
+                            // Stored in hpmControllerUUID, not in rawProperties,
+                            // but listed here as a belt-and-suspenders guard in
+                            // case a future readAll path captures it.
     ]
 
     /// rawProperties with internal identity keys removed. Use this in all

@@ -394,4 +394,189 @@ struct USBCPortFromTests {
         // The stored rawProperties is untouched (internal joins still work).
         #expect(port.rawProperties["ConnectionUUID"] != nil, "rawProperties must be unmodified")
     }
+
+    // MARK: - HPM controller UUID (DAR-29)
+
+    /// The factory must thread `hpmControllerUUID` through to the model
+    /// unchanged. The watcher passes the UUID it reads from the HPM controller
+    /// ancestor; this verifies the plumbing from `from(...)` to the stored field.
+    @Test("hpmControllerUUID passes through from factory (M3+ class)")
+    func hpmControllerUUIDPassesThroughM3Plus() throws {
+        let uuid = "7C30AF2D-0000-0000-0000-000000000001"
+        let port = try #require(USBCPort.from(
+            entryID: 1, serviceName: "Port-USB-C@1",
+            className: "AppleHPMInterfaceType10",
+            read: { self.m2MBA_USBC_Disconnected[$0] },
+            hpmControllerUUID: uuid
+        ))
+        #expect(port.hpmControllerUUID == uuid)
+    }
+
+    /// Same plumbing test but with the M1/M2 class name, confirming the
+    /// factory is class-agnostic (the UUID comes from the parent walk,
+    /// not from the port node's class).
+    @Test("hpmControllerUUID passes through from factory (M1/M2 class)")
+    func hpmControllerUUIDPassesThroughM1M2() throws {
+        let uuid = "6230AF2D-0000-0000-0000-000000000002"
+        let port = try #require(USBCPort.from(
+            entryID: 2, serviceName: "Port-USB-C@1",
+            className: "AppleTCControllerType10",
+            read: { self.m2MBA_USBC_Disconnected[$0] },
+            hpmControllerUUID: uuid
+        ))
+        #expect(port.hpmControllerUUID == uuid)
+    }
+
+    /// When the watcher finds no HPM controller ancestor (or the controller
+    /// has no UUID property), the factory must accept nil and the field must be nil.
+    @Test("hpmControllerUUID is nil when absent (defensive fallback)")
+    func hpmControllerUUIDNilWhenAbsent() throws {
+        let port = try #require(USBCPort.from(
+            entryID: 3, serviceName: "Port-USB-C@1",
+            className: "AppleHPMInterfaceType10",
+            read: { self.m2MBA_USBC_Disconnected[$0] }
+            // hpmControllerUUID omitted -> defaults to nil
+        ))
+        #expect(port.hpmControllerUUID == nil)
+    }
+
+    /// Issue #195: MagSafe and USB-C share the same `@N` number on M2 MBA.
+    /// Each gets a different HPM controller UUID, so consumers can
+    /// disambiguate them even before looking at portTypeDescription or
+    /// carriesData. This test confirms the UUID is distinct per physical port
+    /// when the watcher reads them off different controller ancestors.
+    @Test("hpmControllerUUID is distinct for MagSafe and USB-C sharing the same @N (issue #195)")
+    func hpmControllerUUIDDistinguishesMagSafeFromUSBC() throws {
+        // On the real M2 MBA, MagSafe@1 and USB-C@1 have different UUIDs.
+        let magSafeUUID = "7C30AF2D-0000-0000-0000-AABBCCDDEEFF"
+        let usbcUUID    = "6230AF2D-0000-0000-0000-112233445566"
+
+        let magSafe = try #require(USBCPort.from(
+            entryID: 10, serviceName: "Port-MagSafe 3@1",
+            className: "AppleTCControllerType11",
+            read: { self.m2MBA_MagSafe_Connected[$0] },
+            hpmControllerUUID: magSafeUUID
+        ))
+        let usbC = try #require(USBCPort.from(
+            entryID: 11, serviceName: "Port-USB-C@1",
+            className: "AppleTCControllerType10",
+            read: { self.m2MBA_USBC_Disconnected[$0] },
+            hpmControllerUUID: usbcUUID
+        ))
+
+        // Both share portNumber 1 but have distinct UUIDs.
+        #expect(magSafe.portNumber == usbC.portNumber,
+            "Fixture: both ports share portNumber 1 (the #195 collision shape)")
+        #expect(magSafe.hpmControllerUUID != usbC.hpmControllerUUID,
+            "UUID must be distinct even when portNumber collides")
+        // portKey stays distinct via portTypeDescription, as before.
+        #expect(magSafe.portKey == "17/1")
+        #expect(usbC.portKey == "2/1")
+    }
+
+    // MARK: - Privacy regression (DAR-29)
+
+    /// The HPM controller UUID is an internal join key. It must never appear in
+    /// `redactedRawProperties` (the boundary used by --raw and --json), even if
+    /// a future readAll path inadvertently captures a "UUID" key.
+    @Test("redactedRawProperties strips the UUID key (DAR-29 privacy guard)")
+    func redactedRawPropertiesStripsUUIDKey() {
+        let port = USBCPort(
+            id: 1, serviceName: "Port-USB-C@1",
+            className: "AppleHPMInterfaceType10",
+            portDescription: "Port-USB-C@1",
+            portTypeDescription: "USB-C",
+            portNumber: 1,
+            connectionActive: true,
+            activeCable: nil, opticalCable: nil, usbActive: nil,
+            superSpeedActive: nil, usbModeType: nil, usbConnectString: nil,
+            transportsSupported: ["CC", "USB2", "USB3"],
+            transportsActive: ["USB3"], transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil,
+            // Simulate a future readAll that accidentally captured UUID.
+            rawProperties: [
+                "UUID": "7C30AF2D-FEED-BEEF-CAFE-112233445566",
+                "PortType": "2",
+                "ConnectionActive": "1",
+            ]
+        )
+
+        let redacted = port.redactedRawProperties
+        #expect(redacted["UUID"] == nil, "UUID must be redacted from raw output (internal join key)")
+        #expect(redacted["PortType"] == "2", "PortType must survive redaction")
+        // The stored rawProperties is untouched so internal joins still work.
+        #expect(port.rawProperties["UUID"] != nil, "rawProperties must be unmodified")
+    }
+
+    // MARK: - canonicalJoinKey (DAR-29 wiring)
+
+    /// When a port has a UUID, `canonicalJoinKey` returns the normalised UUID
+    /// (32 lowercase hex chars, dashes stripped). Two ports that share the same
+    /// `@N` suffix but have different UUIDs (MagSafe@1 and USB-C@1, issue #195)
+    /// therefore have distinct canonical join keys and can never be confused.
+    @Test("canonicalJoinKey is normalised UUID when UUID present (M3+)")
+    func canonicalJoinKeyIsNormalisedUUID() throws {
+        let uuid = "7C30AF2D-D913-3441-0CD9-000000000001"
+        let port = try #require(USBCPort.from(
+            entryID: 1, serviceName: "Port-USB-C@1",
+            className: "AppleHPMInterfaceType10",
+            read: { self.m2MBA_USBC_Disconnected[$0] },
+            hpmControllerUUID: uuid
+        ))
+        let expectedKey = "7c30af2dd91334410cd9000000000001"
+        #expect(port.canonicalJoinKey == expectedKey,
+            "canonicalJoinKey must be the normalised (dashes stripped, lowercase) UUID")
+    }
+
+    /// When UUID is absent (M1/M2 or defensive nil) the canonical join key
+    /// falls back to portKey so every port still has a key.
+    @Test("canonicalJoinKey falls back to portKey when UUID is nil (M1/M2)")
+    func canonicalJoinKeyFallsBackToPortKey() throws {
+        let port = try #require(USBCPort.from(
+            entryID: 2, serviceName: "Port-USB-C@1",
+            className: "AppleTCControllerType10",
+            read: { self.m2MBA_USBC_Disconnected[$0] },
+            hpmControllerUUID: nil   // M1/M2: no UUID
+        ))
+        #expect(port.canonicalJoinKey == port.portKey,
+            "canonicalJoinKey must equal portKey when UUID is absent")
+        #expect(port.canonicalJoinKey == "2/1")
+    }
+
+    /// MagSafe@1 and USB-C@1 collide on @N (issue #195) but carry distinct
+    /// UUIDs. Their canonical join keys must be different so they can never
+    /// match each other's data in a UUID-keyed lookup.
+    @Test("canonicalJoinKey disambiguates MagSafe@1 from USB-C@1 (issue #195 UUID guard)")
+    func canonicalJoinKeyDisambiguatesMagSafeFromUSBC() throws {
+        let magSafeUUID = "7C30AF2D-0000-0000-0000-AABBCCDDEEFF"
+        let usbcUUID    = "6230AF2D-0000-0000-0000-112233445566"
+
+        let magSafe = try #require(USBCPort.from(
+            entryID: 10, serviceName: "Port-MagSafe 3@1",
+            className: "AppleTCControllerType11",
+            read: { self.m2MBA_MagSafe_Connected[$0] },
+            hpmControllerUUID: magSafeUUID
+        ))
+        let usbC = try #require(USBCPort.from(
+            entryID: 11, serviceName: "Port-USB-C@1",
+            className: "AppleTCControllerType10",
+            read: { self.m2MBA_USBC_Disconnected[$0] },
+            hpmControllerUUID: usbcUUID
+        ))
+
+        // Both share portNumber 1 and therefore the same @N suffix.
+        #expect(magSafe.portNumber == usbC.portNumber,
+            "Fixture: both ports share portNumber 1")
+        // Their canonical join keys must differ: UUID wins over @N.
+        #expect(magSafe.canonicalJoinKey != usbC.canonicalJoinKey,
+            "UUID-distinct ports must have distinct canonicalJoinKeys even when @N collides")
+        // portKey is still distinct via portTypeDescription (MagSafe = 17).
+        #expect(magSafe.portKey == "17/1")
+        #expect(usbC.portKey == "2/1")
+        // Canonical keys are the normalised UUIDs.
+        #expect(magSafe.canonicalJoinKey == "7c30af2d000000000000aabbccddeeff")
+        #expect(usbC.canonicalJoinKey == "6230af2d000000000000112233445566")
+    }
 }

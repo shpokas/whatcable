@@ -51,6 +51,9 @@ public struct TRMTransport: Identifiable, Hashable, Sendable {
     public let profileDescription: String?
     /// True when the TRM cache missed for this accessory (first time seen).
     public let cacheMiss: Bool?
+    /// HPM controller UUID captured by walking the IOKit parent chain.
+    /// Internal join key only. Never serialised to JSON or text output.
+    public let hpmControllerUUID: String?
 
     public init(
         id: UInt64,
@@ -67,7 +70,8 @@ public struct TRMTransport: Identifiable, Hashable, Sendable {
         gracePeriodReasonDescription: String?,
         profile: Int?,
         profileDescription: String?,
-        cacheMiss: Bool?
+        cacheMiss: Bool?,
+        hpmControllerUUID: String? = nil
     ) {
         self.id = id
         self.portKey = portKey
@@ -84,6 +88,29 @@ public struct TRMTransport: Identifiable, Hashable, Sendable {
         self.profile = profile
         self.profileDescription = profileDescription
         self.cacheMiss = cacheMiss
+        self.hpmControllerUUID = hpmControllerUUID
+    }
+
+    /// Canonical in-session join key: normalised UUID when captured, else portKey.
+    /// Internal only; never expose in JSON or text output.
+    public var canonicalJoinKey: String {
+        if let uuid = hpmControllerUUID {
+            let n = uuid.replacingOccurrences(of: "-", with: "").lowercased()
+            if n.count == 32 { return n }
+        }
+        return portKey
+    }
+
+    /// True when this transport belongs to the same physical port as `port`.
+    /// UUID-keyed when both sides have a UUID, portKey fallback otherwise.
+    public func canonicallyMatches(port: AppleHPMInterface) -> Bool {
+        guard let portKey = port.portKey else { return false }
+        if let srcUUID = hpmControllerUUID, let portUUID = port.hpmControllerUUID {
+            let sn = srcUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            let pn = portUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            if sn.count == 32 && pn.count == 32 { return sn == pn }
+        }
+        return self.portKey == portKey
     }
 
     /// True when this transport is in a restricted (limited) TRM state.

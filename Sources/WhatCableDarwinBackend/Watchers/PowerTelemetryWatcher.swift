@@ -53,6 +53,21 @@ public final class PowerTelemetryWatcher: ObservableObject {
         latestSnapshot = nil
     }
 
+    /// Updates the cached UUID-to-portKey map from already-captured HPM port
+    /// data. Call this whenever the `AppleHPMInterfaceWatcher` publishes a
+    /// fresh port list so the telemetry watcher uses the live-captured UUIDs
+    /// instead of performing a redundant IOKit sweep via `HPMPortUUIDMap.current()`.
+    ///
+    /// When the supplied ports carry UUIDs (M3+) the map is rebuilt from them.
+    /// When no UUIDs are present (M1/M2 or empty list) the existing cached map
+    /// is left untouched so a valid map captured at `start()` is not evicted.
+    public func updatePorts(_ ports: [AppleHPMInterface]) {
+        let map = HPMPortUUIDMap.from(ports: ports)
+        if !map.isEmpty {
+            cachedUUIDMap = map
+        }
+    }
+
     public func refresh() {
         let timestamp = Date()
         // Optional now: desktop Macs (Mac mini / Studio / Pro) may have no
@@ -120,18 +135,28 @@ public final class PowerTelemetryWatcher: ObservableObject {
                 uuidMap = HPMPortUUIDMap.current()
                 if !uuidMap.isEmpty { cachedUUIDMap = uuidMap }
             }
-            // Channels carry a UUID even when idle (present=false, 0 W), so a
-            // non-empty list means the SMC opened and this Mac can meter, even
-            // if nothing is drawing right now. An empty list means M1/M2, a
-            // Mac Pro, or the SMC open was refused: per-port can't be metered.
+            // Channels carry a UUID even when idle (present=false, 0 W). We only
+            // declare per-port metering supported when at least one SMC channel
+            // actually resolves to a known port via the UUID map. An empty map
+            // means M1/M2 or Mac Pro (no per-port SMC channels). A non-empty map
+            // with zero matching channels means the UUID map and SMC channel set
+            // don't overlap, which should not happen on real hardware but guards
+            // against a hypothetical M1/M2 machine where updatePorts() populated
+            // the map from the AppleHPMInterfaceWatcher while SMC channels return
+            // a different UUID namespace. Without this guard, a non-empty UUID map
+            // (even from M1/M2 ports without SMC channels) would flip the flag true
+            // and spin the Power Monitor on "Negotiating forever" (#291).
             let channels = uuidMap.isEmpty ? [] : smcReader.readPortPowerChannels()
-            perPortMeteringSupported = !uuidMap.isEmpty && !channels.isEmpty
+            var matchedChannels = 0
             for channel in channels {
-                guard channel.present || channel.watts > 0.001 else { continue }
-                guard let key = uuidMap[channel.uuid], !coveredKeys.contains(key) else { continue }
+                guard let key = uuidMap[channel.uuid] else { continue }
+                matchedChannels += 1
+                guard (channel.present || channel.watts > 0.001), !coveredKeys.contains(key) else { continue }
                 portSamples.append(Self.smcPortSample(channel: channel, portKey: key))
                 coveredKeys.insert(key)
             }
+            // Supported only when SMC channels actually resolved to ports.
+            perPortMeteringSupported = matchedChannels > 0
         }
 
         accumulator.append(portSamples: portSamples)

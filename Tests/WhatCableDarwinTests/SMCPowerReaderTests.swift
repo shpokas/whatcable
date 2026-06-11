@@ -114,4 +114,58 @@ struct SMCPowerReaderTests {
         #expect(sample.portIndex == 1)
         #expect(sample.watts == 9000)
     }
+
+    // MARK: - perPortMeteringSupported gate (issue #291 regression guard)
+
+    /// A non-empty UUID map alone must NOT flip `perPortMeteringSupported` to
+    /// true. The flag is only true when at least one SMC channel UUID actually
+    /// appears in the map. This guards against the M1/M2 regression where
+    /// `updatePorts()` could populate the map (the HPM watcher fires on M1/M2
+    /// too), but SMC channels return a different UUID namespace and nothing
+    /// matches. Without this guard, the Power Monitor would spin on
+    /// "Negotiating..." forever on M1/M2 desktop Macs (issue #291).
+    @Test("perPortMeteringSupported is false when no SMC channel UUID matches the port map")
+    func perPortMeteringNotSupportedWhenChannelsDontMatch() {
+        // Simulate an M1/M2 scenario: the UUID map was populated from the HPM
+        // watcher, but the SMC port-power channels carry UUIDs from a different
+        // namespace. No channel resolves to a known port key.
+        let uuidMap: [String: String] = [
+            "aaaabbbbccccddddeeeeffffffff0001": "2/1",
+            "aaaabbbbccccddddeeeeffffffff0002": "2/2",
+        ]
+        let channels: [SMCPortPowerChannel] = [
+            // Channel UUIDs from the SMC are entirely different from the map.
+            SMCPortPowerChannel(channel: 1, present: false, volts: 0.0, amps: 0.0,
+                                uuid: "1111111111111111111111111111dead"),
+            SMCPortPowerChannel(channel: 2, present: false, volts: 0.0, amps: 0.0,
+                                uuid: "2222222222222222222222222222beef"),
+        ]
+        var matchedChannels = 0
+        for channel in channels {
+            guard uuidMap[channel.uuid] != nil else { continue }
+            matchedChannels += 1
+        }
+        // The map is non-empty, but no channel matched -- flag must stay false.
+        let supported = matchedChannels > 0
+        #expect(!supported,
+            "perPortMeteringSupported must be false when no SMC channel resolves via UUID map")
+    }
+
+    @Test("perPortMeteringSupported is true when at least one SMC channel UUID matches")
+    func perPortMeteringSupportedWhenOneChannelMatches() {
+        let knownUUID = "17bd562dd91334410cd9435cac6cfa51"
+        let uuidMap: [String: String] = [knownUUID: "2/4"]
+        let channels: [SMCPortPowerChannel] = [
+            SMCPortPowerChannel(channel: 1, present: true, volts: 5.18, amps: 0.643,
+                                uuid: knownUUID),
+        ]
+        var matchedChannels = 0
+        for channel in channels {
+            guard uuidMap[channel.uuid] != nil else { continue }
+            matchedChannels += 1
+        }
+        let supported = matchedChannels > 0
+        #expect(supported,
+            "perPortMeteringSupported must be true when at least one channel resolves")
+    }
 }

@@ -149,7 +149,70 @@ struct TRMTransportTests {
         #expect(snapshot.trmTransports.isEmpty)
     }
 
+    // MARK: - canonicallyMatches (DAR-29)
+
+    /// UUID match: both transport and port carry the same UUID. Must match.
+    @Test("canonicallyMatches uses UUID when both sides have matching UUID")
+    func canonicallyMatchesUUIDOnBothSides() {
+        let uuid = "7C30AF2D-D913-3441-0CD9-435CAC6CFA51"
+        let t = makeTRM(portKey: "2/1", uuid: uuid)
+        let port = makePort(portNumber: 1, portType: "USB-C", uuid: uuid)
+        #expect(t.canonicallyMatches(port: port))
+    }
+
+    /// No UUID on transport (M1/M2): must fall back to portKey comparison.
+    @Test("canonicallyMatches falls back to portKey when transport has no UUID (M1/M2)")
+    func canonicallyMatchesFallsBackToPortKey() {
+        let t = makeTRM(portKey: "2/1", uuid: nil)
+        let port = makePort(portNumber: 1, portType: "USB-C", uuid: "7C30AF2D-D913-3441-0CD9-435CAC6CFA51")
+        #expect(t.canonicallyMatches(port: port))
+    }
+
+    /// Issue #195 guard: same portNumber, different UUIDs. Must NOT match.
+    @Test("canonicallyMatches rejects UUID mismatch even when portKey collides (issue #195 guard)")
+    func canonicallyMatchesRejectsUUIDMismatch() {
+        let trmUUID     = "6230AF2D-0000-0000-0000-112233445566"
+        let magSafeUUID = "7C30AF2D-0000-0000-0000-AABBCCDDEEFF"
+        let t = makeTRM(portKey: "2/1", uuid: trmUUID)
+        let magSafePort = makePort(portNumber: 1, portType: "MagSafe 3", uuid: magSafeUUID)
+        #expect(!t.canonicallyMatches(port: magSafePort))
+    }
+
+    // MARK: - canonicalJoinKey (DAR-29)
+
+    @Test("canonicalJoinKey returns normalised UUID when UUID is present")
+    func canonicalJoinKeyNormalisedUUID() {
+        let t = makeTRM(uuid: "17BD562D-D913-3441-0CD9-435CAC6CFA51")
+        #expect(t.canonicalJoinKey == "17bd562dd91334410cd9435cac6cfa51")
+    }
+
+    @Test("canonicalJoinKey falls back to portKey when UUID is nil")
+    func canonicalJoinKeyFallsBackToPortKey() {
+        let t = makeTRM(portKey: "2/3", uuid: nil)
+        #expect(t.canonicalJoinKey == "2/3")
+    }
+
     // MARK: - Helpers
+
+    private func makePort(portNumber: Int, portType: String, uuid: String?) -> AppleHPMInterface {
+        AppleHPMInterface(
+            id: UInt64(portNumber),
+            serviceName: "Port-\(portType)@\(portNumber)",
+            className: "AppleHPMInterfaceType10",
+            portDescription: nil,
+            portTypeDescription: portType,
+            portNumber: portNumber,
+            connectionActive: nil, activeCable: nil, opticalCable: nil,
+            usbActive: nil, superSpeedActive: nil, usbModeType: nil,
+            usbConnectString: nil,
+            transportsSupported: [], transportsActive: [], transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil,
+            hpmControllerUUID: uuid,
+            rawProperties: ["PortType": portType == "USB-C" ? "2" : "17"]
+        )
+    }
 
     private func makeTRM(
         id: UInt64 = 1,
@@ -158,7 +221,8 @@ struct TRMTransportTests {
         state: Int? = nil,
         stateDescription: String? = nil,
         transportRestricted: Bool? = nil,
-        transportSupervised: Bool? = nil
+        transportSupervised: Bool? = nil,
+        uuid: String? = nil
     ) -> TRMTransport {
         TRMTransport(
             id: id,
@@ -175,7 +239,8 @@ struct TRMTransportTests {
             gracePeriodReasonDescription: nil,
             profile: nil,
             profileDescription: nil,
-            cacheMiss: nil
+            cacheMiss: nil,
+            hpmControllerUUID: uuid
         )
     }
 }

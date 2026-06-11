@@ -30,7 +30,7 @@ public enum JSONFormatter {
         // port with a connected-but-idle second charger uses this to know
         // another port is the active source. See issue #264.
         let chargingPortKeys = Set(ports.compactMap { port -> String? in
-            let portSources = sources.filter { $0.portKey == port.portKey }
+            let portSources = sources.filter { $0.canonicallyMatches(port: port) }
             return PowerSource.hasLiveChargingContract(in: portSources) ? port.portKey : nil
         })
         let output = Output(
@@ -38,7 +38,7 @@ public enum JSONFormatter {
             isDesktopMac: isDesktopMac,
             adapter: adapter.map { AdapterDTO(adapter: $0) },
             ports: ports.map { port in
-                let portSources = sources.filter { $0.portKey == port.portKey }
+                let portSources = sources.filter { $0.canonicallyMatches(port: port) }
                 let wattageSource = ChargerWattageSource.resolve(
                     portSources: portSources,
                     activePortCount: activePortCount,
@@ -48,19 +48,19 @@ public enum JSONFormatter {
                 return PortDTO(
                     port: port,
                     sources: portSources,
-                    identities: identities.filter { $0.portKey == port.portKey },
+                    identities: identities.filter { $0.canonicallyMatches(port: port) },
                     thunderboltSwitches: thunderboltSwitches,
                     switchIndexByUID: switchIndexByUID,
                     showRaw: showRaw,
                     adapter: adapter,
                     federatedIdentities: federatedIdentities,
-                    usb3Transports: usb3Transports.filter { $0.portKey == port.portKey },
-                    trmTransports: trmTransports.filter { $0.portKey == port.portKey },
-                    cioCapability: cioCapabilities.first { $0.portKey == port.portKey },
+                    usb3Transports: usb3Transports.filter { $0.canonicallyMatches(port: port) },
+                    trmTransports: trmTransports.filter { $0.canonicallyMatches(port: port) },
+                    cioCapability: cioCapabilities.first { $0.canonicallyMatches(port: port) },
                     chargerWattageSource: wattageSource,
                     batteryFullyCharged: batteryFullyCharged,
                     usbDevices: port.matchingDevices(from: usbDevices),
-                    displayPorts: displayPorts.filter { $0.portKey == port.portKey },
+                    displayPorts: displayPorts.filter { $0.canonicallyMatches(port: port) },
                     anotherPortActivelyCharging: anotherPortActivelyCharging
                 )
             },

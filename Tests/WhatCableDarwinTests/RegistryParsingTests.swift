@@ -113,4 +113,77 @@ struct RegistryParsingTests {
         #expect(priorityParent.type == 0x11)
         #expect(priorityParent.number == 1)
     }
+
+    // MARK: - HPMPortUUIDMap.from(ports:) (DAR-29)
+
+    /// `from(ports:)` must build the same UUID -> portKey map that `current()`
+    /// builds from IOKit, just from already-captured ports instead of a second
+    /// IOKit sweep. The test covers the normal case (UUID present) and confirms
+    /// the normalisation (dashes stripped, lowercase) used to match SMC DxUI.
+    @Test("HPMPortUUIDMap.from(ports:) builds map from captured port UUIDs")
+    func hpmPortUUIDMapFromPorts() {
+        // Two ports with distinct UUIDs (the M3+ dashed form the watcher reads).
+        let uuid1 = "7C30AF2D-D913-3441-0CD9-000000000001"
+        let uuid2 = "6230AF2D-D913-3441-0CD9-000000000002"
+
+        let port1 = AppleHPMInterface(
+            id: 1, serviceName: "Port-USB-C@1", className: "AppleHPMInterfaceType10",
+            portDescription: "Port-USB-C@1", portTypeDescription: "USB-C",
+            portNumber: 1, connectionActive: false,
+            activeCable: nil, opticalCable: nil, usbActive: nil,
+            superSpeedActive: nil, usbModeType: nil, usbConnectString: nil,
+            transportsSupported: ["CC", "USB2", "USB3", "CIO"],
+            transportsActive: [], transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil,
+            hpmControllerUUID: uuid1,
+            rawProperties: ["PortType": "2"]
+        )
+        let port2 = AppleHPMInterface(
+            id: 2, serviceName: "Port-MagSafe 3@1", className: "AppleHPMInterfaceType11",
+            portDescription: "Port-MagSafe 3@1", portTypeDescription: "MagSafe 3",
+            portNumber: 1, connectionActive: true,
+            activeCable: nil, opticalCable: nil, usbActive: nil,
+            superSpeedActive: nil, usbModeType: nil, usbConnectString: nil,
+            transportsSupported: [], transportsActive: ["CC"], transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil,
+            hpmControllerUUID: uuid2,
+            rawProperties: [:]
+        )
+
+        let map = HPMPortUUIDMap.from(ports: [port1, port2])
+
+        // UUIDs are normalised (dashes stripped, lowercase) as keys.
+        let normalised1 = HPMPortUUIDMap.normalise(uuid1)
+        let normalised2 = HPMPortUUIDMap.normalise(uuid2)
+        #expect(map[normalised1] == "2/1",  "USB-C@1 must map to portKey 2/1")
+        #expect(map[normalised2] == "17/1", "MagSafe@1 must map to portKey 17/1")
+        #expect(map.count == 2)
+    }
+
+    /// Ports with no UUID (M1/M2 fallback or defensive nil) are skipped.
+    /// The map must be empty rather than guessing positional mappings.
+    @Test("HPMPortUUIDMap.from(ports:) is empty when no UUIDs present")
+    func hpmPortUUIDMapFromPortsEmptyWithoutUUIDs() {
+        let port = AppleHPMInterface(
+            id: 1, serviceName: "Port-USB-C@1", className: "AppleTCControllerType10",
+            portDescription: "Port-USB-C@1", portTypeDescription: "USB-C",
+            portNumber: 1, connectionActive: false,
+            activeCable: nil, opticalCable: nil, usbActive: nil,
+            superSpeedActive: nil, usbModeType: nil, usbConnectString: nil,
+            transportsSupported: ["CC", "USB2", "USB3"],
+            transportsActive: [], transportsProvisioned: [],
+            plugOrientation: nil, plugEventCount: nil, connectionCount: nil,
+            overcurrentCount: nil, pinConfiguration: [:], powerCurrentLimits: [],
+            firmwareVersion: nil, bootFlagsHex: nil,
+            hpmControllerUUID: nil,    // M1/M2: no UUID
+            rawProperties: ["PortType": "2"]
+        )
+
+        let map = HPMPortUUIDMap.from(ports: [port])
+        #expect(map.isEmpty, "No positional guessing: empty map when UUIDs absent")
+    }
 }

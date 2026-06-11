@@ -48,6 +48,10 @@ public struct CIOCableCapability: Identifiable, Hashable, Sendable {
     /// Link training mode reported by CIO. Meaning TBD.
     public let linkTrainingMode: Int?
 
+    /// HPM controller UUID captured by walking the IOKit parent chain.
+    /// Internal join key only. Never serialised to JSON or text output.
+    public let hpmControllerUUID: String?
+
     public init(
         id: UInt64,
         portKey: String,
@@ -56,7 +60,8 @@ public struct CIOCableCapability: Identifiable, Hashable, Sendable {
         generation: Int?,
         asymmetricModeSupported: Bool?,
         legacyAdapter: Bool?,
-        linkTrainingMode: Int?
+        linkTrainingMode: Int?,
+        hpmControllerUUID: String? = nil
     ) {
         self.id = id
         self.portKey = portKey
@@ -66,6 +71,29 @@ public struct CIOCableCapability: Identifiable, Hashable, Sendable {
         self.asymmetricModeSupported = asymmetricModeSupported
         self.legacyAdapter = legacyAdapter
         self.linkTrainingMode = linkTrainingMode
+        self.hpmControllerUUID = hpmControllerUUID
+    }
+
+    /// Canonical in-session join key: normalised UUID when captured, else portKey.
+    /// Internal only; never expose in JSON or text output.
+    public var canonicalJoinKey: String {
+        if let uuid = hpmControllerUUID {
+            let n = uuid.replacingOccurrences(of: "-", with: "").lowercased()
+            if n.count == 32 { return n }
+        }
+        return portKey
+    }
+
+    /// True when this capability record belongs to the same physical port as `port`.
+    /// UUID-keyed when both sides have a UUID, portKey fallback otherwise.
+    public func canonicallyMatches(port: AppleHPMInterface) -> Bool {
+        guard let portKey = port.portKey else { return false }
+        if let srcUUID = hpmControllerUUID, let portUUID = port.hpmControllerUUID {
+            let sn = srcUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            let pn = portUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            if sn.count == 32 && pn.count == 32 { return sn == pn }
+        }
+        return self.portKey == portKey
     }
 
     /// Human-readable speed label for a confirmed `cableSpeed` value,

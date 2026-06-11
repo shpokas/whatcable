@@ -228,7 +228,8 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
             className: className,
             read: read,
             readAll: readAll,
-            busIndex: busIndex(for: service)
+            busIndex: busIndex(for: service),
+            hpmControllerUUID: hpmControllerUUID(for: service)
         )
     }
 
@@ -261,6 +262,56 @@ public final class AppleHPMInterfaceWatcher: ObservableObject {
             return n
         }
 
+        return nil
+    }
+
+    /// Walks the IOKit parent chain to find the HPM power-controller node and
+    /// returns its `UUID` property. The probe reads `AppleHPMDevice` (the base
+    /// class) so it catches both M1/M2 (`AppleHPMDevice` exact) and M3+
+    /// (`AppleHPMDeviceHALType3`, a subclass). This matches probe 35's
+    /// class-agnostic sweep (corpus: 265/265 ports have a UUID).
+    ///
+    /// The UUID is an internal in-session join key only. It is stored on
+    /// `AppleHPMInterface.hpmControllerUUID` and must never be serialised to
+    /// `--json` / `--raw` or shown in the UI.
+    ///
+    /// Falls back to `nil` when the parent walk finds no HPM controller or the
+    /// controller has no `UUID` property (defensive; corpus says never, but
+    /// malformed or sandboxed cases could hit it).
+    private func hpmControllerUUID(for service: io_service_t) -> String? {
+        var current = service
+        IOObjectRetain(current)
+        defer { IOObjectRelease(current) }
+
+        for _ in 0..<8 {
+            var classBuf = [CChar](repeating: 0, count: 128)
+            IOObjectGetClass(current, &classBuf)
+            let cls = String(cString: classBuf)
+            // Match both the M1/M2 base class and the M3+ subclass. The base
+            // class name is the common prefix, and IOKit conformance checks
+            // cover subclasses, but a name check is sufficient because we only
+            // need to stop at a node that carries the UUID property.
+            if cls == "AppleHPMDevice" || cls.hasPrefix("AppleHPMDeviceHAL") {
+                if let uuid = IORegistryEntryCreateCFProperty(
+                    current,
+                    "UUID" as CFString,
+                    kCFAllocatorDefault,
+                    0
+                )?.takeRetainedValue() as? String, !uuid.isEmpty {
+                    return uuid
+                }
+                // Found the controller but no UUID (e.g. M1/M2 variant without
+                // the property). Stop walking; no point going further up.
+                return nil
+            }
+
+            var parent: io_service_t = 0
+            guard IORegistryEntryGetParentEntry(current, kIOServicePlane, &parent) == KERN_SUCCESS else {
+                break
+            }
+            IOObjectRelease(current)
+            current = parent
+        }
         return nil
     }
 

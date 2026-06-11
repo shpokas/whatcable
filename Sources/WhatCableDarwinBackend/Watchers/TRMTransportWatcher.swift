@@ -109,13 +109,13 @@ public final class TRMTransportWatcher: ObservableObject {
                     let className = String(cString: classBuf)
                     let transportType = Self.transportType(from: className)
 
-                    if let t = makeTRMTransport(entryID: entryID, read: read, transportType: transportType),
+                    if let t = makeTRMTransport(entryID: entryID, service: service, read: read, transportType: transportType),
                        !rebuiltTransports.contains(where: { $0.id == t.id }) {
                         rebuiltTransports.append(t)
                     }
 
                     if transportType == "CIO",
-                       let c = makeCIOCapability(entryID: entryID, read: read),
+                       let c = makeCIOCapability(entryID: entryID, service: service, read: read),
                        !rebuiltCIO.contains(where: { $0.id == c.id }) {
                         rebuiltCIO.append(c)
                     }
@@ -149,13 +149,13 @@ public final class TRMTransportWatcher: ObservableObject {
             let className = String(cString: classBuf)
             let transportType = Self.transportType(from: className)
 
-            if let t = makeTRMTransport(entryID: entryID, read: read, transportType: transportType),
+            if let t = makeTRMTransport(entryID: entryID, service: service, read: read, transportType: transportType),
                !transports.contains(where: { $0.id == t.id }) {
                 transports.append(t)
             }
 
             if transportType == "CIO",
-               let c = makeCIOCapability(entryID: entryID, read: read),
+               let c = makeCIOCapability(entryID: entryID, service: service, read: read),
                !cioCapabilities.contains(where: { $0.id == c.id }) {
                 cioCapabilities.append(c)
             }
@@ -172,7 +172,7 @@ public final class TRMTransportWatcher: ObservableObject {
         }
     }
 
-    private func makeTRMTransport(entryID: UInt64, read: (String) -> Any?, transportType: String) -> TRMTransport? {
+    private func makeTRMTransport(entryID: UInt64, service: io_service_t, read: (String) -> Any?, transportType: String) -> TRMTransport? {
         // Use TRM_State as the presence gate: it is the primary TRM field and
         // is always published when TRM data exists. This replaces the old
         // dict.keys.contains { $0.hasPrefix("TRM_") } check, which required
@@ -185,6 +185,9 @@ public final class TRMTransportWatcher: ObservableObject {
 
         let parent = Self.parentPortIdentity(read: read)
         let portKey = "\(parent.type)/\(parent.number)"
+
+        // Walk the parent chain to get the HPM controller UUID.
+        let uuid = wcHPMControllerUUID(for: service)
 
         return TRMTransport(
             id: entryID,
@@ -201,13 +204,17 @@ public final class TRMTransportWatcher: ObservableObject {
             gracePeriodReasonDescription: read("TRM_GracePeriodReasonDescription") as? String,
             profile: (read("TRM_Profile") as? NSNumber)?.intValue,
             profileDescription: read("TRM_ProfileDescription") as? String,
-            cacheMiss: (read("TRM_CacheMiss") as? NSNumber)?.boolValue
+            cacheMiss: (read("TRM_CacheMiss") as? NSNumber)?.boolValue,
+            hpmControllerUUID: uuid
         )
     }
 
-    private func makeCIOCapability(entryID: UInt64, read: (String) -> Any?) -> CIOCableCapability? {
+    private func makeCIOCapability(entryID: UInt64, service: io_service_t, read: (String) -> Any?) -> CIOCableCapability? {
         let parent = Self.parentPortIdentity(read: read)
         let portKey = "\(parent.type)/\(parent.number)"
+
+        // Walk the parent chain to get the HPM controller UUID.
+        let uuid = wcHPMControllerUUID(for: service)
 
         return CIOCableCapability(
             id: entryID,
@@ -217,7 +224,8 @@ public final class TRMTransportWatcher: ObservableObject {
             generation: (read("Generation") as? NSNumber)?.intValue,
             asymmetricModeSupported: (read("AsymmetricModeSupported") as? NSNumber)?.boolValue,
             legacyAdapter: (read("LegacyAdapter") as? NSNumber)?.boolValue,
-            linkTrainingMode: (read("LinkTrainingMode") as? NSNumber)?.intValue
+            linkTrainingMode: (read("LinkTrainingMode") as? NSNumber)?.intValue,
+            hpmControllerUUID: uuid
         )
     }
 

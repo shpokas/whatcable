@@ -4,22 +4,42 @@ import WhatCableCore
 
 /// Maps each port controller's `UUID` to its physical-port key.
 ///
-/// On Apple Silicon M3 and later, every USB-C / MagSafe port has a power
-/// controller of class `AppleHPMDeviceHALType3` that carries a stable `UUID`.
-/// That same UUID is the SMC channel's `DxUI` (see ``SMCPowerReader``). Matching
-/// the two ties an SMC power-OUT reading to the right physical port with no
-/// index guessing, which matters because the SMC D-index and the IOKit `@N`
-/// number do NOT agree (SMC `D3` can be `Port-USB-C@4`).
-///
-/// M1 / M2 use the older `AppleHPMDevice` class, which does not carry this UUID,
-/// so this returns an empty map there and the caller falls back to the
-/// no-per-port state. It deliberately does NOT guess a positional mapping.
+/// On Apple Silicon (all chip families: M1, M2, M3, M4, M5, Intel) every
+/// USB-C / MagSafe port has a power controller (`AppleHPMDevice` base class or
+/// its `AppleHPMDeviceHALType3` subclass on M3+) that carries a stable `UUID`.
+/// On M3+, that same UUID is the SMC channel's `DxUI` (see ``SMCPowerReader``).
+/// Matching the two ties an SMC power-OUT reading to the right physical port
+/// with no index guessing, which matters because the SMC D-index and the IOKit
+/// `@N` number do NOT agree (SMC `D3` can be `Port-USB-C@4`).
 ///
 /// The UUIDs here are an internal join key only. The returned map's *values*
 /// are plain port keys (`"2/4"`, `"17/1"`); the UUID keys never leave this join.
 public enum HPMPortUUIDMap {
     /// `[normalised-UUID : portKey]`, e.g. `["17bd562d…fa51": "2/4"]`. UUIDs are
     /// 32 lowercase hex chars (dashes stripped) to match `SMCPortPowerChannel.uuid`.
+    ///
+    /// Builds the map from already-captured `AppleHPMInterface` ports when
+    /// available, avoiding a second IOKit sweep. Falls back to `current()` when
+    /// no ports with UUIDs are present (M1/M2 or empty set).
+    public static func from(ports: [AppleHPMInterface]) -> [String: String] {
+        var map: [String: String] = [:]
+        for port in ports {
+            guard let rawUUID = port.hpmControllerUUID else { continue }
+            guard let portKey = port.portKey else { continue }
+            let uuid = normalise(rawUUID)
+            guard uuid.count == 32 else { continue }
+            if map[uuid] == nil { map[uuid] = portKey }
+        }
+        return map
+    }
+
+    /// Builds the map directly from IOKit. Called at startup (before ports are
+    /// available) or when `from(ports:)` returns an empty map (M1/M2 where the
+    /// UUID is absent or the watcher hasn't run yet).
+    ///
+    /// Queries `AppleHPMDeviceHALType3` (M3+ only). M1/M2 do not expose this
+    /// class, so the map is empty there and the caller falls back to no-per-port
+    /// state. It deliberately does NOT guess a positional mapping.
     public static func current() -> [String: String] {
         var map: [String: String] = [:]
 

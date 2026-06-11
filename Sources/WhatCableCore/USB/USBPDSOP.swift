@@ -20,6 +20,11 @@ public struct USBPDSOP: Identifiable, Hashable {
     public let vdos: [UInt32]
     public let specRevision: Int
 
+    /// HPM controller UUID captured by walking the IOKit parent chain from the
+    /// SOP/SOP' node up through `AppleHPMInterfaceType10` to `AppleHPMDeviceHALType3`.
+    /// Internal join key only. Never serialised to JSON or text output.
+    public let hpmControllerUUID: String?
+
     public init(
         id: UInt64,
         endpoint: Endpoint,
@@ -29,7 +34,8 @@ public struct USBPDSOP: Identifiable, Hashable {
         productID: Int,
         bcdDevice: Int,
         vdos: [UInt32],
-        specRevision: Int
+        specRevision: Int,
+        hpmControllerUUID: String? = nil
     ) {
         self.id = id
         self.endpoint = endpoint
@@ -40,9 +46,20 @@ public struct USBPDSOP: Identifiable, Hashable {
         self.bcdDevice = bcdDevice
         self.vdos = vdos
         self.specRevision = specRevision
+        self.hpmControllerUUID = hpmControllerUUID
     }
 
     public var portKey: String { "\(parentPortType)/\(parentPortNumber)" }
+
+    /// Canonical in-session join key: normalised UUID when captured, else portKey.
+    /// Internal only; never expose in JSON or text output.
+    public var canonicalJoinKey: String {
+        if let uuid = hpmControllerUUID {
+            let n = uuid.replacingOccurrences(of: "-", with: "").lowercased()
+            if n.count == 32 { return n }
+        }
+        return portKey
+    }
 
     public var idHeader: PDVDO.IDHeader? {
         guard let v = vdos.first else { return nil }
@@ -110,6 +127,22 @@ public struct USBPDSOP: Identifiable, Hashable {
               idHeader?.ufpProductType == .passiveCable,
               let cv = cableVDO else { return false }
         return cv.sopDoubleControllerPresent
+    }
+
+    /// True when this identity belongs to the same physical port as `port`.
+    ///
+    /// UUID-keyed when both sides have a UUID (collision-proof on M3+). Falls
+    /// back to `portKey` when either side is missing a UUID (M1/M2, or a
+    /// defensive nil from an unusual registry layout). A source that fails to
+    /// resolve a UUID while the port has one still matches via portKey fallback.
+    public func canonicallyMatches(port: AppleHPMInterface) -> Bool {
+        guard let portKey = port.portKey else { return false }
+        if let srcUUID = hpmControllerUUID, let portUUID = port.hpmControllerUUID {
+            let sn = srcUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            let pn = portUUID.replacingOccurrences(of: "-", with: "").lowercased()
+            if sn.count == 32 && pn.count == 32 { return sn == pn }
+        }
+        return self.portKey == portKey
     }
 
     /// Human-readable PD spec revision (e.g. "PD 3.0"). The raw value is the

@@ -177,6 +177,11 @@ public final class DisplayPortTransportWatcher: ObservableObject {
             freqs = []
         }
 
+        // Walk the parent chain to capture the HPM controller UUID.
+        // DisplayPort nodes sit at Port-USB-C@N/DisplayPort, so the controller
+        // is ~2 steps up (AppleHPMInterfaceType10 -> AppleHPMDeviceHALType3).
+        let uuid = wcHPMControllerUUID(for: service)
+
         let status = IOPortTransportStateDisplayPort(
             link: link,
             monitor: monitor,
@@ -213,7 +218,8 @@ public final class DisplayPortTransportWatcher: ObservableObject {
             parentBuiltInPortNumber: wcInt(read("ParentBuiltInPortNumber")),
             edidChanged: wcBool(read("EDIDChanged")),
             nominalSignalingFrequenciesHz: freqs,
-            index: wcInt(read("Index"))
+            index: wcInt(read("Index")),
+            hpmControllerUUID: uuid
         )
         return DisplayPortUpdate(
             entryID: entryID,

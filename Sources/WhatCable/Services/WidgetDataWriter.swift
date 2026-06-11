@@ -203,7 +203,7 @@ final class WidgetDataWriter {
                 devices: devices,
                 thunderboltSwitches: tbWatcher.switches,
                 usb3Transports: usb3Watcher.transports(for: port),
-                cioCapability: trmWatcher.cioCapabilities.first { $0.portKey == port.portKey },
+                cioCapability: trmWatcher.cioCapabilities.first { $0.canonicallyMatches(port: port) },
                 isConnectedOverride: isLive,
                 batteryFullyCharged: batteryFull
             )
@@ -237,9 +237,9 @@ final class WidgetDataWriter {
             // nil-match a keyless display status and wrongly borrow its mode.
             // A dock can drive several monitors through one port (issue #271):
             // show the first here and carry the total so the card can hint "+N".
-            if let key = port.portKey {
+            if port.portKey != nil {
                 let diags = displayWatcher.statuses
-                    .filter { $0.status.portKey == key }
+                    .filter { $0.status.canonicallyMatches(port: port) }
                     .compactMap { DisplayDiagnostic(dp: $0.status, cable: nil) }
                 displayCount = diags.count
                 if let first = diags.first {

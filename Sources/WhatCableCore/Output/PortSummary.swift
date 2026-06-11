@@ -144,7 +144,7 @@ extension PortSummary {
             //      seemingly-Gen-2 downstream device (see Codex review).
             let rootDeviceLabel = USBDevice.rootSuperSpeed(in: devices)?.usb3SpeedLabel
             let transportLabel = usb3Transports
-                .first { $0.portKey == port.portKey }?
+                .first { $0.canonicallyMatches(port: port) }?
                 .speedLabel
             let portMatchedLabel = USBDevice.portMatchedSuperSpeed(in: devices)?.usb3SpeedLabel
 
@@ -758,7 +758,7 @@ private func usb3Gbps(
     // treats it as "no info" (USB3Transport.speedLabel returns nil) and falls
     // through to a port-matched device, so the badge must do the same or it
     // would read 5G where the bullet shows 10G/20G.
-    if let signaling = transports.first(where: { $0.portKey == port.portKey })?.signaling,
+    if let signaling = transports.first(where: { $0.canonicallyMatches(port: port) })?.signaling,
        signaling != 0 {
         // Signaling only encodes Gen 1 (1) / Gen 2 (2); 20 Gbps is only seen
         // via a device's speedRaw above or below.

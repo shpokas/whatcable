@@ -46,12 +46,12 @@ public enum TextFormatter {
                 adapter: adapter,
                 thunderboltSwitches: thunderboltSwitches,
                 federatedIdentities: federatedIdentities,
-                usb3Transports: usb3Transports.filter { $0.portKey == port.portKey },
-                cioCapability: cioCapabilities.first { $0.portKey == port.portKey },
+                usb3Transports: usb3Transports.filter { $0.canonicallyMatches(port: port) },
+                cioCapability: cioCapabilities.first { $0.canonicallyMatches(port: port) },
                 chargerWattageSource: wattageSource,
                 batteryFullyCharged: batteryFullyCharged,
                 usbDevices: port.matchingDevices(from: usbDevices),
-                displayPorts: displayPorts.filter { $0.portKey == port.portKey },
+                displayPorts: displayPorts.filter { $0.canonicallyMatches(port: port) },
                 anotherPortActivelyCharging: port.portKey.map { key in chargingPortKeys.contains { $0 != key } } ?? false
             )
         }
@@ -262,12 +262,10 @@ public enum TextFormatter {
     }
 
     private static func filterSources(_ port: AppleHPMInterface, all: [PowerSource]) -> [PowerSource] {
-        guard let key = port.portKey else { return [] }
-        return all.filter { $0.portKey == key }
+        return all.filter { $0.canonicallyMatches(port: port) }
     }
 
     private static func filterIdentities(_ port: AppleHPMInterface, all: [USBPDSOP]) -> [USBPDSOP] {
-        guard let key = port.portKey else { return [] }
-        return all.filter { $0.portKey == key }
+        all.filter { $0.canonicallyMatches(port: port) }
     }
 }
