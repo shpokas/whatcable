@@ -278,22 +278,47 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate, NSW
 
     /// Set the status-item glyph, falling back to a short text label if the
     /// SF Symbol is unavailable on this macOS (keeps the menu bar usable).
+    ///
+    /// A fixed SymbolConfiguration pins every glyph to 16pt regular so the
+    /// button width stays constant regardless of which symbol is chosen.
+    /// Without it, symbols with different intrinsic sizes shift the button
+    /// bounds mid-session and misalign the popover anchor (issue #313).
     private func applyMenuBarIcon(to button: NSStatusBarButton, symbolName: String) {
         let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: AppInfo.name)
         if let image {
-            button.image = image
+            let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .regular)
+            let sizedImage = image.withSymbolConfiguration(config) ?? image
+            sizedImage.isTemplate = true
+            button.image = sizedImage
+            button.imagePosition = .imageOnly
             button.title = ""
         } else {
             log.warning("menuBar: SF Symbol \(symbolName, privacy: .public) returned nil, using text fallback")
             button.image = nil
+            button.imagePosition = .noImage
             button.title = "WC"
         }
+        button.needsLayout = true
+        button.needsDisplay = true
+        button.layoutSubtreeIfNeeded()
     }
 
     /// Swap the live menu bar glyph when the user picks a new one in Settings.
+    ///
+    /// The anchor only drifts when the button geometry changes. Reseating the
+    /// popover (close + reopen) causes a visible blink, so it is done only
+    /// when the button width actually changes after the swap. When the
+    /// SymbolConfiguration size-pinning keeps the width stable (the common
+    /// case), the popover is left alone.
     private func updateMenuBarIcon(_ symbolName: String) {
         guard let button = statusItem?.button else { return }
+        let widthBefore = button.frame.width
         applyMenuBarIcon(to: button, symbolName: symbolName)
+        let widthAfter = button.frame.width
+        if widthAfter != widthBefore, let popover, popover.isShown {
+            popover.performClose(nil)
+            togglePopover(from: button)
+        }
     }
 
     private func tearDownMenuBarMode() {
